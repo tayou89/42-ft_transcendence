@@ -1,0 +1,19 @@
+services:
+  node:
+    image: node:transcendence
+    container_name: node_container
+    volumes:
+      - ./requirements/Node/conf/src:/workspace/src
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - my_net
+    build: 
+      context: ./requirements/Node/
+      dockerfile: dockerfile
+
+networks:
+  my_net:
+    name: my_net
+    driver: bridge

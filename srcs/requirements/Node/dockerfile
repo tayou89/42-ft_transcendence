@@ -1,0 +1,5 @@
+FROM node:latest
+COPY ./conf /workspace
+WORKDIR /workspace
+RUN npm install
+CMD [ "npm", "start" ]
