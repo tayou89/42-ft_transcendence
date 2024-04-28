@@ -1,12 +1,17 @@
 YML_PATH := ./srcs/docker-compose.yml
+SCRIPTS_PATH := ./srcs/scripts
 
-.PHONY: build
-build:
+.PHONY: all
+all:
 	docker-compose -f $(YML_PATH) up --build -d
 
 .PHONY: up
 up:
 	docker-compose -f $(YML_PATH) up -d
+
+.PHONY: build
+build:
+	docker-compose -f $(YML_PATH) build
 
 .PHONY: down clean
 clean down:
@@ -18,4 +23,19 @@ fclean:
 
 .PHONY: re
 re: fclean
-	make build
+	make all
+
+.PHONY: certs
+certs:
+	sh $(SCRIPTS_PATH)/elk_copy_certs.sh
+
+.PHONY: token
+token:
+	sh $(SCRIPTS_PATH)/elk_get_tokens.sh
+
+.PHONY: elk
+elk: certs token
+
+.PHONY: delete_unused_imgs
+delete_imgs:
+	sh $(SCRIPTS_PATH)/clear.sh
