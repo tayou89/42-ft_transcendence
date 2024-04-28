@@ -1,6 +1,6 @@
 import MyReact from "../MyReact/MyReact.js";
 import Home from "./home.js";
-import { Route } from "../MyReact/router.js";
+import { Route } from "../MyReact/MyReactRouter.js";
 import Login from "./login.js";
 
 function App() {

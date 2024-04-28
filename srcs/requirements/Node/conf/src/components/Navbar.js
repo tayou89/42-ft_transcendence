@@ -1,5 +1,5 @@
 import MyReact from "../MyReact/MyReact.js";
-import MyReactRouter, { Link } from "../MyReact/router.js";
+import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
 
 function Navbar() {
   return (

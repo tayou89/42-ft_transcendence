@@ -1,7 +1,7 @@
 services:
   node:
     image: node:transcendence
-    container_name: node_container
+    container_name: node
     volumes:
       - ./requirements/Node/conf/src:/workspace/src
     restart: always
@@ -13,7 +13,181 @@ services:
       context: ./requirements/Node/
       dockerfile: dockerfile
 
+  cert_setup:
+    image: elasticsearch:${STACK_VERSION}
+    container_name: cert_setup
+    networks:
+      - elk_net
+    volumes:
+      - ./scripts/cert_setup.sh:/usr/share/elasticsearch/cert_setup.sh
+      - certs:/usr/share/elasticsearch/config/certs
+    user: "0"
+    command: "bash ./cert_setup.sh"
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 120
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      KIBANA_PASSWORD: ${KIBANA_PASSWORD}
+
+  es01:
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es01
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - es01_volume:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elk_net
+    environment:
+      node.name: es01
+      cluster.name: ${CLUSTER_NAME}
+      cluster.initial_master_nodes: es01,es02
+      discovery.seed_hosts: es02
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      bootstrap.memory_lock: true
+      xpack.security.enabled: true
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.key: certs/es01/es01.key
+      xpack.security.http.ssl.certificate: certs/es01/es01.crt
+      xpack.security.http.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.key: certs/es01/es01.key
+      xpack.security.transport.ssl.certificate: certs/es01/es01.crt
+      xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.license.self_generated.type: ${LICENSE}
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  es02:
+    depends_on:
+      - es01
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es02
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - es02_volume:/usr/share/elasticsearch/data
+    networks:
+      - elk_net
+    environment:
+      node.name: es02
+      cluster.name: ${CLUSTER_NAME}
+      cluster.initial_master_nodes: es01,es02
+      discovery.seed_hosts: es01
+      bootstrap.memory_lock: true
+      xpack.security.enabled: true
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.key: certs/es02/es02.key
+      xpack.security.http.ssl.certificate: certs/es02/es02.crt
+      xpack.security.http.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.key: certs/es02/es02.key
+      xpack.security.transport.ssl.certificate: certs/es02/es02.crt
+      xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.license.self_generated.type: ${LICENSE}
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  kibana:
+    depends_on:
+      es01:
+        condition: service_healthy
+      es02:
+        condition: service_healthy
+    image: kibana:${STACK_VERSION}
+    container_name: kibana
+    volumes:
+      - certs:/usr/share/kibana/config/certs
+      - kibana_volume:/usr/share/kibana/data
+    ports:
+      - 5601:5601
+    networks:
+      - elk_net
+    environment:
+      SERVERNAME: kibana
+      ELASTICSEARCH_HOSTS: https://es01:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: ${KIBANA_PASSWORD}
+      ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: config/certs/ca/ca.crt
+    mem_limit: ${MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  # logstash:
+  #   depends_on:
+  #     - elasticsearch
+  #   image: logstash:transcendence
+  #   container_name: logstash
+  #   volumes:
+  #     - ./requirements/logstash/conf/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+  #     - ./requirements/logstash/conf/logstash.yml:/usr/share/logstash/config/logstash.yml
+  #     # - elk:/usr/share/logstash/config/certs
+  #   restart: always
+  #   ports:
+  #     - 9900:9900
+  #   networks:
+  #     - elk_net
+  #   build: 
+  #     context: ./requirements/logstash
+  #     dockerfile: dockerfile
+
 networks:
   my_net:
     name: my_net
     driver: bridge
+  elk_net:
+    name: elk_net
+    driver: bridge
+
+volumes:
+  certs:
+    name: certs
+    driver: local
+  es01_volume:
+    name: es01_volume
+    driver: local
+  es02_volume:
+    name: es02_volume
+    driver: local
+  kibana_volume:
+    name: kibana_volume
+    driver: local
