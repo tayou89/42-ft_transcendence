@@ -1,0 +1,17 @@
+filebeat.inputs:
+  - type: filestream
+    id: node
+    paths:
+      - /logs/node/*.log
+
+output.logstash:
+  hosts: ["logstash:5044"]
+  ssl.certificate_authorities: ["config/certs/ca/ca.crt"]
+  ssl.certificate: "config/certs/filebeat/filebeat.crt"
+  ssl.key: "config/certs/filebeat/filebeat.key"
+
+setup.kibana.host: "https://kibana:5601"
+setup.kibana.ssl.enabled: true
+setup.kibana.ssl.certificate_authorities: ["config/certs/ca/ca.crt"]
+setup.kibana.ssl.certificate: "config/certs/filebeat/filebeat.crt"
+setup.kibana.ssl.key: "config/certs/filebeat/filebeat.key"
