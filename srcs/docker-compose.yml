@@ -4,6 +4,7 @@ services:
     container_name: node
     volumes:
       - ./requirements/Node/conf/src:/workspace/src
+      - logs:/logs
     restart: always
     ports:
       - 8080:8080
@@ -12,6 +13,11 @@ services:
     build: 
       context: ./requirements/Node/
       dockerfile: dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "curl -I localhost:8080 | grep -q 'HTTP/1.1 200 OK'"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   cert_setup:
     image: elasticsearch:${STACK_VERSION}
@@ -32,6 +38,8 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_PASSWORD: ${KIBANA_PASSWORD}
       LOGSTASH_PASSWORD: ${LOGSTASH_PASSWORD}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
+
   es01:
     depends_on:
       cert_setup:
@@ -141,12 +149,15 @@ services:
       ELASTICSEARCH_USERNAME: kibana_system
       ELASTICSEARCH_PASSWORD: ${KIBANA_PASSWORD}
       ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: config/certs/ca/ca.crt
+      SERVER_SSL_ENABLED: true
+      SERVER_SSL_CERTIFICATE: config/certs/kibana/kibana.crt
+      SERVER_SSL_KEY: config/certs/kibana/kibana.key
     mem_limit: ${MEM_LIMIT}
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'"
+          "curl -s --cacert config/certs/ca/ca.crt -I https://localhost:5601 | grep -q 'HTTP/1.1 302 Found'"
         ]
       interval: 10s
       timeout: 10s
@@ -167,6 +178,7 @@ services:
       - ./requirements/logstash/conf/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     environment:
       LOGSTASH_PASSWORD: ${LOGSTASH_PASSWORD}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
       NODE_NAME: logstash
       CONFIG_RELOAD_AUTOMATIC: true
       xpack.monitoring.enabled: false
@@ -179,6 +191,28 @@ services:
     ports:
       - 9900:9900
     mem_limit: ${MEM_LIMIT}
+    networks:
+      - elk_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -XGET 'localhost:9600/?pretty' | grep -q '\"status\" : \"green\"'"]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  node_beat:
+    depends_on:
+      node:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
+    image: elastic/filebeat:${STACK_VERSION}
+    container_name: node_beat
+    volumes:
+      - certs:/usr/share/filebeat/config/certs
+      - logs:/logs
+      - ./requirements/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     networks:
       - elk_net
 
@@ -205,4 +239,7 @@ volumes:
     driver: local
   logstash_volume:
     name: logstash_volume
+    driver: local
+  logs:
+    name: logs
     driver: local

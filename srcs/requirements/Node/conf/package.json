@@ -20,6 +20,6 @@
   },
   "scripts": {
     "build": "npx webpack",
-    "start": "webpack serve --open --mode=development --hot --progress"
+    "start": "sh start.sh"
   }
 }
