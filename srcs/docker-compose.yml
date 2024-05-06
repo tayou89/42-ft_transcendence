@@ -19,6 +19,19 @@ services:
       timeout: 10s
       retries: 5
 
+  django:
+    image: python:transcendence
+    container_name: django
+    volumes:
+      - ./requirements/django/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+    ports:
+      - 8000:8000
+    networks:
+      - my_net
+    build:
+      context: ./requirements/django
+      dockerfile: dockerfile
+
   cert_setup:
     image: elasticsearch:${STACK_VERSION}
     container_name: cert_setup
