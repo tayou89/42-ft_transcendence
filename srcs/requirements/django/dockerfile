@@ -1,0 +1,9 @@
+FROM python:alpine3.19
+RUN apk update \
+    && apk add --no-cache postgresql-client
+WORKDIR /app
+COPY conf/requirements.txt ./
+COPY music_controller/ ./music_controller
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt
+CMD [ "python", "./music_controller/manage.py", "runserver", "0.0.0.0:8000" ]

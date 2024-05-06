@@ -7,6 +7,7 @@ function Navbar() {
       <div className="container-fluid">
         <Link to="/" className="navbar-brand">트센</Link>
         <Link to="/login" className="navbar-brand">로그인</Link>
+        <Link to="/room" className="navbar-brand">room</Link>
       </div>
     </nav>
   )
