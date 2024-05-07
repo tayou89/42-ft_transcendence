@@ -27,6 +27,10 @@ services:
     container_name: django
     volumes:
       - ./requirements/django/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+    environment:
+      DJANGO_DB_NAME: ${DJANGO_DB_NAME}
+      DJANGO_DB_USER: ${DJANGO_DB_USER}
+      DJANGO_DB_PASSWORD: ${DJANGO_DB_PASSWORD}
     ports:
       - 8000:8000
     networks:
