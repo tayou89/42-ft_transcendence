@@ -20,6 +20,9 @@ services:
       retries: 5
 
   django:
+    depends_on:
+      postgres:
+        condition: service_healthy
     image: python:transcendence
     container_name: django
     volumes:
@@ -31,6 +34,31 @@ services:
     build:
       context: ./requirements/django
       dockerfile: dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:transcendence
+    container_name: postgres
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_LISTEN_ADDRESSES: '*'
+    networks:
+      - my_net
+    build:
+      context: ./requirements/postgres
+      dockerfile: dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   cert_setup:
     image: elasticsearch:${STACK_VERSION}
@@ -238,6 +266,9 @@ networks:
     driver: bridge
 
 volumes:
+  postgres_volume:
+    name: postgres_volume
+    driver: local
   certs:
     name: certs
     driver: local
