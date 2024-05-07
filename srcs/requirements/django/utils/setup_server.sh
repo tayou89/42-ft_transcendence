@@ -1,7 +1,5 @@
 #!/bin/sh
 
-sleep 5 #helth check
-
 cd django
 
 python3 manage.py makemigrations
