@@ -1,6 +1,8 @@
 FROM python:alpine3.19
 RUN apk update \
-    && apk add --no-cache postgresql-client curl
+    && apk add --no-cache \
+    postgresql-client \
+    curl
 WORKDIR /app
 COPY django ./django
 COPY utils ./utils
