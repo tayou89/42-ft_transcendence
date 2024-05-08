@@ -19,14 +19,14 @@ services:
       timeout: 10s
       retries: 5
 
-  django:
+  user_server:
     depends_on:
       postgres:
         condition: service_healthy
-    image: python:transcendence
-    container_name: django
+    image: python:user_server
+    container_name: user_server
     volumes:
-      - ./requirements/django/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+      - ./requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
     environment:
       DJANGO_DB_NAME: ${DJANGO_DB_NAME}
       DJANGO_DB_USER: ${DJANGO_DB_USER}
@@ -36,7 +36,7 @@ services:
     networks:
       - my_net
     build:
-      context: ./requirements/django
+      context: ./requirements/user_server
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "curl -s localhost:8000"]
@@ -66,6 +66,33 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  game_server:
+    image: python:game_server
+    build:
+      context: ./requirements/game_server
+      dockerfile: dockerfile
+    container_name: game_server
+    volumes:
+      - ./requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+    ports:
+      - 8000:8000
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:transcendence
+    build:
+      context: ./requirements/redis
+      dockerfile: dockerfile
+    container_name: redis
+    networks:
+      - my_net
 
   cert_setup:
     image: elasticsearch:${STACK_VERSION}
