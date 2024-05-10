@@ -1,8 +1,12 @@
 FROM python:alpine3.19
+
 RUN apk update \
-    && apk add --no-cache postgresql-client curl
+    && apk add --no-cache \
+    curl
+
 WORKDIR /app
-COPY django ./django
+
 COPY utils ./utils
 RUN pip install -r ./utils/requirements.txt
+
 ENTRYPOINT ["/bin/sh", "./utils/setup_server.sh"]

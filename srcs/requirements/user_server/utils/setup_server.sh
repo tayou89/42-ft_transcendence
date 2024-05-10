@@ -7,4 +7,5 @@ python3 manage.py makemigrations api
 
 python3 manage.py migrate
 
-python3 manage.py runserver 0.0.0.0:8000
+# python3 manage.py runserver 0.0.0.0:8000
+gunicorn --bind 0.0.0.0:8000 user_manage.wsgi:application

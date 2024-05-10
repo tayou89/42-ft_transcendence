@@ -37,5 +37,5 @@ token:
 elk: certs token
 
 .PHONY: delete_unused_imgs
-delete_imgs:
+delete_unused_imgs:
 	sh $(SCRIPTS_PATH)/clear.sh
