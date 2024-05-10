@@ -1,5 +1,4 @@
 **/.env
 **/migrations
-**/__pycache__
-mysite/ 
 **/avatars
+**/__pycache__
