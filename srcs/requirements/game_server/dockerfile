@@ -1,6 +1,9 @@
 FROM python:alpine3.19
 
-RUN apk update
+RUN apk update \
+    && apk add --no-cache \
+    curl
+
 WORKDIR /app
 
 COPY utils ./utils

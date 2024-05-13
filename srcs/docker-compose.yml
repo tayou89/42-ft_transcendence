@@ -3,7 +3,7 @@ services:
     image: node:transcendence
     container_name: node
     volumes:
-      - ./requirements/Node/conf/src:/workspace/src
+      - ./requirements/node/conf/src:/workspace/src
       - logs:/logs
     restart: always
     ports:
@@ -11,7 +11,7 @@ services:
     networks:
       - my_net
     build: 
-      context: ./requirements/Node/
+      context: ./requirements/node/
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "curl -I localhost:8080 | grep -q 'HTTP/1.1 200 OK'"]
@@ -31,18 +31,19 @@ services:
       DJANGO_DB_NAME: ${DJANGO_DB_NAME}
       DJANGO_DB_USER: ${DJANGO_DB_USER}
       DJANGO_DB_PASSWORD: ${DJANGO_DB_PASSWORD}
-    ports:
-      - 8000:8000
+    # ports:
+    #   - 8000:8000
     networks:
       - my_net
     build:
       context: ./requirements/user_server
       dockerfile: dockerfile
     healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8000"]
-      interval: 10s
+      test: ["CMD-SHELL", "curl -I localhost:8000 | grep -q 'HTTP/1.1 404 Not Found'"]
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 3
+      start_period: 10s
 
   postgres:
     image: postgres:transcendence
@@ -63,9 +64,32 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-      interval: 10s
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 3
+      start_period: 10s
+
+  nginx:
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+      user_server:
+        condition: service_healthy
+    image: nginx:stable-alpine3.19
+    container_name: nginx
+    volumes:
+      - ./requirements/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
+      - certs:/certs
+    ports:
+      - 443:443
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl --cacert /certs/ca/ca.crt -I -s https://localhost:443 | grep -q 'Server: nginx'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   game_server:
     image: python:game_server
@@ -75,15 +99,16 @@ services:
     container_name: game_server
     volumes:
       - ./requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
-    ports:
-      - 8000:8000
+    # ports:
+    #   - 8001:8001
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8000"]
-      interval: 10s
+      test: ["CMD-SHELL", "curl -s localhost:8001"]
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 3
+      start_period: 10s
 
   redis:
     image: redis:transcendence
@@ -108,7 +133,8 @@ services:
       test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
       interval: 1s
       timeout: 5s
-      retries: 120
+      retries: 10
+      start_period: 10s
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_PASSWORD: ${KIBANA_PASSWORD}
@@ -124,8 +150,6 @@ services:
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - es01_volume:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
     networks:
       - elk_net
     environment:
@@ -263,8 +287,8 @@ services:
       xpack.monitoring.elasticsearch.ssl.certificate: "/usr/share/logstash/config/certs/ca/ca.crt"
       xpack.monitoring.elasticsearch.ssl.key: "/usr/share/logstash/config/certs/ca/ca.key"
       xpack.monitoring.elasticsearch.ssl.verification_mode: full
-    ports:
-      - 9900:9900
+    # ports:
+    #   - 9900:9900
     mem_limit: ${MEM_LIMIT}
     networks:
       - elk_net
