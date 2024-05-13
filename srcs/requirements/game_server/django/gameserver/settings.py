@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
 	'rest_framework',
 	'api',
+	'channels',
 ]
 
 
@@ -85,14 +86,23 @@ WSGI_APPLICATION = 'gameserver.wsgi.application'
 # }
 
 # Redis Cache
-CACHES = {  
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+# CACHES = {  
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://redis:1234",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#     }
+# }
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],  # Redis 서버 주소
         },
-    }
+    },
 }
 
 # Password validation
@@ -135,3 +145,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ASGI_APPLICATION = 'gameserver.asgi.application'
+
