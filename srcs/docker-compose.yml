@@ -4,7 +4,7 @@ services:
     container_name: node
     volumes:
       - ./requirements/node/conf/src:/workspace/src
-      - logs:/logs
+      - logs_volume:/logs
     restart: always
     ports:
       - 8080:8080
@@ -79,8 +79,8 @@ services:
     container_name: nginx
     volumes:
       - ./requirements/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
-      - certs:/certs
-      - logs:/logs
+      - certs_volume:/certs
+      - logs_volume:/logs
     ports:
       - 443:443
     networks:
@@ -127,7 +127,7 @@ services:
       - elk_net
     volumes:
       - ./scripts/cert_setup.sh:/usr/share/elasticsearch/cert_setup.sh
-      - certs:/usr/share/elasticsearch/config/certs
+      - certs_volume:/usr/share/elasticsearch/config/certs
     user: "0"
     command: "bash ./cert_setup.sh"
     healthcheck:
@@ -149,7 +149,7 @@ services:
     image: elasticsearch:${STACK_VERSION}
     container_name: es01
     volumes:
-      - certs:/usr/share/elasticsearch/config/certs
+      - certs_volume:/usr/share/elasticsearch/config/certs
       - es01_volume:/usr/share/elasticsearch/data
     networks:
       - elk_net
@@ -192,7 +192,7 @@ services:
     image: elasticsearch:${STACK_VERSION}
     container_name: es02
     volumes:
-      - certs:/usr/share/elasticsearch/config/certs
+      - certs_volume:/usr/share/elasticsearch/config/certs
       - es02_volume:/usr/share/elasticsearch/data
     networks:
       - elk_net
@@ -237,7 +237,7 @@ services:
     image: kibana:${STACK_VERSION}
     container_name: kibana
     volumes:
-      - certs:/usr/share/kibana/config/certs
+      - certs_volume:/usr/share/kibana/config/certs
       - kibana_volume:/usr/share/kibana/data
     ports:
       - 5601:5601
@@ -275,7 +275,7 @@ services:
     container_name: logstash
     user: "0"
     volumes:
-      - certs:/usr/share/logstash/config/certs
+      - certs_volume:/usr/share/logstash/config/certs
       - logstash_volume:/usr/share/logstash/data
       - ./requirements/logstash/conf/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     environment:
@@ -301,7 +301,7 @@ services:
       timeout: 10s
       retries: 120
 
-  node_beat:
+  filebeat:
     depends_on:
       nginx:
         condition: service_healthy
@@ -310,13 +310,31 @@ services:
       logstash:
         condition: service_healthy
     image: elastic/filebeat:${STACK_VERSION}
-    container_name: node_beat
+    container_name: filebeat
     volumes:
-      - certs:/usr/share/filebeat/config/certs
-      - logs:/logs
+      - certs_volume:/usr/share/filebeat/config/certs
+      - logs_volume:/logs
       - ./requirements/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     networks:
       - elk_net
+
+  grafana:
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+    image: grafana/grafana:11.0.0
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+    ports:
+      - 3000:3000
+    volumes:
+      - certs_volume:/certs
+      - grafana_volume:/var/lib/grafana
+      - ./requirements/grafana/grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - my_net
 
 networks:
   my_net:
@@ -330,7 +348,7 @@ volumes:
   postgres_volume:
     name: postgres_volume
     driver: local
-  certs:
+  certs_volume:
     name: certs
     driver: local
   es01_volume:
@@ -345,6 +363,9 @@ volumes:
   logstash_volume:
     name: logstash_volume
     driver: local
-  logs:
-    name: logs
+  logs_volume:
+    name: logs_volume
+    driver: local
+  grafana_volume:
+    name: grafana_volume
     driver: local
