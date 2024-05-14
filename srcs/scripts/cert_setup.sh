@@ -52,6 +52,12 @@ if [ ! -f config/certs/certs.zip ]; then
         "       - localhost\n"\
         "     ip:\n"\
         "       - 127.0.0.1\n"\
+        "   - name: grafana\n"\
+        "     dns:\n"\
+        "       - grafana\n"\
+        "       - localhost\n"\
+        "     ip:\n"\
+        "       - 127.0.0.1\n"\
     > config/certs/instances.yml;
     bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
     unzip config/certs/certs.zip -d config/certs;
@@ -69,7 +75,7 @@ until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASS
     do sleep 5;
 done;
 echo "Setting logstash_writer role";
-until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://es01:9200/_security/role/logstash_writer -d '{"cluster": ["manage_index_templates", "monitor", "manage_ilm"], "indices": [{"names": [ "logstash-*" ], "privileges": ["write","create","create_index","manage","manage_ilm"]}]}' | grep -q '{"role":{"created":true}}';
+until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://es01:9200/_security/role/logstash_writer -d '{"cluster": ["manage_index_templates", "monitor", "manage_ilm"], "indices": [{"names": [ "log-*" ], "privileges": ["write","create","create_index","manage","manage_ilm"]}]}' | grep -q '{"role":{"created":true}}';
     do sleep 5;
 done;
 echo "Setting logstash_internal account";
