@@ -2,7 +2,7 @@ filebeat.inputs:
   - type: filestream
     id: node
     paths:
-      - /logs/node/*.log
+      - /logs/*.log
 
 output.logstash:
   hosts: ["logstash:5044"]
