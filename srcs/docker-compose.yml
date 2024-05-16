@@ -336,6 +336,21 @@ services:
     networks:
       - my_net
 
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./requirements/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - my_net
+
+  node_exporter:
+    image: prom/node-exporter:v1.8.0
+    container_name: node_exporter
+    networks:
+      - my_net
 networks:
   my_net:
     name: my_net
