@@ -21,16 +21,16 @@ services:
 
   user_server:
     depends_on:
-      postgres:
+      user_db:
         condition: service_healthy
     image: python:user_server
     container_name: user_server
     volumes:
       - ./requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
     environment:
-      DJANGO_DB_NAME: ${DJANGO_DB_NAME}
-      DJANGO_DB_USER: ${DJANGO_DB_USER}
-      DJANGO_DB_PASSWORD: ${DJANGO_DB_PASSWORD}
+      USERDATA_DB_NAME: ${USERDATA_DB_NAME}
+      USERDATA_DB_USER: ${USERDATA_DB_USER}
+      USERDATA_DB_PW: ${USERDATA_DB_PW}
     # ports:
     #   - 8000:8000
     networks:
@@ -45,22 +45,22 @@ services:
       retries: 3
       start_period: 10s
 
-  postgres:
-    image: postgres:transcendence
-    container_name: postgres
+  user_db:
+    image: postgres:user_server
+    container_name: user_db
     volumes:
-      - postgres_volume:/var/lib/postgresql/data
+      - userdb_volume:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_LISTEN_ADDRESSES: '*'
-      DJANGO_DB_NAME: ${DJANGO_DB_NAME}
-      DJANGO_DB_USER: ${DJANGO_DB_USER}
-      DJANGO_DB_PASSWORD: ${DJANGO_DB_PASSWORD}
+      USERDATA_DB_NAME: ${USERDATA_DB_NAME}
+      USERDATA_DB_USER: ${USERDATA_DB_USER}
+      USERDATA_DB_PW: ${USERDATA_DB_PW}
     networks:
       - my_net
     build:
-      context: ./requirements/postgres
+      context: ./requirements/user_db
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
@@ -93,19 +93,50 @@ services:
 
   game_server:
     image: python:game_server
+    depends_on:
+      game_db:
+        condition: service_healthy
     build:
       context: ./requirements/game_server
       dockerfile: dockerfile
     container_name: game_server
     volumes:
       - ./requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
-    # ports:
-    #   - 8001:8001
+    ports:
+      - 8001:8000
+    environment:
+      GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
+      GAMEDATA_DB_USER: ${USERDATA_DB_USER}
+      GAMEDATA_DB_PW: ${USERDATA_DB_PW}
     networks:
       - my_net
     healthcheck:
       test: ["CMD-SHELL", "curl -s localhost:8001"]
       interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  game_db:
+    image: postgres:game_server
+    container_name: game_db
+    build:
+      context: ./requirements/game_db
+      dockerfile: dockerfile
+    volumes:
+      - gamedb_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_LISTEN_ADDRESSES: '*'
+      GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
+      GAMEDATA_DB_USER: ${USERDATA_DB_USER}
+      GAMEDATA_DB_PW: ${USERDATA_DB_PW}
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -p 5431 -U $POSTGRES_USER"]
+      interval: 1s
       timeout: 5s
       retries: 3
       start_period: 10s
@@ -324,8 +355,11 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_volume:
-    name: postgres_volume
+  userdb_volume:
+    name: userdb_volume
+    driver: local
+  gamedb_volume:
+    name: gamedb_volume
     driver: local
   certs:
     name: certs
