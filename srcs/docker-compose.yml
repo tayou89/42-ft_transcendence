@@ -335,6 +335,8 @@ services:
     depends_on:
       cert_setup:
         condition: service_healthy
+      prometheus:
+        condition: service_healthy
     image: grafana/grafana:11.0.0
     container_name: grafana
     environment:
@@ -343,11 +345,19 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - certs_volume:/certs
+      - certs_volume:/certs:ro
       - grafana_volume:/var/lib/grafana
-      - ./requirements/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./requirements/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - ./requirements/grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./requirements/grafana/dashboards/:/var/lib/grafana/dashboards/:ro
     networks:
       - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k https://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   prometheus:
     image: prom/prometheus:v2.52.0
@@ -358,6 +368,12 @@ services:
       - ./requirements/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   node_exporter:
     image: prom/node-exporter:v1.8.0
