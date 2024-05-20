@@ -9,4 +9,4 @@ python3 manage.py makemigrations api
 
 python3 manage.py migrate
 
-uvicorn gameserver.asgi:application --host 0.0.0.0 --port 8000
+uvicorn gameserver.asgi:application --host 0.0.0.0 --port 8000 --workers 4

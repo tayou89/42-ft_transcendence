@@ -1,14 +1,12 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Room, GameState
 
-from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 
 import json
 import asyncio
 
 class ChatConsumer(AsyncWebsocketConsumer):
-
 
 	async def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -31,6 +29,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.accept()
 
 
+
 	async def disconnect(self, close_code):
 
 		room = await database_sync_to_async(Room.objects.get)(name=self.room_name)
@@ -47,7 +46,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 
-
 	async def receive(self, text_data):
 
 		room = await database_sync_to_async(Room.objects.get)(name=self.room_name)
@@ -60,25 +58,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					'message': "not enough users",
 				}
 			)
-		else:
-			game = GameState(0, 0)
+			return
+		
+		asyncio.create_task(self.game_loop())
 
-			while game.left_score != 7 and game.right_score != 7:
-				game.update_ball()
-				await self.channel_layer.group_send(
-					self.room_group_name,
-					{
-						'type': 'chat_message',
-						'message': game.ball_position
-					}
-				)
-				await asyncio.sleep(1 / 10)
+		await database_sync_to_async(room.delete)()
 
+
+
+	async def game_loop(self):
+
+		game = GameState(0, 0)
+		
+		while game.left_score != 1 and game.right_score != 1:
+			game.update_ball()
+			await self.channel_layer.group_send(
+				self.room_group_name,
+				{
+					'type': 'chat_message',
+					'message': game.ball_position
+				}
+			)
+			await asyncio.sleep(1/10)
+
+		await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': 'Game Over'
+            }
+        )
 
 
 	async def chat_message(self, event):
-		message = event['message']
 		
 		await self.send(text_data=json.dumps({
-			'message': message
+			'message': event['message']
 		}))

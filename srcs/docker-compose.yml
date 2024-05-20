@@ -31,8 +31,8 @@ services:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
       USERDATA_DB_PW: ${USERDATA_DB_PW}
-    # ports:
-    #   - 8000:8000
+    ports:
+      - 8000:8000
     networks:
       - my_net
     build:

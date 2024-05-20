@@ -12,8 +12,9 @@ class RoomSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
-HEIGHT = 300
-WIDTH = 400
+HEIGHT = 100
+WIDTH = 200
+PADDLE = 0
 
 class GameState:
 
@@ -33,14 +34,14 @@ class GameState:
 			dy = -dy
 		
 		if x >= WIDTH:
-			if abs(self.right_paddle - y) < 50:
+			if abs(self.right_paddle - y) < PADDLE:
 				dx = -dx
 			else:
 				x, y = 0, 0
 				self.right_score += 1
 		
 		if x <= -WIDTH:
-			if abs(self.left_paddle - y) < 50:
+			if abs(self.left_paddle - y) < PADDLE:
 				dx = -dx
 			else:
 				x, y = 0, 0
