@@ -394,6 +394,11 @@ services:
     container_name: alertmanager
     volumes:
       - ./requirements/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    environment:
+      ALERTMANAGER_EMAIL_TO: ${ALERTMANAGER_EMAIL_TO}
+      ALERTMANAGER_EMAIL_FROM: ${ALERTMANAGER_EMAIL_FROM}
+      ALERTMANAGER_AUTH_USERNAME: ${ALERTMANAGER_AUTH_USERNAME}
+      ALERTMANAGER_AUTH_PASSWORD: ${ALERTMANAGER_AUTH_PASSWORD}
     networks:
       - my_net
     healthcheck:
