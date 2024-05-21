@@ -83,6 +83,7 @@ services:
       - logs_volume:/logs
     ports:
       - 443:443
+      - 9090:9090
       # - 8080:8080
     networks:
       - my_net
@@ -364,11 +365,10 @@ services:
   prometheus:
     image: prom/prometheus:v2.52.0
     container_name: prometheus
-    ports:
-      - 9090:9090
     volumes:
       - ./requirements/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./requirements/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+      - prometheus_volume:/prometheus
     networks:
       - my_net
     healthcheck:
@@ -430,4 +430,7 @@ volumes:
     driver: local
   grafana_volume:
     name: grafana_volume
+    driver: local
+  prometheus_volume:
+    name: prometheus_volume
     driver: local
