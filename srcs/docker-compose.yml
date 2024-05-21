@@ -389,6 +389,19 @@ services:
     volumes:
       - /:/host:ro,rslave
 
+  postgres_exporter:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: quay.io/prometheuscommunity/postgres-exporter
+    container_name: postgres_exporter
+    ports:
+      - 9187:9787
+    networks:
+      - my_net
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres?sslmode=disable"
+
   alertmanager:
     image: prom/alertmanager:v0.27.0
     container_name: alertmanager
