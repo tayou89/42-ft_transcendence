@@ -17,6 +17,8 @@ class Status(Enum):
 
 class PongCunsumer(AsyncWebsocketConsumer):
 
+	game = None
+
 	async def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']
 		self.room_group_name = f'pong_{self.room_name}'
@@ -83,7 +85,7 @@ class PongCunsumer(AsyncWebsocketConsumer):
 				self.room_group_name,
 				{
 					'type': 'chat_message',
-					'message': room['cur_users'],
+					'message': 'not enough users',
 				}
 			)
 			return
@@ -97,9 +99,9 @@ class PongCunsumer(AsyncWebsocketConsumer):
 
 	async def game_loop(self):
 
-		game = GameState(0, 0)
-		
-		while game.left_score != 1 and game.right_score != 1:
+		self.game = GameState(0, 0)
+
+		while self.game.is_ended() == False:
 			
 			room = cache.get(self.room_name)
 
@@ -122,12 +124,12 @@ class PongCunsumer(AsyncWebsocketConsumer):
 
 					await asyncio.sleep(1)
 
-			game.update_ball()
+			self.game.update_ball()
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
 					'type': 'chat_message',
-					'message': game.ball_position
+					'message': self.game.get_ball_position()
 				}
 			)
 			await asyncio.sleep(1/10)
@@ -136,11 +138,9 @@ class PongCunsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': 'Game Over'
+                'message': self.game.get_result()
             }
         )
-
-
 
 	async def chat_message(self, event):
 		
