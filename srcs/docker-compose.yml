@@ -1,6 +1,7 @@
 services:
   node:
     image: node:transcendence
+    pull_policy: never
     container_name: node
     volumes:
       - ./requirements/node/conf/src:/workspace/src
@@ -23,6 +24,7 @@ services:
     depends_on:
       user_db:
         condition: service_healthy
+    pull_policy: never
     image: python:user_server
     container_name: user_server
     volumes:
@@ -47,6 +49,7 @@ services:
 
   user_db:
     image: postgres:user_server
+    pull_policy: never
     container_name: user_db
     volumes:
       - userdb_volume:/var/lib/postgresql/data
@@ -94,6 +97,7 @@ services:
 
   game_server:
     image: python:game_server
+    pull_policy: never
     depends_on:
       game_db:
         condition: service_healthy
@@ -120,6 +124,7 @@ services:
 
   game_db:
     image: postgres:game_server
+    pull_policy: never
     container_name: game_db
     build:
       context: ./requirements/game_db
@@ -144,6 +149,7 @@ services:
 
   redis:
     image: redis:transcendence
+    pull_policy: never
     build:
       context: ./requirements/redis
       dockerfile: dockerfile

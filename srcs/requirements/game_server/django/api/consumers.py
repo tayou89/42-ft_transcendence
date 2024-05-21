@@ -2,11 +2,20 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Room, GameState
 
 from channels.db import database_sync_to_async
+from django.core.cache import cache
+from enum import Enum
 
 import json
 import asyncio
 
-class ChatConsumer(AsyncWebsocketConsumer):
+class Status(Enum):
+	NONE = 0
+	PAUSED = 1
+	STARTED = 2
+	END = 3
+
+
+class PongCunsumer(AsyncWebsocketConsumer):
 
 	async def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -17,7 +26,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if room.cur_users == 2:
 			await self.close()
 			return
-		
+
 		room.cur_users += 1
 		await database_sync_to_async(room.save)()
 
@@ -25,8 +34,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			self.room_group_name,
 			self.channel_name
 		)
-
+		
 		await self.accept()
+
+		room = cache.get(self.room_name, None)
+		if room is None:
+			cache.set(self.room_name, {'cur_users': 1, 'status': Status.NONE})
+		else:
+			room['cur_users'] += 1
+			cache.set(self.room_name, room)
+
 
 
 
@@ -34,10 +51,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		room = await database_sync_to_async(Room.objects.get)(name=self.room_name)
 		room.cur_users -= 1
-		await database_sync_to_async(room.save)()
 
 		if room.cur_users == 0:
 			await database_sync_to_async(room.delete)()
+		else:
+			await database_sync_to_async(room.save)()
+
+		room = cache.get(self.room_name)
+		if room['cur_users'] == 1:
+			room['cur_users'] = 0
+			room['status'] = Status.END
+			cache.delete(self.room_name)
+		else:
+			room['cur_users'] = 1
+			room['status'] = Status.PAUSED
+			cache.set(self.room_name, room)
 
 		await self.channel_layer.group_discard(
 			self.room_group_name,
@@ -48,21 +76,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 
-		room = await database_sync_to_async(Room.objects.get)(name=self.room_name)
+		room = cache.get(self.room_name)
 
-		if room.cur_users != 2:
+		if room['cur_users'] != 2:
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
 					'type': 'chat_message',
-					'message': "not enough users",
+					'message': room['cur_users'],
 				}
 			)
 			return
-		
-		asyncio.create_task(self.game_loop())
 
-		await database_sync_to_async(room.delete)()
+		if room['status'] == Status.NONE:
+			room['status'] = Status.STARTED
+			cache.set(self.room_name, room)
+			asyncio.create_task(self.game_loop())
 
 
 
@@ -71,6 +100,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		game = GameState(0, 0)
 		
 		while game.left_score != 1 and game.right_score != 1:
+			
+			room = cache.get(self.room_name)
+
+			if room['cur_users'] != 2:
+				
+				await self.channel_layer.group_send(
+					self.room_group_name,
+					{
+						'type': 'chat_message',
+						'message': 'PAUSED'
+					}
+				)
+
+				while room['cur_users'] != 2:
+					room = cache.get(self.room_name)
+
+					if room['status'] == Status.END:
+						cache.delete(self.room_name)
+						return
+
+					await asyncio.sleep(1)
+
 			game.update_ball()
 			await self.channel_layer.group_send(
 				self.room_group_name,
@@ -90,8 +141,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
 
+
 	async def chat_message(self, event):
 		
 		await self.send(text_data=json.dumps({
 			'message': event['message']
 		}))
+
