@@ -1,10 +1,30 @@
 groups:
-- name: nginx_alert
-  rules:
-  - alert: TooManyConnections
-    expr: nginx_connections_active > 1
-    for: 10s
-    labels:
-      severity: page
-    annotations:
-      summary: Too Many Connections
+  - name: nginx_alert
+    rules:
+    - alert: TooManyConnections
+      expr: nginx_connections_active > 5
+      for: 10s
+      labels:
+        severity: page
+      annotations:
+        summary: Too Many Connections
+
+  - name: system_alert
+    rules:
+      - alert: HighCpuUsage
+        expr: 100 * (1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]))) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ humanize $value }}% on {{ $labels.instance }}"
+
+      - alert: HighRamUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High RAM usage detected"
+          description: "RAM usage is {{ humanize $value }}% on {{ $labels.instance }}"
