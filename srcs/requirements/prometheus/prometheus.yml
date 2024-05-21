@@ -26,3 +26,7 @@ scrape_configs:
 
     static_configs:
       - targets: ["nginx_exporter:9113"]
+  
+  - job_name: "host_system_metrics"
+    static_configs:
+      - targets: ["node_exporter:9100"]
