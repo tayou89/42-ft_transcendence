@@ -1,0 +1,10 @@
+groups:
+- name: nginx_alert
+  rules:
+  - alert: TooManyConnections
+    expr: nginx_connections_active > 1
+    for: 10s
+    labels:
+      severity: page
+    annotations:
+      summary: Too Many Connections
