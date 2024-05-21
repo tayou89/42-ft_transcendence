@@ -1,0 +1,15 @@
+route:
+  group_by: ['alertname']
+  group_wait: 3s
+  group_interval: 5s
+  repeat_interval: 20s
+  receiver: 'seonlim'
+
+receivers:
+- name: 'seonlim'
+  email_configs:
+  - to: dltjwl1@naver.com
+    from: dltjwl1234@gmail.com
+    smarthost: smtp.gmail.com:587
+    auth_username: dltjwl1234@gmail.com
+    auth_password: "jhxmvdwfqoslwjgu"
