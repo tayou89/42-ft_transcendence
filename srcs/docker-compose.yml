@@ -342,14 +342,16 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_PATHS_PROVISIONING: /usr/share/grafana/conf/provisioning/
     ports:
       - 3000:3000
     volumes:
       - certs_volume:/certs:ro
       - grafana_volume:/var/lib/grafana
       - ./requirements/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
-      - ./requirements/grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
-      - ./requirements/grafana/dashboards/:/var/lib/grafana/dashboards/:ro
+      - ./requirements/grafana/dashboard.yaml:/usr/share/grafana/conf/provisioning/dashboards/dashboards.yaml:ro
+      - ./requirements/grafana/datasource.yaml:/usr/share/grafana/conf/provisioning/datasources/datasource.yaml:ro
+      - ./requirements/grafana/dashboards/:/var/lib/grafana/dashboards:ro
     networks:
       - my_net
     healthcheck:
