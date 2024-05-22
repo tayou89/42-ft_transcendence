@@ -81,10 +81,10 @@ WSGI_APPLICATION = 'user_manage.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DJANGO_DB_NAME'),
-        'USER': os.getenv('DJANGO_DB_USER'),
-        'PASSWORD': os.getenv('DJANGO_DB_PASSWORD'),
-        'HOST': 'postgres',
+        'NAME': os.getenv('USERDATA_DB_NAME'),
+        'USER': os.getenv('USERDATA_DB_USER'),
+        'PASSWORD': os.getenv('USERDATA_DB_PW'),
+        'HOST': 'user_db',
         'PORT': '5432',
     }
 }

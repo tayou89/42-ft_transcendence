@@ -1,12 +1,17 @@
-from django.shortcuts import render
-from django.core.cache import cache
-from django.http import JsonResponse
+# from django.shortcuts import render
+# from django.core.cache import cache
+# from django.http import JsonResponse
 
-def tmp(request):
+from rest_framework.generics import ListAPIView
+from rest_framework.renderers import JSONRenderer
+from .models import Room, RoomSerializer
 
-	if (request.method == "GET"):
-		cache.set('1', "hi", 60 * 60)
-		return JsonResponse({'data': cache.get('1')})
+class RoomListView(ListAPIView):
+	renderer_classes = [JSONRenderer]
+
+	queryset = Room.objects.all()
+	serializer_class = RoomSerializer
+
 
 
 # Create your views here.
