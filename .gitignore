@@ -1,4 +1,4 @@
-**/.env
+# **/.env
 **/migrations
 **/avatars
 **/__pycache__
