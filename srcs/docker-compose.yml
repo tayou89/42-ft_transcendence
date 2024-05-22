@@ -7,8 +7,8 @@ services:
       - ./requirements/node/conf/src:/workspace/src
       - logs_volume:/logs
     restart: always
-    # ports:
-    #   - 8080:8080
+    ports:
+      - 8080:8080
     networks:
       - my_net
     build: 
