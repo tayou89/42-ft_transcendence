@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
 	'rest_framework',
 	'api',
+	'channels',
 ]
 
 
@@ -74,23 +75,37 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gameserver.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('GAMEDATA_DB_NAME'),
+        'USER': os.getenv('GAMEDATA_DB_USER'),
+        'PASSWORD': os.getenv('GAMEDATA_DB_PW'),
+        'HOST': 'game_db',
+        'PORT': '5431',
+    }
+}
 
-# Redis Cache
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],  # Redis 서버 주소
+        },
+    },
+}
+
+
 CACHES = {  
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://redis:6379",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+			'REDIS_CLIENT_KWARGS': {
+                'decode_responses': True,
+            },
         },
     }
 }
@@ -135,3 +150,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ASGI_APPLICATION = 'gameserver.asgi.application'
+
