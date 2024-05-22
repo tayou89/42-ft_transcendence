@@ -33,6 +33,8 @@ services:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
       USERDATA_DB_PW: ${USERDATA_DB_PW}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
     ports:
       - 8000:8000
     networks:
