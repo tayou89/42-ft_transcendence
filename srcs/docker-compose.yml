@@ -130,7 +130,7 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8001"]
+      test: ["CMD-SHELL", "curl -s localhost:8000"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -452,7 +452,7 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:9093/-/healthy | grep -q 'OK"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9093/-/healthy | grep -q 'OK'"]
       interval: 30s
       timeout: 5s
       retries: 3
