@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -e
+
+echo port = 5431 >> /var/lib/postgresql/data/postgresql.conf
+
+psql -U $POSTGRES_USER << EOF
+create database $GAMEDATA_DB_NAME;
+create user $GAMEDATA_DB_USER with password '$GAMEDATA_DB_PW';
+ALTER DATABASE $GAMEDATA_DB_NAME OWNER TO $GAMEDATA_DB_USER;
+GRANT ALL ON DATABASE $GAMEDATA_DB_NAME TO $GAMEDATA_DB_USER;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO $GAMEDATA_DB_USER;
+EOF
