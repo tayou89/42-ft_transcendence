@@ -7,8 +7,8 @@ services:
       - ./requirements/node/conf/src:/workspace/src
       - logs_volume:/logs
     restart: always
-    # ports:
-    #   - 8080:8080
+    ports:
+      - 8080:8080
     networks:
       - my_net
     build: 
@@ -130,7 +130,7 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8001"]
+      test: ["CMD-SHELL", "curl -s localhost:8000"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -432,12 +432,10 @@ services:
         condition: service_healthy
     image: quay.io/prometheuscommunity/postgres-exporter
     container_name: postgres_exporter
-    ports:
-      - 9187:9787
     networks:
       - my_net
     environment:
-      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@user_db:5432/postgres?sslmode=disable"
 
   alertmanager:
     image: prom/alertmanager:v0.27.0
@@ -452,7 +450,7 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:9093/-/healthy | grep -q 'OK"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9093/-/healthy | grep -q 'OK'"]
       interval: 30s
       timeout: 5s
       retries: 3
