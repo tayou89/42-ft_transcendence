@@ -9,6 +9,9 @@ server {
     access_log /logs/front.log;
     error_log /logs/front_error.log;
 
+    #modsecurity on;
+    #modsecurity_rules_file /etc/nginx/modsecurity.d/modsecurity.conf;
+
     location / {
         proxy_pass http://node:8080;
         proxy_set_header Host $host;

@@ -9,6 +9,9 @@ server {
     access_log /logs/user_server.log;
     error_log /logs/user_server_error.log;
 
+    #modsecurity on;
+    #modsecurity_rules_file /etc/nginx/modsecurity.d/modsecurity.conf;
+    
     location / {
         proxy_pass http://user_server:8000;
         proxy_set_header Host $host;
