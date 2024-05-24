@@ -50,6 +50,14 @@ class UserVeiwSet(viewsets.ModelViewSet):
 
 		return Response(UserSerializer(user, many=False).data)
 
+	@action(detail=False, methods=['get'], url_path='(?P<user_name>[^/.]+)')
+	def get_by_username(self, request, user_name):
+		try:
+			user = User.objects.get(name=user_name)
+			return Response(UserSerializer(user, many=False).data)
+		except User.DoesNotExist:
+			return Response({'detail': 'User does not found'}, status=404)
+
 
 	# /users/{id}/matches/
 	@action(detail=True, methods=['get'])

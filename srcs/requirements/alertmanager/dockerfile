@@ -1,0 +1,4 @@
+FROM prom/alertmanager:v0.27.0
+COPY setup.sh .
+ENTRYPOINT [ "/bin/sh" ]
+CMD [ "setup.sh" ]

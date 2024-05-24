@@ -411,3 +411,511 @@ volumes:
   grafana_volume:
     name: grafana_volume
     driver: local
+services:
+  node:
+    image: node:transcendence
+    pull_policy: never
+    container_name: node
+    volumes:
+      - ./requirements/node/conf/src:/workspace/src
+      - logs_volume:/logs
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - my_net
+    build: 
+      context: ./requirements/node/
+      dockerfile: dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "curl -I localhost:8080 | grep -q 'HTTP/1.1 200 OK'"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  user_server:
+    depends_on:
+      user_db:
+        condition: service_healthy
+    pull_policy: never
+    image: python:user_server
+    container_name: user_server
+    volumes:
+      - ./requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+    environment:
+      USERDATA_DB_NAME: ${USERDATA_DB_NAME}
+      USERDATA_DB_USER: ${USERDATA_DB_USER}
+      USERDATA_DB_PW: ${USERDATA_DB_PW}
+    ports:
+      - 8000:8000
+    networks:
+      - my_net
+    build:
+      context: ./requirements/user_server
+      dockerfile: dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "curl -I localhost:8000 | grep -q 'HTTP/1.1 404 Not Found'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  user_db:
+    image: postgres:user_server
+    pull_policy: never
+    container_name: user_db
+    volumes:
+      - userdb_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_LISTEN_ADDRESSES: '*'
+      USERDATA_DB_NAME: ${USERDATA_DB_NAME}
+      USERDATA_DB_USER: ${USERDATA_DB_USER}
+      USERDATA_DB_PW: ${USERDATA_DB_PW}
+    networks:
+      - my_net
+    build:
+      context: ./requirements/user_db
+      dockerfile: dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  nginx:
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+      user_server:
+        condition: service_healthy
+    # image: nginx:stable-alpine3.19
+    user: "0"
+    image: owasp/modsecurity-crs:4.2.0-nginx-alpine-202405101205
+    container_name: nginx
+    volumes:
+      # - ./requirements/nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./requirements/nginx/conf/:/etc/nginx/templates/conf.d/:ro
+      - certs_volume:/certs:ro
+      - logs_volume:/logs
+    ports:
+      - 443:443
+      - 9090:9090
+      - 4242:4242
+      - 8484:8484
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl --cacert /certs/ca/ca.crt -I -s https://localhost:443 | grep -q 'Server: nginx'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  nginx_exporter:
+    depends_on:
+      nginx:
+        condition: service_healthy
+    image: nginx/nginx-prometheus-exporter:1.1
+    container_name: nginx_exporter
+    command: --nginx.scrape-uri=http://nginx:8484/metrics
+    # ports:
+    #   - 9113:9113
+    networks:
+      - my_net
+
+  game_server:
+    image: python:game_server
+    pull_policy: never
+    depends_on:
+      game_db:
+        condition: service_healthy
+    build:
+      context: ./requirements/game_server
+      dockerfile: dockerfile
+    container_name: game_server
+    volumes:
+      - ./requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+    ports:
+      - 8001:8000
+    environment:
+      GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
+      GAMEDATA_DB_USER: ${USERDATA_DB_USER}
+      GAMEDATA_DB_PW: ${USERDATA_DB_PW}
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s localhost:8000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  game_db:
+    image: postgres:game_server
+    pull_policy: never
+    container_name: game_db
+    build:
+      context: ./requirements/game_db
+      dockerfile: dockerfile
+    volumes:
+      - gamedb_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_LISTEN_ADDRESSES: '*'
+      GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
+      GAMEDATA_DB_USER: ${USERDATA_DB_USER}
+      GAMEDATA_DB_PW: ${USERDATA_DB_PW}
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -p 5431 -U $POSTGRES_USER"]
+      interval: 1s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  redis:
+    image: redis:transcendence
+    pull_policy: never
+    build:
+      context: ./requirements/redis
+      dockerfile: dockerfile
+    container_name: redis
+    networks:
+      - my_net
+
+  cert_setup:
+    image: elasticsearch:${STACK_VERSION}
+    container_name: cert_setup
+    networks:
+      - elk_net
+    volumes:
+      - ./scripts/cert_setup.sh:/usr/share/elasticsearch/cert_setup.sh
+      - certs_volume:/usr/share/elasticsearch/config/certs
+    user: "0"
+    command: "bash ./cert_setup.sh"
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      KIBANA_PASSWORD: ${KIBANA_PASSWORD}
+      LOGSTASH_PASSWORD: ${LOGSTASH_PASSWORD}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
+
+  es01:
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es01
+    volumes:
+      - certs_volume:/usr/share/elasticsearch/config/certs
+      - es01_volume:/usr/share/elasticsearch/data
+    networks:
+      - elk_net
+    environment:
+      node.name: es01
+      cluster.name: ${CLUSTER_NAME}
+      cluster.initial_master_nodes: es01,es02
+      discovery.seed_hosts: es02
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      bootstrap.memory_lock: true
+      xpack.security.enabled: true
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.key: certs/es01/es01.key
+      xpack.security.http.ssl.certificate: certs/es01/es01.crt
+      xpack.security.http.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.key: certs/es01/es01.key
+      xpack.security.transport.ssl.certificate: certs/es01/es01.crt
+      xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.license.self_generated.type: ${LICENSE}
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  es02:
+    depends_on:
+      - es01
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es02
+    volumes:
+      - certs_volume:/usr/share/elasticsearch/config/certs
+      - es02_volume:/usr/share/elasticsearch/data
+    networks:
+      - elk_net
+    environment:
+      node.name: es02
+      cluster.name: ${CLUSTER_NAME}
+      cluster.initial_master_nodes: es01,es02
+      discovery.seed_hosts: es01
+      bootstrap.memory_lock: true
+      xpack.security.enabled: true
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.key: certs/es02/es02.key
+      xpack.security.http.ssl.certificate: certs/es02/es02.crt
+      xpack.security.http.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.key: certs/es02/es02.key
+      xpack.security.transport.ssl.certificate: certs/es02/es02.crt
+      xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.license.self_generated.type: ${LICENSE}
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  kibana:
+    depends_on:
+      es01:
+        condition: service_healthy
+      es02:
+        condition: service_healthy
+    image: kibana:${STACK_VERSION}
+    container_name: kibana
+    volumes:
+      - certs_volume:/usr/share/kibana/config/certs
+      - kibana_volume:/usr/share/kibana/data
+    ports:
+      - 5601:5601
+    networks:
+      - elk_net
+    environment:
+      SERVERNAME: kibana
+      ELASTICSEARCH_HOSTS: https://es01:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: ${KIBANA_PASSWORD}
+      ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: config/certs/ca/ca.crt
+      SERVER_SSL_ENABLED: true
+      SERVER_SSL_CERTIFICATE: config/certs/kibana/kibana.crt
+      SERVER_SSL_KEY: config/certs/kibana/kibana.key
+    mem_limit: ${MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt -I https://localhost:5601 | grep -q 'HTTP/1.1 302 Found'"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  logstash:
+    depends_on:
+      es01:
+        condition: service_healthy
+      es02:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    image: logstash:${STACK_VERSION}
+    container_name: logstash
+    user: "0"
+    volumes:
+      - certs_volume:/usr/share/logstash/config/certs
+      - logstash_volume:/usr/share/logstash/data
+      - ./requirements/logstash/conf/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      LOGSTASH_PASSWORD: ${LOGSTASH_PASSWORD}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
+      NODE_NAME: logstash
+      CONFIG_RELOAD_AUTOMATIC: true
+      xpack.monitoring.enabled: false
+      xpack.monitoring.elasticsearch.username: "logstash_system"
+      xpack.monitoring.elasticsearch.password: ${LOGSTASH_PASSWORD}
+      xpack.monitoring.elasticsearch.hosts: "https://es01:9200"
+      xpack.monitoring.elasticsearch.ssl.certificate: "/usr/share/logstash/config/certs/ca/ca.crt"
+      xpack.monitoring.elasticsearch.ssl.key: "/usr/share/logstash/config/certs/ca/ca.key"
+      xpack.monitoring.elasticsearch.ssl.verification_mode: full
+    # ports:
+    #   - 9900:9900
+    mem_limit: ${MEM_LIMIT}
+    networks:
+      - elk_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -XGET 'localhost:9600/?pretty' | grep -q '\"status\" : \"green\"'"]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  filebeat:
+    depends_on:
+      nginx:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
+    image: elastic/filebeat:${STACK_VERSION}
+    container_name: filebeat
+    volumes:
+      - certs_volume:/usr/share/filebeat/config/certs
+      - logs_volume:/logs
+      - ./requirements/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - elk_net
+
+  grafana:
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+    image: grafana/grafana:11.0.0
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_PATHS_PROVISIONING: /usr/share/grafana/conf/provisioning/
+    ports:
+      - 3000:3000
+    volumes:
+      - certs_volume:/certs:ro
+      - grafana_volume:/var/lib/grafana
+      - ./requirements/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+      - ./requirements/grafana/dashboard.yaml:/usr/share/grafana/conf/provisioning/dashboards/dashboards.yaml:ro
+      - ./requirements/grafana/datasource.yaml:/usr/share/grafana/conf/provisioning/datasources/datasource.yaml:ro
+      - ./requirements/grafana/dashboards/:/var/lib/grafana/dashboards:ro
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k https://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    volumes:
+      - ./requirements/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./requirements/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+      - prometheus_volume:/prometheus
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9090/-/healthy | grep -q 'Prometheus Server is Healthy.'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  node_exporter:
+    image: prom/node-exporter:v1.8.0
+    container_name: node_exporter
+    networks:
+      - my_net
+    command:
+      - --path.rootfs=/host
+    pid: host
+    volumes:
+      - /:/host:ro,rslave
+
+  postgres_exporter:
+    depends_on:
+      user_db:
+        condition: service_healthy
+    image: quay.io/prometheuscommunity/postgres-exporter
+    container_name: postgres_exporter
+    networks:
+      - my_net
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@user_db:5432/postgres?sslmode=disable"
+
+  alertmanager:
+    image: alertmanager:transcendence
+    build: 
+      context: ./requirements/alertmanager
+      dockerfile: dockerfile
+    container_name: alertmanager
+    volumes:
+      - ./requirements/alertmanager/alertmanager.yml:/etc/alertmanager/input.yml:ro
+      - ./requirements/alertmanager/setup.sh:/etc/alertmanager/setup.sh:ro
+    environment:
+      ALERTMANAGER_EMAIL_TO: ${ALERTMANAGER_EMAIL_TO}
+      ALERTMANAGER_EMAIL_FROM: ${ALERTMANAGER_EMAIL_FROM}
+      ALERTMANAGER_AUTH_USERNAME: ${ALERTMANAGER_AUTH_USERNAME}
+      ALERTMANAGER_AUTH_PASSWORD: ${ALERTMANAGER_AUTH_PASSWORD}
+    ports:
+      - 9093:9093
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9093/-/healthy | grep -q 'OK'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  my_net:
+    name: my_net
+    driver: bridge
+  elk_net:
+    name: elk_net
+    driver: bridge
+
+volumes:
+  userdb_volume:
+    name: userdb_volume
+    driver: local
+  gamedb_volume:
+    name: gamedb_volume
+    driver: local
+  certs_volume:
+    name: certs
+    driver: local
+  es01_volume:
+    name: es01_volume
+    driver: local
+  es02_volume:
+    name: es02_volume
+    driver: local
+  kibana_volume:
+    name: kibana_volume
+    driver: local
+  logstash_volume:
+    name: logstash_volume
+    driver: local
+  logs_volume:
+    name: logs_volume
+    driver: local
+  grafana_volume:
+    name: grafana_volume
+    driver: local
+  prometheus_volume:
+    name: prometheus_volume
+    driver: local
+    

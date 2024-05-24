@@ -1,0 +1,22 @@
+server {
+    listen       4242 ssl;
+    listen  [::]:4242 ssl;
+    server_name  localhost;
+
+    ssl_certificate_key /etc/nginx/conf/server.key;
+    ssl_certificate /etc/nginx/conf/server.crt;
+
+    access_log /logs/front.log;
+    error_log /logs/front_error.log;
+
+    #modsecurity on;
+    #modsecurity_rules_file /etc/nginx/modsecurity.d/modsecurity.conf;
+
+    location / {
+        proxy_pass http://node:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+#리소스 READ, WRITE를 nginx로 해야함

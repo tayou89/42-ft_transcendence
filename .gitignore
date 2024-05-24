@@ -1,5 +1,6 @@
-**/.env
+# **/.env
 **/migrations
 **/avatars
 **/__pycache__
+test/
 .vscode
