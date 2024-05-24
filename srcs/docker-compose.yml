@@ -78,12 +78,14 @@ services:
         condition: service_healthy
       user_server:
         condition: service_healthy
-    image: nginx:stable-alpine3.19
-    # image: owasp/modsecurity-crs:4.2.0-nginx-alpine-202405101205
+    # image: nginx:stable-alpine3.19
+    user: "0"
+    image: owasp/modsecurity-crs:4.2.0-nginx-alpine-202405101205
     container_name: nginx
     volumes:
-      - ./requirements/nginx/conf/:/etc/nginx/conf.d/:ro
-      - certs_volume:/certs
+      # - ./requirements/nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./requirements/nginx/conf/:/etc/nginx/templates/conf.d/:ro
+      - certs_volume:/certs:ro
       - logs_volume:/logs
     ports:
       - 443:443
