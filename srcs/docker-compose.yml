@@ -78,16 +78,20 @@ services:
         condition: service_healthy
       user_server:
         condition: service_healthy
-    image: nginx:stable-alpine3.19
+    # image: nginx:stable-alpine3.19
+    user: "0"
+    image: owasp/modsecurity-crs:4.2.0-nginx-alpine-202405101205
     container_name: nginx
     volumes:
-      - ./requirements/nginx/conf/:/etc/nginx/conf.d/:ro
-      - certs_volume:/certs
+      # - ./requirements/nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./requirements/nginx/conf/:/etc/nginx/templates/conf.d/:ro
+      - certs_volume:/certs:ro
       - logs_volume:/logs
     ports:
       - 443:443
       - 9090:9090
       - 4242:4242
+      - 8484:8484
     networks:
       - my_net
     healthcheck:
@@ -103,7 +107,7 @@ services:
         condition: service_healthy
     image: nginx/nginx-prometheus-exporter:1.1
     container_name: nginx_exporter
-    command: --nginx.scrape-uri=http://nginx:8080/metrics
+    command: --nginx.scrape-uri=http://nginx:8484/metrics
     # ports:
     #   - 9113:9113
     networks:
@@ -438,15 +442,21 @@ services:
       DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@user_db:5432/postgres?sslmode=disable"
 
   alertmanager:
-    image: prom/alertmanager:v0.27.0
+    image: alertmanager:transcendence
+    build: 
+      context: ./requirements/alertmanager
+      dockerfile: dockerfile
     container_name: alertmanager
     volumes:
-      - ./requirements/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./requirements/alertmanager/alertmanager.yml:/etc/alertmanager/input.yml:ro
+      - ./requirements/alertmanager/setup.sh:/etc/alertmanager/setup.sh:ro
     environment:
       ALERTMANAGER_EMAIL_TO: ${ALERTMANAGER_EMAIL_TO}
       ALERTMANAGER_EMAIL_FROM: ${ALERTMANAGER_EMAIL_FROM}
       ALERTMANAGER_AUTH_USERNAME: ${ALERTMANAGER_AUTH_USERNAME}
       ALERTMANAGER_AUTH_PASSWORD: ${ALERTMANAGER_AUTH_PASSWORD}
+    ports:
+      - 9093:9093
     networks:
       - my_net
     healthcheck:

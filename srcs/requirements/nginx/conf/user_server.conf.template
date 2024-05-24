@@ -3,12 +3,15 @@ server {
     listen  [::]:443 ssl;
     server_name  localhost;
 
-    ssl_certificate_key /certs/nginx/nginx.key;
-    ssl_certificate /certs/nginx/nginx.crt;
+    ssl_certificate_key /etc/nginx/conf/server.key;
+    ssl_certificate /etc/nginx/conf/server.crt;
 
     access_log /logs/user_server.log;
     error_log /logs/user_server_error.log;
 
+    #modsecurity on;
+    #modsecurity_rules_file /etc/nginx/modsecurity.d/modsecurity.conf;
+    
     location / {
         proxy_pass http://user_server:8000;
         proxy_set_header Host $host;
