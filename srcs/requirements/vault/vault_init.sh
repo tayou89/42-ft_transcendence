@@ -6,7 +6,9 @@ keyThreshold=2
 keyFile=/vault/keys/generated_keys.txt
 
 #start server
-vault server -config /vault/config/default.hcl
+vault server -config /vault/config/default.hcl &
+
+sleep 5
 
 #generate keys
 vault operator init "-key-shares=${keyShare}" "-key-threshold=${keyThreshold}" > /vault/keys/generated_keys.txt
@@ -17,22 +19,13 @@ while IFS= read -r line && [ ${count} -lt ${keyThreshold} ]
 do
     if echo ${line} | grep "Unseal Key "; then
         vault operator unseal $(echo ${line} | grep "Unseal Key " | cut -c15-)
-        count=${count} + 1
+        count=$((count + 1))
     fi
 done < ${keyFile}
 
-
-
-# #Parse Unseal keys to KeyArray
-# mapfile -t keyArray < <(grep "Unseal Key " < generated_key.txt | cut -c15-)
-
-# #Unseal vault
-# vault operator unseal ${keyArray[0]}
-# vault operator unseal ${keyArray[1]}
-# vault operator unseal ${keyArray[2]}
-
-#get root token
-rootToken=$(grep "Initial Root Token: " < generated_keys.txt  | cut -c21-)
+rootToken=$(grep "Initial Root Token: " < ${keyFile}  | cut -c21-)
 export VAULT_TOKEN=${rootToken}
 
-echo "========Vault Setting was successfully finished.========"
+echo "========Vault Settings were successfully finished.========"
+
+tail -f ${keyFile}

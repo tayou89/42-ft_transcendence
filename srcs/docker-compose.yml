@@ -493,8 +493,8 @@ services:
     volumes:
       - ./requirements/vault/vault_init.sh:/vault_init.sh:ro
       - ./requirements/vault/config:/vault/config:ro
-      - ./requirements/vault/keys/:/vault/keys
-      - vault_volume:/vault/
+      - valut_keys_volume:/vault/keys
+      - vault_volume:/vault/file/
       - certs_volume:/certs/:ro
     command: ["sh", "/vault_init.sh"]
 
@@ -539,4 +539,7 @@ volumes:
     driver: local
   vault_volume:
     name: vault_volume
+    driver: local
+  valut_keys_volume:
+    name: valut_keys_volume
     driver: local
