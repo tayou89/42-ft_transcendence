@@ -490,6 +490,7 @@ services:
     container_name: vault_init
     environment:
       VAULT_SKIP_VERIFY: true
+      VAULT_SERVER_PASSWORD: ${VAULT_SERVER_PASSWORD}
     volumes:
       - ./requirements/vault/vault_init.sh:/vault_init.sh:ro
       - ./requirements/vault/config:/vault/config:ro

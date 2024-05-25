@@ -26,6 +26,12 @@ done < ${keyFile}
 rootToken=$(grep "Initial Root Token: " < ${keyFile}  | cut -c21-)
 export VAULT_TOKEN=${rootToken}
 
+#settings
+vault secrets enable kv
+vault auth enable userpass
+vault policy write server-policy /vault/config/server_policy.hcl
+vault write auth/userpass/users/server password=${VAULT_SERVER_PASSWORD} policies=server-policy
+
 echo "========Vault Settings were successfully finished.========"
 
 tail -f ${keyFile}
