@@ -466,6 +466,38 @@ services:
       retries: 3
       start_period: 10s
 
+  vault:
+    image: vault:1.13.3
+    container_name: vault
+    ports:
+      - 8200:8200
+    environment:
+      VAULT_SKIP_VERIFY: true
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./requirements/vault/config:/vault/config:ro
+      - vault_volume:/vault/file/
+      - certs_volume:/certs/:ro
+    networks:
+      - my_net
+
+  vault_init:
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+    image: vault:1.13.3
+    container_name: vault_init
+    environment:
+      VAULT_SKIP_VERIFY: true
+    volumes:
+      - ./requirements/vault/vault_init.sh:/vault_init.sh:ro
+      - ./requirements/vault/config:/vault/config:ro
+      - ./requirements/vault/keys/:/vault/keys
+      - vault_volume:/vault/
+      - certs_volume:/certs/:ro
+    command: ["sh", "/vault_init.sh"]
+
 networks:
   my_net:
     name: my_net
@@ -505,4 +537,6 @@ volumes:
   prometheus_volume:
     name: prometheus_volume
     driver: local
-    
+  vault_volume:
+    name: vault_volume
+    driver: local
