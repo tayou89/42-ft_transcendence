@@ -14,6 +14,24 @@ from pathlib import Path
 from rest_framework import permissions
 import os
 
+import hvac
+def kv_get(key):
+    client = hvac.Client(
+        url="https://vault_init:8200",
+        verify=False,
+
+    )
+    client.auth.userpass.login(
+        username='server',
+        password='qlalfqjsgh'
+    )
+    secret = client.secrets.kv.v2.read_secret_version(path='provision', mount_point='kv')
+    ret = secret['data']['data'].get(key)
+    if ret:
+        return ret
+    else:
+        raise ValueError(f"Key '{key}' not found in the secret data.")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,8 +39,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-lo0q8rwc4qvn*9t933jr+j2#0pn93h3i$km-)sx)5q5av9@l-^'
+SECRET_KEY = kv_get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

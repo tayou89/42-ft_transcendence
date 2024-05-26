@@ -488,9 +488,14 @@ services:
         condition: service_healthy
     image: vault:1.13.3
     container_name: vault_init
+    ports:
+      - 8201:8200
+    networks:
+      - my_net
     environment:
       VAULT_SKIP_VERIFY: true
       VAULT_SERVER_PASSWORD: ${VAULT_SERVER_PASSWORD}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
     volumes:
       - ./requirements/vault/vault_init.sh:/vault_init.sh:ro
       - ./requirements/vault/config:/vault/config:ro

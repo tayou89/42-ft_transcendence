@@ -27,10 +27,12 @@ rootToken=$(grep "Initial Root Token: " < ${keyFile}  | cut -c21-)
 export VAULT_TOKEN=${rootToken}
 
 #settings
-vault secrets enable kv
+vault secrets enable -version=2 kv
 vault auth enable userpass
 vault policy write server-policy /vault/config/server_policy.hcl
 vault write auth/userpass/users/server password=${VAULT_SERVER_PASSWORD} policies=server-policy
+
+vault kv put -mount=kv provision SECRET_KEY=${DJANGO_SECRET_KEY}
 
 echo "========Vault Settings were successfully finished.========"
 

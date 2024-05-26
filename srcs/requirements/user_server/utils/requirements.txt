@@ -9,6 +9,8 @@ requests==2.31.0
 pillow==10.3.0
 
 gunicorn==22.0.0
+
+hvac==2.2.0 #vault
 # asgiref==3.8.1
 # certifi==2024.2.2
 # cffi==1.16.0
