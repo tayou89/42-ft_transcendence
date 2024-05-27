@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.exceptions import NotFound
 
 import os
 
@@ -25,18 +26,14 @@ class UserVeiwSet(viewsets.ModelViewSet):
 
 		name = request.query_params.get('name', None)
 
-		if name:
-			return Response(status=status.HTTP_204_NO_CONTENT)  # No Content response
-
-		queryset = self.filter_queryset(self.get_queryset())
-		page = self.paginate_queryset(queryset)
-
-		if page is not None:
-			serializer = self.get_serializer(page, many=True)
-			return self.get_paginated_response(serializer.data)
-			
-		serializer = self.get_serializer(queryset, many=True)
-		return Response(serializer.data)
+		if name is not None:
+			try:
+				user = User.objects.get(name=name)
+				return Response(UserSerializer(user, many=False).data)
+			except User.DoesNotExist:
+				raise NotFound(detail='user not found')
+	
+		return super().list(request, *args, **kwargs)
 
 
 	@action(detail=False, methods=['get'])
@@ -50,13 +47,13 @@ class UserVeiwSet(viewsets.ModelViewSet):
 
 		return Response(UserSerializer(user, many=False).data)
 
-	@action(detail=False, methods=['get'], url_path='(?P<user_name>[^/.]+)')
-	def get_by_username(self, request, user_name):
-		try:
-			user = User.objects.get(name=user_name)
-			return Response(UserSerializer(user, many=False).data)
-		except User.DoesNotExist:
-			return Response({'detail': 'User does not found'}, status=404)
+	# @action(detail=False, methods=['get'], url_path='(?P<user_name>[^/.]+)')
+	# def get_by_username(self, request, user_name):
+	# 	try:
+	# 		user = User.objects.get(name=user_name)
+	# 		return Response(UserSerializer(user, many=False).data)
+	# 	except User.DoesNotExist:
+	# 		return Response({'detail': 'User does not found'}, status=404)
 
 
 	# /users/{id}/matches/
@@ -78,3 +75,4 @@ class UserVeiwSet(viewsets.ModelViewSet):
 		if os.path.exists(avatar_path):
 			return FileResponse(open(avatar_path, 'rb'), content_type='image/jpeg')
 		return Response({"failed": "zaa"} ,status=status.HTTP_400_BAD_REQUEST)
+	

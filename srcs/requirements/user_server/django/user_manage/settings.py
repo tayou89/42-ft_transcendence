@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-lo0q8rwc4qvn*9t933jr+j2#0pn93h3i$km-)sx)5q5av9@l-^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1', 'userserver', 'userserver:8000']
 
 
 # Application definition
@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': os.getenv('USERDATA_DB_NAME'),
         'USER': os.getenv('USERDATA_DB_USER'),
         'PASSWORD': os.getenv('USERDATA_DB_PW'),
-        'HOST': 'user_db',
+        'HOST': 'userdb',
         'PORT': '5432',
     }
 }
@@ -150,7 +150,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'SIGNING_KEY': 'hihi',
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ALGORITHM': 'HS256',
     'VERIFYING_KEY': None,
