@@ -22,6 +22,11 @@ class Status(Enum):
 class MultiPongConsumer(AsyncWebsocketConsumer):
 
 	game = None
+	
+	p1 = None
+	p2 = None
+	p3 = None
+	p4 = None
 
 	async def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']

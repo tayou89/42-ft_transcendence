@@ -20,6 +20,8 @@ class Status(Enum):
 class PongCunsumer(AsyncWebsocketConsumer):
 
 	game = None
+	p1 = None
+	p2 = None
 
 	async def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -44,9 +46,15 @@ class PongCunsumer(AsyncWebsocketConsumer):
 		room = cache.get(self.room_name, None)
 		if room is None:
 			cache.set(self.room_name, {'cur_users': 1, 'status': Status.NONE})
+			p1 = self.channel_name
 		else:
 			room['cur_users'] += 1
 			cache.set(self.room_name, room)
+
+			if p1 is None:
+				p1 = self.channel_name
+			else:
+				p2 = self.channel_name
 
 
 
@@ -70,6 +78,11 @@ class PongCunsumer(AsyncWebsocketConsumer):
 			room['cur_users'] = 1
 			room['status'] = Status.PAUSED
 			cache.set(self.room_name, room)
+
+			if p1 == self.channel_name:
+				p1 = None
+			else:
+				p2 = None
 
 		await self.channel_layer.group_discard(
 			self.room_group_name,
@@ -127,6 +140,7 @@ class PongCunsumer(AsyncWebsocketConsumer):
 					await asyncio.sleep(1)
 
 			self.game.update_ball()
+
 			await self.channel_layer.group_send(
 				self.room_group_name,
 				{
