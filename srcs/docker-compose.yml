@@ -141,7 +141,7 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8001"]
+      test: ["CMD-SHELL", "curl -s localhost:8000"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -426,44 +426,38 @@ services:
       retries: 3
       start_period: 10s
 
-  # node_exporter:
-  #   image: prom/node-exporter:v1.8.0
-  #   container_name: node_exporter
-  #   networks:
-  #     - my_net
-  #   command:
-  #     - --path.rootfs=/host
-  #   pid: host
-  #   volumes:
-  #     - /:/host:ro,rslave
+  node_exporter:
+    image: prom/node-exporter:v1.8.0
+    container_name: node_exporter
+    networks:
+      - my_net
+    command:
+      - --path.rootfs=/host
+    pid: host
+    volumes:
+      - /:/host:ro,rslave
 
   postgres_exporter:
     depends_on:
-      userdb:
+      user_db:
         condition: service_healthy
     image: quay.io/prometheuscommunity/postgres-exporter
     container_name: postgres_exporter
     networks:
       - my_net
     environment:
-      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@userdb:5432/postgres?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@user_db:5432/postgres?sslmode=disable"
 
   alertmanager:
-    image: alertmanager:transcendence
-    build: 
-      context: ./requirements/alertmanager
-      dockerfile: dockerfile
+    image: prom/alertmanager:v0.27.0
     container_name: alertmanager
     volumes:
-      - ./requirements/alertmanager/alertmanager.yml:/etc/alertmanager/input.yml:ro
-      - ./requirements/alertmanager/setup.sh:/etc/alertmanager/setup.sh:ro
+      - ./requirements/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
     environment:
       ALERTMANAGER_EMAIL_TO: ${ALERTMANAGER_EMAIL_TO}
       ALERTMANAGER_EMAIL_FROM: ${ALERTMANAGER_EMAIL_FROM}
       ALERTMANAGER_AUTH_USERNAME: ${ALERTMANAGER_AUTH_USERNAME}
       ALERTMANAGER_AUTH_PASSWORD: ${ALERTMANAGER_AUTH_PASSWORD}
-    ports:
-      - 9093:9093
     networks:
       - my_net
     healthcheck:
