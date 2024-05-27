@@ -20,19 +20,21 @@ services:
       timeout: 10s
       retries: 5
 
-  user_server:
+  userserver:
     depends_on:
-      user_db:
+      userdb:
         condition: service_healthy
     pull_policy: never
-    image: python:user_server
-    container_name: user_server
+    image: python:userserver
+    container_name: userserver
     volumes:
       - ./requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
     environment:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
       USERDATA_DB_PW: ${USERDATA_DB_PW}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
     ports:
       - 8000:8000
     networks:
@@ -42,15 +44,15 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "curl -I localhost:8000 | grep -q 'HTTP/1.1 404 Not Found'"]
-      interval: 30s
-      timeout: 5s
+      interval: 1s
+      timeout: 1s
       retries: 3
       start_period: 10s
 
-  user_db:
-    image: postgres:user_server
+  userdb:
+    image: postgres:userserver
     pull_policy: never
-    container_name: user_db
+    container_name: userdb
     volumes:
       - userdb_volume:/var/lib/postgresql/data
     environment:
@@ -76,7 +78,11 @@ services:
     depends_on:
       cert_setup:
         condition: service_healthy
-      user_server:
+      userserver:
+        condition: service_healthy
+      node:
+        condition: service_healthy
+      prometheus:
         condition: service_healthy
     # image: nginx:stable-alpine3.19
     user: "0"
@@ -95,8 +101,9 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl --cacert /certs/ca/ca.crt -I -s https://localhost:443 | grep -q 'Server: nginx'"]
-      interval: 30s
+      # test: ["CMD-SHELL", "curl --cacert /certs/ca/ca.crt -I -s https://localhost:443 | grep -q 'Server: nginx'"]
+      test: ["CMD-SHELL", "curl --insecure https://localhost:4242"]
+      interval: 10s
       timeout: 5s
       retries: 3
       start_period: 5s
@@ -113,20 +120,20 @@ services:
     networks:
       - my_net
 
-  game_server:
-    image: python:game_server
+  gameserver:
+    image: python:gameserver
     pull_policy: never
     depends_on:
-      game_db:
+      gamedb:
         condition: service_healthy
     build:
       context: ./requirements/game_server
       dockerfile: dockerfile
-    container_name: game_server
+    container_name: gameserver
     volumes:
       - ./requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
     ports:
-      - 8001:8000
+      - 8001:8001
     environment:
       GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
       GAMEDATA_DB_USER: ${USERDATA_DB_USER}
@@ -134,16 +141,16 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8000"]
+      test: ["CMD-SHELL", "curl -s localhost:8001"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
 
-  game_db:
-    image: postgres:game_server
+  gamedb:
+    image: postgres:gameserver
     pull_policy: never
-    container_name: game_db
+    container_name: gamedb
     build:
       context: ./requirements/game_db
       dockerfile: dockerfile
@@ -419,27 +426,27 @@ services:
       retries: 3
       start_period: 10s
 
-  node_exporter:
-    image: prom/node-exporter:v1.8.0
-    container_name: node_exporter
-    networks:
-      - my_net
-    command:
-      - --path.rootfs=/host
-    pid: host
-    volumes:
-      - /:/host:ro,rslave
+  # node_exporter:
+  #   image: prom/node-exporter:v1.8.0
+  #   container_name: node_exporter
+  #   networks:
+  #     - my_net
+  #   command:
+  #     - --path.rootfs=/host
+  #   pid: host
+  #   volumes:
+  #     - /:/host:ro,rslave
 
   postgres_exporter:
     depends_on:
-      user_db:
+      userdb:
         condition: service_healthy
     image: quay.io/prometheuscommunity/postgres-exporter
     container_name: postgres_exporter
     networks:
       - my_net
     environment:
-      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@user_db:5432/postgres?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@userdb:5432/postgres?sslmode=disable"
 
   alertmanager:
     image: alertmanager:transcendence
