@@ -467,7 +467,14 @@ services:
       start_period: 10s
 
   vault:
-    image: vault:1.13.3
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+    image: vault:transcendence
+    build:
+      context: ./requirements/vault
+      dockerfile: dockerfile
+    user: "0"
     container_name: vault
     ports:
       - 8200:8200
@@ -476,22 +483,28 @@ services:
     cap_add:
       - IPC_LOCK
     volumes:
-      - ./requirements/vault/config:/vault/config:ro
+      - ./requirements/vault/config:/vault/config
       - vault_volume:/vault/file/
       - certs_volume:/certs/:ro
     networks:
       - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k https://localhost:8200/v1/sys/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   vault_init:
     depends_on:
-      cert_setup:
+      vault:
         condition: service_healthy
-    image: vault:1.13.3
+    image: vault:transcendence
+    build:
+      context: ./requirements/vault
+      dockerfile: dockerfile
     container_name: vault_init
-    ports:
-      - 8201:8200
-    networks:
-      - my_net
+    cap_add:
+      - IPC_LOCK
     environment:
       VAULT_SKIP_VERIFY: true
       VAULT_SERVER_PASSWORD: ${VAULT_SERVER_PASSWORD}

@@ -70,8 +70,8 @@ if [ ! -f config/certs/certs.zip ]; then
 fi
 echo "Setting file permissions"
 chown -R root:root config/certs;
-find . -type d -exec chmod 750 \{\} \;;
-find . -type f -exec chmod 640 \{\} \;;
+find . -type d -exec chmod 755 \{\} \;;
+find . -type f -exec chmod 644 \{\} \;;
 echo "Waiting for Elasticsearch availability";
 until curl -s --cacert config/certs/ca/ca.crt https://es01:9200 | grep -q "missing authentication credentials";
     do sleep 5;
