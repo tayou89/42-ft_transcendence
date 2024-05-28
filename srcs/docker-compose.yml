@@ -474,7 +474,6 @@ services:
     build:
       context: ./requirements/vault
       dockerfile: dockerfile
-    user: "0"
     container_name: vault
     ports:
       - 8200:8200
@@ -516,6 +515,8 @@ services:
       - vault_volume:/vault/file/
       - certs_volume:/certs/:ro
     command: ["sh", "/vault_init.sh"]
+    networks:
+      - my_net
 
 networks:
   my_net:
