@@ -19,8 +19,8 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
 
 	name = models.CharField(max_length=50, unique=True, blank=False)
-	display_name = models.CharField(max_length=50, unique=True, default=None)
-	introduce = models.CharField(max_length=200, unique=True, default=None)
+	display_name = models.CharField(max_length=50, unique=True)
+	introduce = models.CharField(max_length=200, unique=True)
 	email = models.EmailField(unique=True, blank=False, null=False, default="example@student.42seoul.kr")
 	avatar = models.ImageField(upload_to='avatars/', blank=True, default='avatars/default.jpg')
 
@@ -58,7 +58,7 @@ class OTPModel(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-	def save(self):
+	def save(self, *args, **kwargs):
 		key_set = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		self.code = ''.join(random.choice(key_set) for _ in range(6))
 		super().save()

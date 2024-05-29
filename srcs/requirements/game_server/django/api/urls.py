@@ -15,8 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
-from .views import RoomListView
+from .views import RoomListView, index, room
 
 urlpatterns = [
 	path('rooms/', RoomListView.as_view()),
+	path('index/', index),
+	path("pong/<str:room_name>/", room),
 ]
