@@ -1,0 +1,62 @@
+services:
+  vault:
+    depends_on:
+      cert_setup:
+        condition: service_completed_successfully
+    image: vault:transcendence
+    build:
+      context: ${PROJECT_DIR}/requirements/vault
+      dockerfile: dockerfile
+    container_name: vault
+    ports:
+      - 8200:8200
+    environment:
+      VAULT_SKIP_VERIFY: true
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ${PROJECT_DIR}/requirements/vault/config:/vault/config
+      - vault_volume:/vault/file/
+      - certs_volume:/certs/:ro
+    networks:
+      - my_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k https://localhost:8200/v1/sys/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  vault_init:
+    depends_on:
+      vault:
+        condition: service_healthy
+    image: vault:transcendence
+    build:
+      context: ${PROJECT_DIR}/requirements/vault
+      dockerfile: dockerfile
+    container_name: vault_init
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_SKIP_VERIFY: true
+      VAULT_SERVER_PASSWORD: ${VAULT_SERVER_PASSWORD}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+    volumes:
+      - ${PROJECT_DIR}/requirements/vault/policies:/vault/policies/:ro
+      - ${PROJECT_DIR}/requirements/vault/vault_init.sh:/vault_init.sh:ro
+      - ${PROJECT_DIR}/requirements/vault/config:/vault/config:ro
+      - valut_keys_volume:/vault/keys
+      - vault_volume:/vault/file/
+      - certs_volume:/certs/:ro
+    command: ["sh", "/vault_init.sh"]
+    networks:
+      - my_net
+
+volumes:
+  vault_volume:
+    name: vault_volume
+    driver: local
+  valut_keys_volume:
+    name: valut_keys_volume
+    driver: local
+    

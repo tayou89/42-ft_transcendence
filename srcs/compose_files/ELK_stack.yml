@@ -1,0 +1,221 @@
+services:
+  cert_setup:
+    image: elasticsearch:${STACK_VERSION}
+    container_name: cert_setup
+    networks:
+      - elk_net
+    volumes:
+      - ${PROJECT_DIR}/scripts/cert_setup.sh:/usr/share/elasticsearch/cert_setup.sh
+      - certs_volume:/usr/share/elasticsearch/config/certs
+    user: "0"
+    command: "bash ./cert_setup.sh"
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      KIBANA_PASSWORD: ${KIBANA_PASSWORD}
+      LOGSTASH_PASSWORD: ${LOGSTASH_PASSWORD}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
+
+  es01:
+    depends_on:
+      cert_setup:
+        condition: service_healthy
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es01
+    volumes:
+      - certs_volume:/usr/share/elasticsearch/config/certs
+      - es01_volume:/usr/share/elasticsearch/data
+    networks:
+      - elk_net
+    environment:
+      node.name: es01
+      cluster.name: ${CLUSTER_NAME}
+      cluster.initial_master_nodes: es01,es02
+      discovery.seed_hosts: es02
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      bootstrap.memory_lock: true
+      xpack.security.enabled: true
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.key: certs/es01/es01.key
+      xpack.security.http.ssl.certificate: certs/es01/es01.crt
+      xpack.security.http.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.key: certs/es01/es01.key
+      xpack.security.transport.ssl.certificate: certs/es01/es01.crt
+      xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.license.self_generated.type: ${LICENSE}
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  es02:
+    depends_on:
+      - es01
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es02
+    volumes:
+      - certs_volume:/usr/share/elasticsearch/config/certs
+      - es02_volume:/usr/share/elasticsearch/data
+    networks:
+      - elk_net
+    environment:
+      node.name: es02
+      cluster.name: ${CLUSTER_NAME}
+      cluster.initial_master_nodes: es01,es02
+      discovery.seed_hosts: es01
+      bootstrap.memory_lock: true
+      xpack.security.enabled: true
+      xpack.security.http.ssl.enabled: true
+      xpack.security.http.ssl.key: certs/es02/es02.key
+      xpack.security.http.ssl.certificate: certs/es02/es02.crt
+      xpack.security.http.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.key: certs/es02/es02.key
+      xpack.security.transport.ssl.certificate: certs/es02/es02.crt
+      xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.license.self_generated.type: ${LICENSE}
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  kibana:
+    depends_on:
+      es01:
+        condition: service_healthy
+      es02:
+        condition: service_healthy
+    image: kibana:${STACK_VERSION}
+    container_name: kibana
+    volumes:
+      - certs_volume:/usr/share/kibana/config/certs
+      - kibana_volume:/usr/share/kibana/data
+    ports:
+      - 5601:5601
+    networks:
+      - elk_net
+    environment:
+      SERVERNAME: kibana
+      ELASTICSEARCH_HOSTS: https://es01:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: ${KIBANA_PASSWORD}
+      ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: config/certs/ca/ca.crt
+      SERVER_SSL_ENABLED: true
+      SERVER_SSL_CERTIFICATE: config/certs/kibana/kibana.crt
+      SERVER_SSL_KEY: config/certs/kibana/kibana.key
+    mem_limit: ${MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt -I https://localhost:5601 | grep -q 'HTTP/1.1 302 Found'"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  logstash:
+    depends_on:
+      es01:
+        condition: service_healthy
+      es02:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    image: logstash:${STACK_VERSION}
+    container_name: logstash
+    user: "0"
+    volumes:
+      - certs_volume:/usr/share/logstash/config/certs
+      - logstash_volume:/usr/share/logstash/data
+      - ${PROJECT_DIR}/requirements/logstash/conf/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      LOGSTASH_PASSWORD: ${LOGSTASH_PASSWORD}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
+      NODE_NAME: logstash
+      CONFIG_RELOAD_AUTOMATIC: true
+      xpack.monitoring.enabled: false
+      xpack.monitoring.elasticsearch.username: "logstash_system"
+      xpack.monitoring.elasticsearch.password: ${LOGSTASH_PASSWORD}
+      xpack.monitoring.elasticsearch.hosts: "https://es01:9200"
+      xpack.monitoring.elasticsearch.ssl.certificate: "/usr/share/logstash/config/certs/ca/ca.crt"
+      xpack.monitoring.elasticsearch.ssl.key: "/usr/share/logstash/config/certs/ca/ca.key"
+      xpack.monitoring.elasticsearch.ssl.verification_mode: full
+    mem_limit: ${MEM_LIMIT}
+    networks:
+      - elk_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -XGET 'localhost:9600/?pretty' | grep -q '\"status\" : \"green\"'"]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  filebeat:
+    depends_on:
+      nginx:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+      logstash:
+        condition: service_healthy
+    image: elastic/filebeat:${STACK_VERSION}
+    container_name: filebeat
+    volumes:
+      - certs_volume:/usr/share/filebeat/config/certs
+      - logs_volume:/logs
+      - ${PROJECT_DIR}/requirements/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - elk_net
+
+networks:
+  elk_net:
+    name: elk_net
+    driver: bridge
+
+volumes:
+  certs_volume:
+    name: certs
+    driver: local
+  es01_volume:
+    name: es01_volume
+    driver: local
+  es02_volume:
+    name: es02_volume
+    driver: local
+  kibana_volume:
+    name: kibana_volume
+    driver: local
+  logstash_volume:
+    name: logstash_volume
+    driver: local
+  logs_volume:
+    name: logs_volume
+    driver: local
