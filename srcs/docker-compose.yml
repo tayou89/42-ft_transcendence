@@ -77,7 +77,7 @@ services:
   nginx:
     depends_on:
       cert_setup:
-        condition: service_healthy
+        condition: service_completed_successfully
       user_server:
         condition: service_healthy
     # image: nginx:stable-alpine3.19
@@ -97,7 +97,7 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl --cacert /certs/ca/ca.crt -I -s https://localhost:443 | grep -q 'Server: nginx'"]
+      test: ["CMD-SHELL", "curl -k -I -s https://localhost:443 | grep -q 'Server: nginx'"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -378,7 +378,7 @@ services:
   grafana:
     depends_on:
       cert_setup:
-        condition: service_healthy
+        condition: service_completed_successfully
       prometheus:
         condition: service_healthy
     image: grafana/grafana:11.0.0
@@ -471,7 +471,7 @@ services:
   vault:
     depends_on:
       cert_setup:
-        condition: service_healthy
+        condition: service_completed_successfully
     image: vault:transcendence
     build:
       context: ./requirements/vault
