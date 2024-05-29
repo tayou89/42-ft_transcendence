@@ -17,15 +17,14 @@ import os
 import hvac
 def kv_get(key):
     client = hvac.Client(
-        url="https://vault_init:8200",
+        url="https://vault:8200",
         verify=False,
-
     )
     client.auth.userpass.login(
         username='server',
         password='qlalfqjsgh'
     )
-    secret = client.secrets.kv.v2.read_secret_version(path='provision', mount_point='kv')
+    secret = client.secrets.kv.v2.read_secret_version(path='django-secret', mount_point='kv')
     ret = secret['data']['data'].get(key)
     if ret:
         return ret
@@ -42,7 +41,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = kv_get('SECRET_KEY')
+SECRET_KEY = kv_get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

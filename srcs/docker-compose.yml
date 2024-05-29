@@ -24,6 +24,8 @@ services:
     depends_on:
       user_db:
         condition: service_healthy
+      vault_init:
+        condition: service_completed_successfully
     pull_policy: never
     image: python:user_server
     container_name: user_server

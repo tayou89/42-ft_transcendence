@@ -100,7 +100,7 @@ curl -k -s -XPOST \
         "max_versions": 5,
         "cas_required": false
     }'
-curl -k -H -s "X-Vault-Token: ${TOKEN}" ${vaultURL}/v1/sys/mounts | grep -q 'kv/'
+curl -s -k -H "X-Vault-Token: ${TOKEN}" ${vaultURL}/v1/sys/mounts | grep -q 'kv/'
 if [ $? -eq 0 ]; then
     echo "enable kv engine."
 else
