@@ -509,6 +509,7 @@ services:
       VAULT_SERVER_PASSWORD: ${VAULT_SERVER_PASSWORD}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
     volumes:
+      - ./requirements/vault/policies:/vault/policies/:ro
       - ./requirements/vault/vault_init.sh:/vault_init.sh:ro
       - ./requirements/vault/config:/vault/config:ro
       - valut_keys_volume:/vault/keys
