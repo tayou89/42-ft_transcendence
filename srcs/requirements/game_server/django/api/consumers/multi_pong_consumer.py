@@ -1,9 +1,7 @@
 
-
 from channels.generic.websocket import AsyncWebsocketConsumer
 from ..models import Room
 from .game_state import GameState
-
 
 from channels.db import database_sync_to_async
 from django.core.cache import cache
@@ -22,11 +20,7 @@ class Status(Enum):
 class MultiPongConsumer(AsyncWebsocketConsumer):
 
 	game = None
-	
-	p1 = None
-	p2 = None
-	p3 = None
-	p4 = None
+	player = []
 
 	async def connect(self):
 		self.room_name = self.scope['url_route']['kwargs']['room_name']

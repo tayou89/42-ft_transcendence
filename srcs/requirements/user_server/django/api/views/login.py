@@ -71,14 +71,6 @@ def save_user_info(data):
 
 	return user
 
-	# if not user:
-	# 	response = requests.get(img_url)
-	# 	avatar = response.content
-
-	# 	user_instance = User(name=name, email=email)
-	# 	user_instance.avatar.save(f"{name}.jpg", ContentFile(avatar))
-	# 	user_instance.save()
-
 
 def get_user_info(access_token):
 
@@ -95,8 +87,6 @@ def get_user_info(access_token):
 
 def make_otp_code(user_instance):
 
-	# user = User.objects.get(name=data['login'])
-
 	user_otp, tmp = OTPModel.objects.get_or_create(user=user_instance)
 	user_otp.save()
 
@@ -112,28 +102,11 @@ def make_otp_code(user_instance):
 
 def make_jwt_token(user_instance):
 
-	name = request.data.get('name')
-
-	if not name:
-		return Response({"name": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-	try:
-		user = User.objects.get(name=name)
-	except User.DoesNotExist:
-		return Response({"error": "Invalid user"}, status=status.HTTP_404_NOT_FOUND)
-
-	token = RefreshToken.for_user(user)
-
-	return Response({
-		"token": str(token.access_token),
-		"refresh": str(token),
-	}, status=status.HTTP_200_OK)
-
-	jwt_token = requests.post("http://localhost:8000/api/token/", json={"name": data['login'],}).json()
+	token = RefreshToken.for_user(user_instance)
 
 	tmp = {
-		"token": jwt_token['token'],
-		"refresh": jwt_token['refresh'],
+		"token": str(token.access_token),
+		"refresh": str(token),
 	}
 
 	return tmp

@@ -18,6 +18,5 @@ urlpatterns = [
 	path('', include(userRouter.urls)),
 	path('', include(matchRouter.urls)),
 	
-	path('token/', views.MyMakeToken.as_view()),
 	path('token/refresh/', views.MyRefreshToken.as_view()),
 ]
