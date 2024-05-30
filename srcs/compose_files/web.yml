@@ -20,15 +20,15 @@ services:
       timeout: 10s
       retries: 5
   
-  user_server:
+  userserver:
     depends_on:
-      user_db:
+      userdb:
         condition: service_healthy
       vault_init:
         condition: service_completed_successfully
     pull_policy: never
-    image: python:user_server
-    container_name: user_server
+    image: python:userserver
+    container_name: userserver
     volumes:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
     environment:
@@ -49,10 +49,10 @@ services:
       retries: 3
       start_period: 10s
 
-  user_db:
-    image: postgres:user_server
+  userdb:
+    image: postgres:userserver
     pull_policy: never
-    container_name: user_db
+    container_name: userdb
     volumes:
       - userdb_volume:/var/lib/postgresql/data
     environment:
@@ -65,7 +65,7 @@ services:
     networks:
       - my_net
     build:
-      context: ${PROJECT_DIR}/requirements/user_db
+      context: ${PROJECT_DIR}/requirements/userdb
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
@@ -74,20 +74,20 @@ services:
       retries: 3
       start_period: 10s
 
-  game_server:
-    image: python:game_server
+  gameserver:
+    image: python:gameserver
     pull_policy: never
     depends_on:
-      game_db:
+      gamedb:
         condition: service_healthy
     build:
       context: ${PROJECT_DIR}/requirements/game_server
       dockerfile: dockerfile
-    container_name: game_server
+    container_name: gameserver
     volumes:
       - ${PROJECT_DIR}/requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
     ports:
-      - 8001:8000
+      - 8001:8001
     environment:
       GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
       GAMEDATA_DB_USER: ${USERDATA_DB_USER}
@@ -95,16 +95,16 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8000"]
+      test: ["CMD-SHELL", "curl -s localhost:8001"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
 
-  game_db:
-    image: postgres:game_server
+  gamedb:
+    image: postgres:gameserver
     pull_policy: never
-    container_name: game_db
+    container_name: gamedb
     build:
       context: ${PROJECT_DIR}/requirements/game_db
       dockerfile: dockerfile
@@ -140,7 +140,7 @@ services:
     depends_on:
       cert_setup:
         condition: service_completed_successfully
-      user_server:
+      userserver:
         condition: service_healthy
     user: "0"
     image: owasp/modsecurity-crs:4.2.0-nginx-alpine-202405101205

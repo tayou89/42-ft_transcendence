@@ -1,5 +1,5 @@
 
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from ..models import Room
 from .game_state import GameState
 
@@ -16,13 +16,14 @@ async def send_msg_to_channels(channels, message):
 	channel_layer = get_channel_layer()
 
 	for chan in channels:
-		await channel_layer.send(
-			chan,
-			{
-				"type": "send_message",
-				"message": message,
-			}
-		)
+		if chan is not None:
+			await channel_layer.send(
+				chan,
+				{
+					"type": "send_message",
+					"message": message,
+				}
+			)
 
 async def send_msg_to_channel(channel, message):
 	channel_layer = get_channel_layer()
@@ -36,7 +37,7 @@ async def send_msg_to_channel(channel, message):
 	)
 
 
-class PongCunsumer(AsyncWebsocketConsumer):
+class PongCunsumer(AsyncJsonWebsocketConsumer):
 
 	game_rooms = {}
 
@@ -58,12 +59,10 @@ class PongCunsumer(AsyncWebsocketConsumer):
 		elif room.cur_users == 1:
 			room.cur_users += 1
 			await database_sync_to_async(room.save)()
-   			
+   
 			game = self.game_rooms[self.room_name]
 			game.add_player(self.channel_name)
    
-			asyncio.create_task(self.game_loop())
-
 
 		elif room.cur_users == 2:
 
@@ -73,9 +72,6 @@ class PongCunsumer(AsyncWebsocketConsumer):
 
 			await self.close()
 			return
-
-
-		await database_sync_to_async(room.save)()
 
 
 	async def disconnect(self, close_code):
@@ -94,10 +90,9 @@ class PongCunsumer(AsyncWebsocketConsumer):
 
 	async def receive(self, text_data):
 		
-		game = self.game_rooms[self.room_name]
-		channels = game.get_channels()
+		channels = self.game_rooms[self.room_name].get_channels()
   
-		await send_msg_to_channels(channels, str(channels))
+		await send_msg_to_channels(channels, text_data)
 
 
 
@@ -107,7 +102,7 @@ class PongCunsumer(AsyncWebsocketConsumer):
 		channels = game.get_channels()
 		await send_msg_to_channels(channels, "game start")
 
-		await asyncio.sleep(3)
+		await asyncio.sleep(5)
 
 		while game.is_ended() == False:
 				
@@ -132,9 +127,9 @@ class PongCunsumer(AsyncWebsocketConsumer):
 
 	async def send_message(self, event):
     	
-		await self.send(text_data=json.dumps({
+		await self.send_json({
 			'message': event['message']
-		}))
+		})
 
 
 

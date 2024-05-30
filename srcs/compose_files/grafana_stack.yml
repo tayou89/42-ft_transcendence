@@ -58,14 +58,14 @@ services:
 
   postgres_exporter:
     depends_on:
-      user_db:
+      userdb:
         condition: service_healthy
     image: quay.io/prometheuscommunity/postgres-exporter
     container_name: postgres_exporter
     networks:
       - my_net
     environment:
-      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@user_db:5432/postgres?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD}@userdb:5432/postgres?sslmode=disable"
 
   alertmanager:
     image: alertmanager:transcendence
