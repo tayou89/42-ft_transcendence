@@ -53,8 +53,8 @@ services:
     command:
       - --path.rootfs=/host
     pid: host
-    volumes:
-      - /:/host:ro,rslave
+    # volumes:
+    #   - /:/host:ro,rslave
 
   postgres_exporter:
     depends_on:

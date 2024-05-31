@@ -65,7 +65,7 @@ services:
     networks:
       - my_net
     build:
-      context: ${PROJECT_DIR}/requirements/userdb
+      context: ${PROJECT_DIR}/requirements/user_db
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]

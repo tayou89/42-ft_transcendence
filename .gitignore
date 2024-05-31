@@ -3,4 +3,5 @@
 **/avatars
 **/__pycache__
 test/
-.vscode
+**/.vscode
+**/.DS_Store
