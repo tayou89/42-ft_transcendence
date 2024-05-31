@@ -4,7 +4,6 @@
 
 from rest_framework.generics import ListAPIView
 from rest_framework.renderers import JSONRenderer
-from rest_framework.permissions import IsAuthenticated
 from .authentication import CustomPermission
 from .models import Room, RoomSerializer
 

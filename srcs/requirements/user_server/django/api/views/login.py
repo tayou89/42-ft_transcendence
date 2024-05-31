@@ -21,14 +21,15 @@ RETURN_URI = 'http://localhost:8000/api/login/done/'
 
 class login_to_42(RedirectView):
 	url = f'https://api.intra.42.fr/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={RETURN_URI}&response_type=code'
+	# url = f'https://www.naver.com/'
 
 
 def after_login(request):
 	access_token = get_access_token(request.GET['code'])
 	user = get_user_info(access_token)
-	save_user_info(user)
-	make_otp_code(user)
-	jwt_token = make_jwt_token(user)
+	user_instance = save_user_info(user)
+	make_otp_code(user_instance)
+	jwt_token = make_jwt_token(user_instance)
 
 	return JsonResponse(jwt_token, safe=False)
 
@@ -57,15 +58,18 @@ def save_user_info(data):
 	email = data['email']
 	img_url = data['image']['link']
 
-	user = User.objects.filter(name=name)
+	user, is_created = User.objects.get_or_create(name=name)
 
-	if not user:
+	if is_created:
+		user.email = email
+
 		response = requests.get(img_url)
 		avatar = response.content
+		user.avatar.save(f"{name}.jpg", ContentFile(avatar))
 
-		user_instance = User(name=name, email=email)
-		user_instance.avatar.save(f"{name}.jpg", ContentFile(avatar))
-		user_instance.save()
+		user.save()
+
+	return user
 
 
 def get_user_info(access_token):
@@ -81,11 +85,9 @@ def get_user_info(access_token):
 	return response.json()
 
 
-def make_otp_code(data):
+def make_otp_code(user_instance):
 
-	user = User.objects.get(name=data['login'])
-
-	user_otp, tmp = OTPModel.objects.get_or_create(user=user)
+	user_otp, tmp = OTPModel.objects.get_or_create(user=user_instance)
 	user_otp.save()
 
 	# send_mail(
@@ -98,13 +100,13 @@ def make_otp_code(data):
 	# )
 
 
-def make_jwt_token(data):
+def make_jwt_token(user_instance):
 
-	jwt_token = requests.post("http://localhost:8000/api/token/", json={"name": data['login'],}).json()
+	token = RefreshToken.for_user(user_instance)
 
 	tmp = {
-		"token": jwt_token['token'],
-		"refresh": jwt_token['refresh'],
+		"token": str(token.access_token),
+		"refresh": str(token),
 	}
 
 	return tmp
