@@ -3,23 +3,23 @@ SCRIPTS_PATH := ./srcs/scripts
 
 .PHONY: all
 all:
-	docker-compose -f $(YML_PATH) up --build -d
+	docker compose -f $(YML_PATH) up --build -d
 
 .PHONY: up
 up:
-	docker-compose -f $(YML_PATH) up -d
+	docker compose -f $(YML_PATH) up -d
 
 .PHONY: build
 build:
-	docker-compose -f $(YML_PATH) build
+	docker compose -f $(YML_PATH) build
 
 .PHONY: down clean
 clean down:
-	docker-compose -f $(YML_PATH) down
+	docker compose -f $(YML_PATH) down
 
 .PHONY: fclean
 fclean:
-	docker-compose -f $(YML_PATH) down --volumes
+	docker compose -f $(YML_PATH) down --volumes
 
 .PHONY: re
 re: fclean
