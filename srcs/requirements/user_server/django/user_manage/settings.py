@@ -22,8 +22,8 @@ def kv_get(key):
         verify=False,
     )
     client.auth.userpass.login(
-        username='server',
-        password='qlalfqjsgh'
+        username=os.getenv('VAULT_USER_NAME'),
+        password=os.getenv('VAULT_PASSWORD')
     )
     secret = client.secrets.kv.v2.read_secret_version(path='django-secret', mount_point='kv')
     ret = secret['data']['data'].get(key)
