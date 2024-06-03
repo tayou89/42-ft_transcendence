@@ -120,4 +120,10 @@ curl -k -s -XPOST \
     }"
 echo "create secrets."
 
+#create prometheus token
+TOKEN_PATH="/certs/prometheus/"
+mkdir -p ${TOKEN_PATH}
+echo "${TOKEN}" > ${TOKEN_PATH}/vault_token.txt
+echo "create prometheus token."
+
 echo "==========DONE=========="

@@ -48,7 +48,7 @@ services:
       - ${PROJECT_DIR}/requirements/vault/config:/vault/config:ro
       - valut_keys_volume:/vault/keys
       - vault_volume:/vault/file/
-      - certs_volume:/certs/:ro
+      - certs_volume:/certs/
     command: ["sh", "/vault_init.sh"]
     networks:
       - my_net

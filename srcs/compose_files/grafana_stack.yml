@@ -30,12 +30,18 @@ services:
       start_period: 10s
 
   prometheus:
+    depends_on:
+      vault_init:
+        condition: service_completed_successfully
     image: prom/prometheus:v2.52.0
     container_name: prometheus
     volumes:
       - ${PROJECT_DIR}/requirements/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ${PROJECT_DIR}/requirements/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
       - prometheus_volume:/prometheus
+      - certs_volume:/certs
+    ports:
+      - 9090:9090
     networks:
       - my_net
     healthcheck:
