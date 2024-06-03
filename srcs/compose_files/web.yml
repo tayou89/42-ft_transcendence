@@ -33,6 +33,7 @@ services:
     container_name: userserver
     volumes:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+      - certs_volume:/certs
     environment:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
@@ -94,6 +95,7 @@ services:
     container_name: gameserver
     volumes:
       - ${PROJECT_DIR}/requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+      - certs_volume:/certs
     ports:
       - 8001:8001
     environment:

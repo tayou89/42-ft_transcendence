@@ -19,7 +19,7 @@ import hvac
 def kv_get(key):
     client = hvac.Client(
         url="https://vault:8200",
-        verify=False,
+        verify="/certs/ca/ca.crt",
     )
     client.auth.userpass.login(
         username=os.getenv('VAULT_USER_NAME'),
