@@ -34,5 +34,14 @@ async def enter_pong_room(sid, message):
   
 async def leave_pong_room(sid, message):
 	room_name = message['room']
+	player = message['player']
+ 
+	if room_list[room_name]['p1']['name'] == player:
+		room_list[room_name].delete('p1')
+	else :
+		room_list[room_name].delete('p2')
+ 
+	await sio.leave_room(sid, room_name)
+
   
 
