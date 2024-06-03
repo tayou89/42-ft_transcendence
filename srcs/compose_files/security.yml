@@ -40,7 +40,8 @@ services:
     environment:
       VAULT_SKIP_VERIFY: true
       VAULT_SERVER_PASSWORD: ${VAULT_SERVER_PASSWORD}
-      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      USER_SERVER_SECRET_KEY: ${USER_SERVER_SECRET_KEY}
+      GAME_SERVER_SECRET_KEY: ${GAME_SERVER_SECRET_KEY}
     volumes:
       - ${PROJECT_DIR}/requirements/vault/policies:/vault/policies/:ro
       - ${PROJECT_DIR}/requirements/vault/vault_init.sh:/vault_init.sh:ro

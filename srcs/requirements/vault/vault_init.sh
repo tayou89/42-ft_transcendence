@@ -114,7 +114,8 @@ curl -k -s -XPOST \
     -H "X-Vault-Token: ${TOKEN}" \
     --data "{
         \"data\": {
-            \"DJANGO_SECRET_KEY\": \"${DJANGO_SECRET_KEY}\"
+            \"USER_SERVER_SECRET_KEY\": \"${USER_SERVER_SECRET_KEY}\",
+            \"GAME_SERVER_SECRET_KEY\": \"${GAME_SERVER_SECRET_KEY}\"
         }
     }"
 echo "create secrets."

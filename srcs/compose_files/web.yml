@@ -26,6 +26,8 @@ services:
         condition: service_healthy
       vault_init:
         condition: service_completed_successfully
+      vault:
+        condition: service_healthy
     pull_policy: never
     image: python:userserver
     container_name: userserver
@@ -82,6 +84,10 @@ services:
     depends_on:
       gamedb:
         condition: service_healthy
+      vault_init:
+        condition: service_completed_successfully
+      vault:
+        condition: service_healthy
     build:
       context: ${PROJECT_DIR}/requirements/game_server
       dockerfile: dockerfile
@@ -94,6 +100,8 @@ services:
       GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
       GAMEDATA_DB_USER: ${USERDATA_DB_USER}
       GAMEDATA_DB_PW: ${USERDATA_DB_PW}
+      VAULT_USER_NAME: ${VAULT_USER_NAME}
+      VAULT_PASSWORD: ${VAULT_PASSWORD}
     networks:
       - my_net
     healthcheck:
