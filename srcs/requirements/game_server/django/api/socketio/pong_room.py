@@ -1,6 +1,9 @@
 
 from . import sio, manager, room_list, room_table
 from .game_statge import GameState
+import asyncio
+
+lock = asyncio.Lock()
 
 @sio.event
 async def enter_pong_room(sid, message):
@@ -63,31 +66,40 @@ async def make_ready(sid, message):
 
 	if cur_room['p1']['is_ready'] and cur_room['p2']['is_ready']:
 		await sio.start_background_task(play_pong, message['room'])	
-		
+
+
 async def play_pong(room_name):
 	game = GameState()
 	await sio.sleep(5)
 	
 	while game.is_ended() == False:
-		
-		game.update_game()
-		game.update_paddle_dir("p1", 1)
+
+		async with lock:		
+			game.update_game()
 		await sio.emit(
-      		'message',
-        	{
+	  		'message',
+			{
 				"ball_position": game.get_ball_position(),
-            	'paddle': game.get_bar_position(),
+				'paddle': game.get_bar_position(),
 				'score': game.get_score()
 			},
-         	room=room_name
-        )
+		 	room=room_name
+		)
 
 		await sio.sleep(1/30)
   
 	await sio.emit(
 		'message',
-		{
-			"result": game.get_result(),
-		},
+		game.get_result(),
 		room=room_name
 	)
+
+@sio.event
+async def move_paddle(sid, message):
+	player = message['player']
+	cur_room = room_list[message['room']]
+	paddle_dir = message['paddle_dir']
+
+	game = room_list['cur_room']
+	async with lock:
+		game.update_paddle_dir(player, paddle_dir)

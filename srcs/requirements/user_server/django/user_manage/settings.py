@@ -63,11 +63,11 @@ INSTALLED_APPS = [
 	'rest_framework',
 	'api',
 
-    # 'corsheaders', #CORS
+    'corsheaders', #CORS
 ]
 
 MIDDLEWARE = [
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -78,9 +78,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:8080',
-# ]
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8080',
+]
 
 ROOT_URLCONF = 'user_manage.urls'
 
@@ -114,6 +114,16 @@ DATABASES = {
         'PASSWORD': os.getenv('USERDATA_DB_PW'),
         'HOST': 'userdb',
         'PORT': '5432',
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://userredis:6378/',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
     }
 }
 

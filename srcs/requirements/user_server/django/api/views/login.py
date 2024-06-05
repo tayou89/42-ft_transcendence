@@ -5,6 +5,8 @@ import os
 from django.http import JsonResponse
 from django.views.generic import RedirectView
 from django.core.files.base import ContentFile
+from django.core.cache import cache
+
 from django.shortcuts import redirect
 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -106,5 +108,7 @@ def make_jwt_token(user_instance):
 	response = redirect('http://localhost:8080/')
 	response.set_cookie('jwt', str(token.access_token))
 	response.set_cookie('refresh', str(token))
+ 
+	cache.set(str(token), 1)
 
 	return response

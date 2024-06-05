@@ -2,6 +2,8 @@
 from ..models import User
 from ._serializer import UserSerializer
 
+from django.core.cache import cache
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -32,11 +34,19 @@ from rest_framework.decorators import action
 
 class MyRefreshToken(APIView):
 	def post(self, request):
+	 
 		refresh_token = request.data.get('refresh_token')
-
+		
 		if not refresh_token:
 			return Response({"refresh_token": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
 		
+		saved_token = cache.get(refresh_token)
+
+		if saved_token == None:
+			return Response({
+				{"refresh_token": "Invalid Refreshtoken"}
+			})
+
 		new_token = RefreshToken(refresh_token)
 
 		return Response({
@@ -44,3 +54,12 @@ class MyRefreshToken(APIView):
 			"refresh": str(new_token),
 		}, status=status.HTTP_200_OK)
 
+
+def logout(request):
+    
+	refresh_token = request.data.get('refresh_token')
+		
+	if not refresh_token:
+		return Response({"refresh_token": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+	cache.delete(refresh_token)

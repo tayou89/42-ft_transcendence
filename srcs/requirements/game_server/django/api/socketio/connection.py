@@ -1,6 +1,6 @@
 import socketio
 
-manager = socketio.AsyncRedisManager('redis://redis:6379')
+manager = socketio.AsyncRedisManager('redis://gameredis:6379')
 sio = socketio.AsyncServer(async_mode='asgi',
 						   client_manager=manager)
 

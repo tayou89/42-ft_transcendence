@@ -75,17 +75,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gameserver.wsgi.application'
 
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('GAMEDATA_DB_NAME'),
-        'USER': os.getenv('GAMEDATA_DB_USER'),
-        'PASSWORD': os.getenv('GAMEDATA_DB_PW'),
-        'HOST': 'gamedb',
-        'PORT': '5431',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('GAMEDATA_DB_NAME'),
+#         'USER': os.getenv('GAMEDATA_DB_USER'),
+#         'PASSWORD': os.getenv('GAMEDATA_DB_PW'),
+#         'HOST': 'gamedb',
+#         'PORT': '5431',
+#     }
+# }
 
 JWT_SECRET_KEY='hihi'
 

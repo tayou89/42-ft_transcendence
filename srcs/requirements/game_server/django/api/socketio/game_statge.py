@@ -77,9 +77,11 @@ class GameState:
 		self.ball_position = (x + dx, y + dy)
 		self.ball_dir = (dx, dy)
 
-		
-		self.p1_paddle += self.p1_paddle_dir
-		self.p2_paddle += self.p2_paddle_dir
+		if abs(self.p1_paddle + self.p1_paddle_dir) <= HEIGHT - (PADDLE_LENGTH / 2):
+			self.p1_paddle += self.p1_paddle_dir
+   
+		if abs(self.p2_paddle + self.p2_paddle_dir) <= HEIGHT - (PADDLE_LENGTH / 2):
+			self.p2_paddle += self.p2_paddle_dir
 
 		if self.p1_score == END_SCORE or self.p2_score == END_SCORE:
 			self.game_end = True
