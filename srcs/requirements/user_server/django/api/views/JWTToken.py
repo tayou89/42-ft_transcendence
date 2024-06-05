@@ -55,8 +55,8 @@ class MyRefreshToken(APIView):
 		}, status=status.HTTP_200_OK)
 
 
+
 def logout(request):
-    
 	refresh_token = request.data.get('refresh_token')
 		
 	if not refresh_token:
