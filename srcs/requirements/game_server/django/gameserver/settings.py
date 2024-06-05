@@ -14,6 +14,23 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
+import hvac
+def kv_get(key):
+    client = hvac.Client(
+        url="https://vault:8200",
+        verify="/certs/ca/ca.crt",
+    )
+    client.auth.userpass.login(
+        username=os.getenv('VAULT_USER_NAME'),
+        password=os.getenv('VAULT_PASSWORD')
+    )
+    secret = client.secrets.kv.v2.read_secret_version(path='django-secret', mount_point='kv')
+    ret = secret['data']['data'].get(key)
+    if ret:
+        return ret
+    else:
+        raise ValueError(f"Key '{key}' not found in the secret data.")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,7 +39,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$ywy1)s6lw4y40okbju%g(4t542x^k6=9#env-pgyjtx+ukx+0'
+SECRET_KEY = kv_get('GAME_SERVER_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
