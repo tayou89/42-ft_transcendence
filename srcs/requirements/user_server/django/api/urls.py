@@ -14,6 +14,8 @@ matchRouter.register(r'matches', views.MatchVeiwSet)
 urlpatterns = [
 	path('login/', views.login_to_42.as_view()),
 	path('login/done/', views.after_login),
+ 
+	path('logout/', views.logout),
 
 	path('', include(userRouter.urls)),
 	path('', include(matchRouter.urls)),
