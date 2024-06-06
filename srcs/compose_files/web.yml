@@ -24,8 +24,8 @@ services:
     depends_on:
       userdb:
         condition: service_healthy
-      vault_init:
-        condition: service_completed_successfully
+      # vault_init:
+      #   condition: service_completed_successfully
     pull_policy: never
     image: python:userserver
     container_name: userserver
@@ -46,10 +46,10 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "curl -I localhost:8000 | grep -q 'HTTP/1.1 404 Not Found'"]
-      interval: 30s
-      timeout: 5s
+      interval: 5s
+      timeout: 1s
       retries: 3
-      start_period: 10s
+      start_period: 1s
 
   userdb:
     image: postgres:userserver
@@ -71,20 +71,10 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-      interval: 30s
+      interval: 1s
       timeout: 5s
       retries: 3
-      start_period: 10s
-
-  userredis:
-    image: redis:transcendence
-    pull_policy: never
-    build:
-      context: ${PROJECT_DIR}/requirements/redis/userserver
-      dockerfile: dockerfile
-    container_name: userredis
-    networks:
-      - my_net
+      start_period: 1s
 
   gameserver:
     image: python:gameserver
@@ -105,10 +95,10 @@ services:
       - my_net
     healthcheck:
       test: ["CMD-SHELL", "curl -s localhost:8001"]
-      interval: 30s
+      interval: 1s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 1s
 
   # gamedb:
   #   image: postgres:gameserver
@@ -135,13 +125,13 @@ services:
   #     retries: 3
   #     start_period: 10s
 
-  gameredis:
+  redis:
     image: redis:transcendence
     pull_policy: never
     build:
-      context: ${PROJECT_DIR}/requirements/redis/gameserver
+      context: ${PROJECT_DIR}/requirements/redis
       dockerfile: dockerfile
-    container_name: gameredis
+    container_name: redis
     networks:
       - my_net
 
