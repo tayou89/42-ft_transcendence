@@ -114,9 +114,16 @@ curl -k -s -XPOST \
     -H "X-Vault-Token: ${TOKEN}" \
     --data "{
         \"data\": {
-            \"DJANGO_SECRET_KEY\": \"${DJANGO_SECRET_KEY}\"
+            \"USER_SERVER_SECRET_KEY\": \"${USER_SERVER_SECRET_KEY}\",
+            \"GAME_SERVER_SECRET_KEY\": \"${GAME_SERVER_SECRET_KEY}\"
         }
     }"
 echo "create secrets."
+
+#create prometheus token
+TOKEN_PATH="/certs/prometheus/"
+mkdir -p ${TOKEN_PATH}
+echo "${TOKEN}" > ${TOKEN_PATH}/vault_token.txt
+echo "create prometheus token."
 
 echo "==========DONE=========="

@@ -26,17 +26,22 @@ services:
         condition: service_healthy
       vault_init:
         condition: service_completed_successfully
+      vault:
+        condition: service_healthy
     pull_policy: never
     image: python:userserver
     container_name: userserver
     volumes:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+      - certs_volume:/certs
     environment:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
       USERDATA_DB_PW: ${USERDATA_DB_PW}
       CLIENT_ID: ${CLIENT_ID}
       CLIENT_SECRET: ${CLIENT_SECRET}
+      VAULT_USER_NAME: ${VAULT_USER_NAME}
+      VAULT_PASSWORD: ${VAULT_PASSWORD}
     ports:
       - 8000:8000
     networks:
@@ -89,18 +94,28 @@ services:
   gameserver:
     image: python:gameserver
     pull_policy: never
+    depends_on:
+      gamedb:
+        condition: service_healthy
+      vault_init:
+        condition: service_completed_successfully
+      vault:
+        condition: service_healthy
     build:
       context: ${PROJECT_DIR}/requirements/game_server
       dockerfile: dockerfile
     container_name: gameserver
     volumes:
       - ${PROJECT_DIR}/requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+      - certs_volume:/certs
     ports:
       - 8001:8001
-    # environment:
-    #   GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
-    #   GAMEDATA_DB_USER: ${USERDATA_DB_USER}
-    #   GAMEDATA_DB_PW: ${USERDATA_DB_PW}
+    environment:
+      GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
+      GAMEDATA_DB_USER: ${USERDATA_DB_USER}
+      GAMEDATA_DB_PW: ${USERDATA_DB_PW}
+      VAULT_USER_NAME: ${VAULT_USER_NAME}
+      VAULT_PASSWORD: ${VAULT_PASSWORD}
     networks:
       - my_net
     healthcheck:
