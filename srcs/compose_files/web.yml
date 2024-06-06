@@ -95,8 +95,8 @@ services:
     image: python:gameserver
     pull_policy: never
     depends_on:
-      gamedb:
-        condition: service_healthy
+      # gamedb:
+      #   condition: service_healthy
       vault_init:
         condition: service_completed_successfully
       vault:
