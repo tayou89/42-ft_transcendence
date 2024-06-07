@@ -2,13 +2,12 @@ import { useEffect, useState, MyReact } from "../MyReact/MyReact.js";
 import Navbar from "./Navbar.js";
 
 function Home() {
-	const name = "byejeon";
 	return (
 		<div>
-			<Navbar name={name} />
+			<Navbar/>
 			<div className="container text-light">
 				<div className="container my-2 fs-3">
-					Loby
+					Lobyㄴ
 				</div>
 				<div className="row">
 					<div className="col-md-5">
