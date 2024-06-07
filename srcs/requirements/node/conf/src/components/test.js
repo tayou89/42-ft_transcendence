@@ -25,9 +25,28 @@ function clickLoginBtn() {
 	window.location.href = "http://localhost:8000/api/login/";
 }
 
+function getQueryParams() {
+	const params = new URLSearchParams(window.location.search);
+	return {
+		token: params.get('token'),
+		refresh: params.get('refresh')
+	};
+}
+
+function storeTokens(token, refresh) {
+	localStorage.setItem('accessToken', token);
+	localStorage.setItem('refreshToken', refresh);
+}
+
 function Login_test() {
+	const queryParams = getQueryParams();
+	if (queryParams.token && queryParams.refresh) {
+		storeTokens(queryParams.token, queryParams.refresh);
+		window.history.replaceState({}, document.title, "/"); // URL에서 토큰 제거
+	}
 	return (
-		<div className="mt-5">
+		<div>
+			<Test.Navbar_test name="byejeon" />
 			<h1 className="container-fluid text-white text-center mt-5 mb-5 p-5 display-1">
 				42 Pong
 			</h1>
@@ -45,14 +64,14 @@ function Navbar_test({ name }) {
 		<div className="container-fluid border-bottom text-center my-1">
 			<div className="container my-2">
 				<div className="row">
-				<div className="container col fs-3">
+					<div className="container col fs-3">
 						<Link to="/" className="navbar-brand ps-2 text-light">42 Pong</Link>
 					</div>
 					<div className="container col fs-5">
-						<Link to="/" className="navbar-brand ps-2 text-light">42 Pong</Link>
+						<Link to="/login" className="navbar-brand ps-2 text-light">login</Link>
 					</div>
 					<div className="container col fs-5">
-						<Link to="/" className="navbar-brand ps-2 text-light">42 Pong</Link>
+						<Link to="/test" className="navbar-brand ps-2 text-light">test</Link>
 					</div>
 					<div className="container col-3 my-2 text-end">
 						<img className="rounded-circle"
@@ -262,17 +281,39 @@ function createRoomBtn(event) {
 	);
 }
 
+function test_btn(event) {
+	const url = "http://localhost:8000/api/users/";
+	const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE3MzE1ODY2LCJpYXQiOjE3MTczMTUyNjYsImp0aSI6Ijg0OTlmZDkzZTVjNTQxZGNiNmQ1NTQxNTM2NDA5MjMyIiwidXNlcl9pZCI6MX0.V2XOD7N-U8gs7dAVceU1CSW-pHLCiueTh_scmoHnPPY";
+	fetch(url, {
+		headers: {
+			'Authorization': `Bearer ${token}`
+		}
+	}).then(response => {
+		if (response.ok) {
+			return (response.json());
+		}
+	}).then(data => {
+		console.log(data);
+		console.log(data[0].avatar);
+	});
+}
+
 function CeateMatch_test() {
+	const name = "byejeon";
 	return (
-		<form id="login-form">
-			<input
-				required
-				maxlength="15"
-				type="text"
-				placeholder="방 이름"
-			/>
-			<Btn size="" text="Create Room" onClickFunc={createRoomBtn} />
-		</form>
+		<div>
+			<Test.Navbar_test name={name} />
+			<Btn size="lg" text="test" onClickFunc={test_btn} />
+			{/* <form id="login-form">
+				<input
+					required
+					maxlength="15"
+					type="text"
+					placeholder="방 이름"
+				/>
+				<Btn size="" text="Create Room" onClickFunc={createRoomBtn} />
+			</form> */}
+		</div>
 	);
 }
 
