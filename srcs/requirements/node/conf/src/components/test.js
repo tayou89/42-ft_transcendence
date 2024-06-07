@@ -62,7 +62,7 @@ function Navbar_test({ name }) {
 function Home_test({ name }) {
 	return (
 		<div>
-			<Test.Navbar_test name="byejeon" />
+			<Test.Navbar_test name={name} />
 			<div className="row p-3 m-3 border">
 				<div className="col-md-5">
 					<div className="container mt-3 mb-3 pt-2 pb-2 border">
@@ -135,15 +135,38 @@ function UserPage_test() {
 	);
 }
 
+function createRoomBtn(event) {
+	event.preventDefault();
+	const roomName = event.target.parentElement.querySelector("input").value;
+	console.log(event.target.parentElement.querySelector("input").value);
+	const socket = new WebSocket('ws://'
+		+ window.location.host
+		+ '/api/pong/'
+		+ roomName
+		+ '/'
+	);
+}
+
 function CeateMatch_test() {
-	
+	return (
+		<form id="login-form">
+			<input
+				required
+				maxlength="15"
+				type="text"
+				placeholder="방 이름"
+			/>
+			<Btn size="" text="Create Room" onClickFunc={createRoomBtn} />
+		</form>
+	);
 }
 
 const Test = {
 	Login_test,
 	Navbar_test,
 	Home_test,
-	UserPage_test
+	UserPage_test,
+	CeateMatch_test
 };
 
 export default Test;
