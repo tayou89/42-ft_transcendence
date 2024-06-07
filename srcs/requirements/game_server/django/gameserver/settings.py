@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 	'rest_framework',
 	'api',
+	'channels',
 ]
 
 
@@ -92,16 +93,41 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gameserver.wsgi.application'
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('GAMEDATA_DB_NAME'),
-#         'USER': os.getenv('GAMEDATA_DB_USER'),
-#         'PASSWORD': os.getenv('GAMEDATA_DB_PW'),
-#         'HOST': 'gamedb',
-#         'PORT': '5431',
-#     }
-# }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('GAMEDATA_DB_NAME'),
+        'USER': os.getenv('GAMEDATA_DB_USER'),
+        'PASSWORD': os.getenv('GAMEDATA_DB_PW'),
+        'HOST': 'gamedb',
+        'PORT': '5431',
+    }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],  # Redis 서버 주소
+        },
+    },
+}
+
+
+CACHES = {  
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+			'REDIS_CLIENT_KWARGS': {
+                'decode_responses': True,
+            },
+        },
+    }
+}
+
 
 JWT_SECRET_KEY='hihi'
 

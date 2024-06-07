@@ -5,9 +5,7 @@ import os
 from django.http import JsonResponse
 from django.views.generic import RedirectView
 from django.core.files.base import ContentFile
-from django.core.cache import cache
-
-from django.shortcuts import redirect
+from django.conf import settings
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -23,6 +21,7 @@ RETURN_URI = 'http://localhost:8000/api/login/done/'
 
 class login_to_42(RedirectView):
 	url = f'https://api.intra.42.fr/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={RETURN_URI}&response_type=code'
+	# url = f'https://www.naver.com/'
 
 
 def after_login(request):
@@ -30,9 +29,9 @@ def after_login(request):
 	user = get_user_info(access_token)
 	user_instance = save_user_info(user)
 	make_otp_code(user_instance)
-	response = make_jwt_token(user_instance)
+	jwt_token = make_jwt_token(user_instance)
 
-	return response
+	return JsonResponse(jwt_token, safe=False)
 
 
 
@@ -105,10 +104,9 @@ def make_jwt_token(user_instance):
 
 	token = RefreshToken.for_user(user_instance)
 
-	response = redirect('http://localhost:8080/')
-	response.set_cookie('jwt', str(token.access_token))
-	response.set_cookie('refresh', str(token))
- 
-	cache.set(str(token), 1)
+	tmp = {
+		"token": str(token.access_token),
+		"refresh": str(token),
+	}
 
-	return response
+	return tmp
