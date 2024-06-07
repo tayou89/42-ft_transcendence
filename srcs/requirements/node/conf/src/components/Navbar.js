@@ -1,9 +1,28 @@
 import MyReact from "../MyReact/MyReact.js";
 import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
 import getCookieValue from "./utility/getCookieValue.js";
-import { navigate } from "../MyReact/MyReactRouter.js";
 
-function Navbar({ name }) {
+function Navbar() {
+	const [name, setName] = MyReact.useState("default");
+	const [profileImg, setProfileImg] = MyReact.useState("https://www.studiopeople.kr/common/img/default_profile.png");
+	const jwt = getCookieValue("jwt");
+	const refresh = getCookieValue("refresh");
+	const url = "http://localhost:8000/api/users/me/";
+
+	MyReact.useEffect(() => {
+		fetch(url, {
+			headers: {
+				'Authorization': `Bearer ${jwt}`
+			}
+		})
+			.then(response => response.json())
+			.then(data => {
+				setName(() => data.name);
+				setProfileImg(() => data.avatar);
+				console.log(profileImg);
+			})
+			.catch(error => console.log(error));
+	}, [jwt]);
 	return (
 		<div className="container-fluide border-bottom">
 			<div className="container">
@@ -14,7 +33,7 @@ function Navbar({ name }) {
 						<div>
 							<img className="rounded-circle"
 								width="30" height="30"
-								src="https://www.studiopeople.kr/common/img/default_profile.png" />
+								src={profileImg} />
 							<Link to="/profile" className="navbar-brand ps-2 text-light">{name}</Link>
 						</div>
 					</div>
