@@ -35,8 +35,12 @@ scrape_configs:
     static_configs:
       - targets: ["postgres_exporter:9187"]
   
-  # - job_name: "vault"
-  #   metrics_path: "/v1/sys/metrics"
-  #   # bearer_token: "your_vault_token_here"
-  #   static_configs:
-  #     - targets: ["vault:8125"]
+  - job_name: "vault"
+    metrics_path: "/v1/sys/metrics"
+    scheme: https
+    tls_config:
+      ca_file: "/certs/ca/ca.crt"
+    authorization:
+      credentials_file: /certs/prometheus/vault_token.txt
+    static_configs:
+      - targets: ["vault:8200"]
