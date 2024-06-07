@@ -1,4 +1,6 @@
 import MyReact from "../MyReact/MyReact.js";
+import Test from "./test.js";
+import Home from "./home.js";
 import { Route } from "../MyReact/MyReactRouter.js";
 import Home from "./home/home.js";
 import UserPage from "./UserPage.js";
@@ -9,11 +11,14 @@ import GamePage from "./GamePage/GamePage.js";
 function App() {
 	return (
 		<div>
-			<Route path="/" component={GamePage} />
-			{/* <Route path="/" component={Interchange} /> */}
-			{/* <Route path="/home" component={Home} /> */}
-			<Route path="/profile" component={UserPage} />
-			<Route path="/login" component={Login} />
+			{/* <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
+      <Route path="/room" component={Room} />
+	<div className="container p-5 my-5 border">*/}
+
+			<Test.Navbar_test name="byejeon"/>
+			{/* <Test.Home_test/> */}
+			{/* <Test.Login_test/> */}
 		</div>
 	);
 }
