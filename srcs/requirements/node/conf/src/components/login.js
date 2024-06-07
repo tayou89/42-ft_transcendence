@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../MyReact/MyReact.js";
 import Navbar from "./Navbar.js";
-import Btn from "./Btn.js";
+import Btn from "./utility/Btn.js";
 
 function clickLoginBtn() {
 	window.location.href = "http://localhost:8000/api/login/";

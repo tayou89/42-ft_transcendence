@@ -1,5 +1,3 @@
-import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-
 // size : lg sm ''
 function Btn({ size, text, color1 = "primary", color2 = "secondary", onClickFunc }) {
 	function MouseEnter(event) {
