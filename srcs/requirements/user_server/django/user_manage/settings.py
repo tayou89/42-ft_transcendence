@@ -68,7 +68,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -76,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'user_manage.middleware.RequestLoggingMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -198,7 +198,8 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'tkdwjd4512@gmail.com'
 EMAIL_HOST_PASSWORD = 'smxk uqnk cpaz gucr'
 
-PROJECT_ROOT='/app/django'
+LOG_PATH='/logs/user_server'
+os.makedirs(f'{LOG_PATH}', exist_ok=True)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -249,7 +250,7 @@ LOGGING = {
             'ca_certs': '/certs/ca/ca.crt',
             'certfile': '/certs/user_server/user_server.crt',
             'keyfile': '/certs/user_server/user_server.key',
-            'database_path': '{}/logstash.db'.format(PROJECT_ROOT),
+            'database_path': '{}/logstash.db'.format(LOG_PATH),
         },
     },
     'loggers': {

@@ -36,6 +36,7 @@ services:
     volumes:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
       - certs_volume:/certs
+      - user_server_log_volume:/logs
     environment:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
@@ -183,4 +184,7 @@ volumes:
     driver: local
   gamedb_volume:
     name: gamedb_volume
+    driver: local
+  user_server_log_volume:
+    name: user_server_log_voulume
     driver: local
