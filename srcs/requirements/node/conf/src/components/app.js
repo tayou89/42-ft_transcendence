@@ -13,6 +13,8 @@ function App() {
 		<div>
 			<Route path="/" component={Test.Home_test} />
 			<Route path="/profile" component={Test.UserPage_test} />
+			<Route path="/test" component={Test.CeateMatch_test} />
+      <Route path="/login" component={Test.Login_test} />
 			{/* <Route path="/" component={Test.Home_test} /> */}
 			{/* <Test.Home_test name="byejeon"/> */}
 			{/* <Test.UserPage_test name="byejeon"/> */}
