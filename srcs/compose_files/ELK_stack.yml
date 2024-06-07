@@ -181,28 +181,29 @@ services:
     mem_limit: ${MEM_LIMIT}
     networks:
       - elk_net
+      - my_net
     healthcheck:
       test: ["CMD-SHELL", "curl -XGET 'localhost:9600/?pretty' | grep -q '\"status\" : \"green\"'"]
       interval: 30s
       timeout: 3s
       retries: 5
 
-  filebeat:
-    depends_on:
-      nginx:
-        condition: service_healthy
-      kibana:
-        condition: service_healthy
-      logstash:
-        condition: service_healthy
-    image: elastic/filebeat:${STACK_VERSION}
-    container_name: filebeat
-    volumes:
-      - certs_volume:/usr/share/filebeat/config/certs
-      - logs_volume:/logs
-      - ${PROJECT_DIR}/requirements/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-    networks:
-      - elk_net
+  # filebeat:
+  #   depends_on:
+  #     nginx:
+  #       condition: service_healthy
+  #     kibana:
+  #       condition: service_healthy
+  #     logstash:
+  #       condition: service_healthy
+  #   image: elastic/filebeat:${STACK_VERSION}
+  #   container_name: filebeat
+  #   volumes:
+  #     - certs_volume:/usr/share/filebeat/config/certs
+  #     - logs_volume:/logs
+  #     - ${PROJECT_DIR}/requirements/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+  #   networks:
+  #     - elk_net
 
 networks:
   elk_net:

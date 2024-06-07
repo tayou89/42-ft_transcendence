@@ -5,3 +5,4 @@ from .login import *
 from .match import *
 from .users import *
 from .JWTToken import *
+from .HealthCheck import *

@@ -19,4 +19,6 @@ urlpatterns = [
 	path('', include(matchRouter.urls)),
 	
 	path('token/refresh/', views.MyRefreshToken.as_view()),
+    
+	path('health/', views.HealthCheck.health_check)
 ]

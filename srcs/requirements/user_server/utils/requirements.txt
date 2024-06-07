@@ -11,6 +11,8 @@ pillow==10.3.0
 gunicorn==22.0.0
 
 hvac==2.2.0 #vault
+python-logstash-async==3.0.0
+
 django-cors-headers==4.3.1
 
 gevent==24.2.1

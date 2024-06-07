@@ -28,6 +28,8 @@ services:
         condition: service_completed_successfully
       vault:
         condition: service_healthy
+      logstash:
+        condition: service_healthy
     pull_policy: never
     image: python:userserver
     container_name: userserver
@@ -48,7 +50,7 @@ services:
       context: ${PROJECT_DIR}/requirements/user_server
       dockerfile: dockerfile
     healthcheck:
-      test: ["CMD-SHELL", "curl -I localhost:8000 | grep -q 'HTTP/1.1 404 Not Found'"]
+      test: ["CMD-SHELL", "curl -sL localhost:8000/api/health | grep -q '{\"status\": \"OK\"}'"]
       interval: 30s
       timeout: 5s
       retries: 3
