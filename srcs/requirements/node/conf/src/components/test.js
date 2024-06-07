@@ -41,20 +41,18 @@ function Login_test() {
 function Navbar_test({ name, phoneNumber }) {
 	return (
 		<nav className="navbar navbar-expand-sm bg-dark">
-			<div className="container col-sm-10 justify-content-center">
+			<div className="col-sm-5"></div>
+			<div className="container col-sm-2 justify-content-center">
 				<div className="navbar-nav">
 					<a className="nav-link text-white" href="#">42Pong</a>
 				</div>
 			</div>
-			<div className="container col-sm-2">
-				<div className="col-sm-3">
-					<img className="img-fluid rounded-circle "
-					style={{ width: 50, height: 50, borderRadius: '50%' }}
+			<div className="col-sm-3"></div>
+			<div className="container col-sm-2 justify-content-center">
+					<img className="rounded-circle"
+					width="30" height="30"
 					src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-				</div>
-				<div className="col-sm-9">
-					<a className="nav-link text-white" href="#">byejeon</a>
-				</div>
+					<a className="nav-link text-white ps-2" href="#">byejeon</a>
 			</div>
 		</nav>
 	);
