@@ -13,8 +13,8 @@ function App() {
       <Route path="/room" component={Room} />
 	<div className="container p-5 my-5 border">*/}
 
-			<Test.Navbar_test name="byejeon"/>
-			{/* <Test.Home_test/> */}
+			<Test.Home_test name="byejeon"/>
+			<Test.UserPage_test name="byejeon"/>
 			{/* <Test.Login_test/> */}
 		</div>
 	);
