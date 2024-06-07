@@ -1,54 +1,47 @@
-import {useEffect, useState, MyReact} from "../MyReact/MyReact.js";
+import { useEffect, useState, MyReact } from "../MyReact/MyReact.js";
 import Navbar from "./Navbar.js";
 
-function GameBorad() {
-  return (
-    <div>
-        <div>
-          <input placeholder="유저검색"/>
-        </div>
-        <div>
-          <div>
-            게임시작
-          </div>
-        </div>
-    </div>
-  )
-}
-
 function Home() {
-  return (
-    // <div>
-    //   <Navbar />
-    //   <GameBorad />
-    // </div>
-    <div>
-      <Navbar />
-      <div className="container-fluid p-5 bg-primary text-white text-center">
-        <h1>My First Bootstrap Page</h1>
-        <p>Resize this responsive page to see the effect!</p>
-      </div>
-      <div className="container mt-5">
-        <div className="row">
-          <div className="col-sm-4">
-            <h3>Column 1</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-          </div>
-          <div className="col-sm-4">
-            <h3>Column 2</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-          </div>
-          <div className="col-sm-4">
-            <h3>Column 3</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+	const name = "byejeon";
+	return (
+		<div>
+			<Navbar name={name} />
+			<div className="container text-light">
+				<div className="container my-2 fs-3">
+					Loby
+				</div>
+				<div className="row">
+					<div className="col-md-5">
+						<div className="container mb-3 pt-2 pb-2 border-top border-bottom">
+							<div className="container mt-1 ">User Simple Profile</div>
+						</div>
+						<div className="container mt-3 mb-3 pt-2 pb-2 border-top border-bottom">
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+						</div>
+					</div>
+					<div className="col-md-7">
+						<div className="container pt-2 pb-2 border-top border-bottom">
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default Home;
