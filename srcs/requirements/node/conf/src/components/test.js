@@ -1,20 +1,21 @@
 import MyReact from "../MyReact/MyReact.js";
+import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
 
 
 // size : lg sm ''
-function Btn({ size, text, onClickFunc }) {
+function Btn({ size, text, color1 = "primary", color2 = "secondary", onClickFunc }) {
 	function MouseEnter(event) {
-		event.target.classList.remove("btn-outline-primary");
-		event.target.classList.remove("bg-secondary");
-		event.target.classList.add("bg-primary");
+		event.target.classList.remove(`btn-outline-${color1}`);
+		event.target.classList.remove(`bg-${color2}`);
+		event.target.classList.add(`bg-${color1}`);
 	}
 	function MouseLeave(event) {
-		event.target.classList.add("btn-outline-primary");
-		event.target.classList.add("bg-secondary");
-		event.target.classList.remove("bg-primary");
+		event.target.classList.add(`btn-outline-${color1}`);
+		event.target.classList.add(`bg-${color2}`);
+		event.target.classList.remove(`bg-${color1}`);
 	}
 	return (
-		<button className={`btn btn-${size} bg-secondary btn-outline-primary text-white`} onClick={onClickFunc} onMouseEnter={MouseEnter} onMouseLeave={MouseLeave}>
+		<button className={`btn btn-${size} bg-${color2} btn-outline-${color1} text-white`} onClick={onClickFunc} onMouseEnter={MouseEnter} onMouseLeave={MouseLeave}>
 			{text}
 		</button>
 	);
@@ -41,61 +42,66 @@ function Login_test() {
 
 function Navbar_test({ name }) {
 	return (
-		<nav className="navbar navbar-expand-sm bg-dark">
-			<div className="col-sm-5"></div>
-			<div className="container col-sm-2 justify-content-center">
-				<div className="navbar-nav">
-					<a className="nav-link text-white" href="#">42Pong</a>
+		<div className="container-fluid border-bottom text-center my-1">
+			<div className="container my-2">
+				<div className="row">
+				<div className="container col fs-3">
+						<Link to="/" className="navbar-brand ps-2 text-light">42 Pong</Link>
+					</div>
+					<div className="container col fs-5">
+						<Link to="/" className="navbar-brand ps-2 text-light">42 Pong</Link>
+					</div>
+					<div className="container col fs-5">
+						<Link to="/" className="navbar-brand ps-2 text-light">42 Pong</Link>
+					</div>
+					<div className="container col-3 my-2 text-end">
+						<img className="rounded-circle"
+							width="30" height="30"
+							src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+						<Link to="/profile" className="navbar-brand ps-2 text-light">{name}</Link>
+					</div>
 				</div>
 			</div>
-			<div className="col-sm-3"></div>
-			<div className="container col-sm-2 justify-content-center">
-				<img className="rounded-circle"
-					width="30" height="30"
-					src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-				<a className="nav-link text-white ps-2" href="#">{name}</a>
-			</div>
-		</nav>
+		</div>
 	);
 }
 
-function Home_test({ name }) {
+function Home_test() {
+	const name = "byejeon";
 	return (
 		<div>
 			<Test.Navbar_test name={name} />
-			<div className="row p-3 m-3 border">
-				<div className="col-md-5">
-					<div className="container mt-3 mb-3 pt-2 pb-2 border">
-						<div className="container mt-1 text-light border">User</div>
-						<div className="container mt-1 text-light border">User</div>
-						<div className="container mt-1 text-light border">User</div>
-						<div className="container mt-1 text-light border">User</div>
-						<div className="container mt-1 text-light border">User</div>
-						<div className="container mt-1 text-light border">User</div>
-					</div>
-					<div className="container mt-3 mb-3 pt-2 pb-2 border">
-						<div className="container mt-1 text-light border">Friend</div>
-						<div className="container mt-1 text-light border">Friend</div>
-						<div className="container mt-1 text-light border">Friend</div>
-						<div className="container mt-1 text-light border">Friend</div>
-						<div className="container mt-1 text-light border">Friend</div>
-						<div className="container mt-1 text-light border">Friend</div>
-						<div className="container mt-1 text-light border">Friend</div>
-					</div>
+			<div className="container text-light">
+				<div className="container my-2 fs-3">
+					Loby
 				</div>
-				<div className="col-md-7">
-					<div className="container mt-3 pt-2 pb-2 border">
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
-						<div className="container text-light mt-1 pt-1 pb-1 border">Match</div>
+				<div className="row">
+					<div className="col-md-5">
+						<div className="container mb-3 pt-2 pb-2 border-top border-bottom">
+							<div className="container mt-1 ">User Simple Profile</div>
+						</div>
+						<div className="container mt-3 mb-3 pt-2 pb-2 border-top border-bottom">
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+							<div className="container mt-1 ">Friend</div>
+						</div>
+					</div>
+					<div className="col-md-7">
+						<div className="container pt-2 pb-2 border-top border-bottom">
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+							<div className="container my-3">Match</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -104,29 +110,138 @@ function Home_test({ name }) {
 }
 
 function UserPage_test() {
+	const name = "byejeon";
 	return (
 		<div>
 			<Test.Navbar_test name="byejeon" />
-			<div className="row p-3 m-3 border">
-				<div className="col-md-12">
-					<div className="container mt-3 pt-2 pb-2 ms-0 me-0 text-light border">
-						<div>User Info</div>
+			<div className="container text-light">
+				<div className="container">
+					<div className="row">
+						<div className="col">
+							<div className="container mt-2 fs-3">
+								User Info
+							</div>
+						</div>
+						<div className="col">
+							<div className="container text-end my-2 mx-2">
+								<Btn size="sm" text="Back" color1="secondary" color2="danger" onClickFunc={null} />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="container">
+					<div className="row border-top border-bottom">
+						<div className="col-md-4">
+							<div className="container m-1 text-center">
+								<img className="rounded-circle"
+									width="120" height="120"
+									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+								<div className="container mt-1 text-center">{name}</div>
+							</div>
+						</div>
+						<div className="col-md-4">
+							<div className="container m-1 text-center">
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Level</div>
+									<div className="col-2">:</div>
+									<div className="col-6">10</div>
+								</div>
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Exp</div>
+									<div className="col-2">:</div>
+									<div className="col-6">1000/3000</div>
+								</div>
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Total</div>
+									<div className="col-2">:</div>
+									<div className="col-6">42</div>
+								</div>
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Win</div>
+									<div className="col-2">:</div>
+									<div className="col-6">25</div>
+								</div>
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Lose</div>
+									<div className="col-2">:</div>
+									<div className="col-6">17</div>
+								</div>
+							</div>
+						</div>
+						<div className="col-md-4">
+							<div className="container m-1 text-center">
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Tourn.</div>
+									<div className="col-2">:</div>
+									<div className="col-6 ">12</div>
+								</div>
+								<div className="row mt-1 mb-1">
+									<div className="col-4">1 v 1</div>
+									<div className="col-2">:</div>
+									<div className="col-6">38</div>
+								</div>
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Victory</div>
+									<div className="col-2">:</div>
+									<div className="col-6">5</div>
+								</div>
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Left</div>
+									<div className="col-2">:</div>
+									<div className="col-6">25</div>
+								</div>
+								<div className="row mt-1 mb-1">
+									<div className="col-4">Right</div>
+									<div className="col-2">:</div>
+									<div className="col-6">17</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div className="row">
 					<div className="col-md-6">
-						<div className="container mt-3 pt-2 pb-2 text-light border">
-							<div className="border text-light mt-1 pt-1 pb-1 ">Win</div>
+						<div className="container mt-3 border-top border-bottom">
+							<div className="container">
+								<div className="row my-3">
+									<div className="col-6">
+										<div className="container text-center">
+											<img className="rounded-circle" width="100" height="100"
+												src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+										</div>
+									</div>
+									<div className="col-6">
+										<div className="container text-center">
+											<img className="rounded-circle" width="100" height="100"
+												src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+										</div>
+									</div>
+								</div>
+								<div className="row my-3">
+									<div className="col-6">
+										<div className="container text-center">
+											<img className="rounded-circle" width="100" height="100"
+												src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+										</div>
+									</div>
+									<div className="col-6">
+										<div className="container text-center">
+											<img className="rounded-circle" width="100" height="100"
+												src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div className="col-md-6">
-						<div className="container mt-3 pt-2 pb-2 border">
-							<div className="border text-light mt-1 pt-1 pb-1 ">Match Record</div>
-							<div className="border text-light mt-1 pt-1 pb-1 ">Match Record</div>
-							<div className="border text-light mt-1 pt-1 pb-1 ">Match Record</div>
-							<div className="border text-light mt-1 pt-1 pb-1 ">Match Record</div>
-							<div className="border text-light mt-1 pt-1 pb-1 ">Match Record</div>
-							<div className="border text-light mt-1 pt-1 pb-1 ">Match Record</div>
+						<div className="container mt-3 pt-2 pb-2 border-top border-bottom">
+							<div className="my-1 pt-1 pb-1">Match Record</div>
+							<div className="my-1 pt-1 pb-1">Match Record</div>
+							<div className="my-1 pt-1 pb-1">Match Record</div>
+							<div className="my-1 pt-1 pb-1">Match Record</div>
+							<div className="my-1 pt-1 pb-1">Match Record</div>
+							<div className="my-1 pt-1 pb-1">Match Record</div>
 						</div>
 					</div>
 				</div>
