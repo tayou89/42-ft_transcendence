@@ -9,8 +9,7 @@ function test_btn(event) {
 	console.log("you pushed test button!");
 }
 
-function Test() {
-	const name = "byejeon";
+function Login_test() {
 	return (
 		<div>
 			<Navbar name={name} />
