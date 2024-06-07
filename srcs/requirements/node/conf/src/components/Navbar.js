@@ -12,13 +12,10 @@ function Navbar({ name }) {
 					<div className="container col fs-5">
 						<Link to="/login" className="navbar-brand ps-2 text-light">login</Link>
 					</div>
-					<div className="container col fs-5">
-						<Link to="/test" className="navbar-brand ps-2 text-light">test</Link>
-					</div>
 					<div className="container col-3 my-2 text-end">
 						<img className="rounded-circle"
 							width="30" height="30"
-							src="https://www.studiopeople.kr/common/img/default_profile.png"/>
+							src="https://www.studiopeople.kr/common/img/default_profile.png" />
 						<Link to="/profile" className="navbar-brand ps-2 text-light">{name}</Link>
 					</div>
 				</div>
