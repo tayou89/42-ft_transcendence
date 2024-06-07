@@ -3,10 +3,9 @@ import Navbar from "./Navbar.js";
 import Btn from "./utility/Btn.js";
 
 function UserPage() {
-	const name = "byejeon";
 	return (
 		<div>
-			<Navbar name="byejeon" />
+			<Navbar/>
 			<div className="container text-light">
 				<div className="container">
 					<div className="row">
