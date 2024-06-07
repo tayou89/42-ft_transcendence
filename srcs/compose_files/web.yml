@@ -32,8 +32,6 @@ services:
     volumes:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
     environment:
-      CLIENT_ID: ${CLIENT_ID}
-      CLIENT_SECRET: ${CLIENT_SECRET}
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
       USERDATA_DB_PW: ${USERDATA_DB_PW}
