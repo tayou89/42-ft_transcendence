@@ -1,4 +1,4 @@
-import MyReact, { useEffect, useState } from "../MyReact/MyReact";
+import MyReact, { useEffect, useState } from "../../MyReact/MyReact";
 
 function Room() {
     const [votesToSkip, votesToSkipSet] = useState(0);
