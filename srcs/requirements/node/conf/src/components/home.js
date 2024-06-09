@@ -7,7 +7,7 @@ function Home() {
 			<Navbar/>
 			<div className="container text-light">
 				<div className="container my-2 fs-3">
-					Lobyㄴ
+					Loby
 				</div>
 				<div className="row">
 					<div className="col-md-5">
