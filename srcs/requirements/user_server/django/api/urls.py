@@ -20,5 +20,5 @@ urlpatterns = [
 	
 	path('token/refresh/', views.MyRefreshToken.as_view()),
     
-	path('health/', views.HealthCheck.health_check)
+	path('health', views.HealthCheck.health_check)
 ]
