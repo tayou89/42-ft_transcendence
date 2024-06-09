@@ -2,8 +2,21 @@ import socketio
 import asyncio
 
 manager = socketio.AsyncRedisManager('redis://redis:6379')
-sio = socketio.AsyncServer(async_mode='asgi',
-						   client_manager=manager)
+sio = socketio.AsyncServer(
+    async_mode='asgi',
+    client_manager=manager,
+    cors_allowed_origins=[
+		'http://localhost:8001',
+		'https://admin.socket.io',
+	],
+	logger=True, engineio_logger=True
+)
+
+sio.instrument(auth={
+    'username': 'admin',
+    'password': '1234',
+})
+
 lock = asyncio.Lock()
 
 room_list = {}
@@ -24,5 +37,7 @@ async def disconnect(sid):
 				room_list[room_name].pop('p1')
 			else:
 				room_list[room_name].pop('p2')
+		
+		sio.emit('message', room_list[room_name], room=room_name)
 
 		sid_table.pop(sid)

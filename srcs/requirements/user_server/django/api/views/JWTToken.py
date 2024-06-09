@@ -37,7 +37,7 @@ class MyRefreshToken(APIView):
 		refresh_token = request.COOKIES.get('refresh')
 		
 		if refresh_token is None:
-			return Response({"refresh_token": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"refresh": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
 
 		try:
 			new_token = RefreshToken(refresh_token)

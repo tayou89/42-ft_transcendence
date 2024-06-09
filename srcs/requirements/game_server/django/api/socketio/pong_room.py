@@ -94,7 +94,7 @@ async def play_pong(room_name):
 		 	room=room_name
 		)
 
-		await sio.sleep(1/10)
+		await sio.sleep(1 / 30)
   
 	await sio.emit(
 		'message',
