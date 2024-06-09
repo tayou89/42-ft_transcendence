@@ -22,7 +22,7 @@
 	<ul id="messages"></ul>
     <form id="form" action="">
 		<input id="name" autocomplete="off" /><input id="input" autocomplete="off" /><br>
-		<button>SEND</button><button id='join' >JOIN</button><button id='leave' >LEAVE</button><button id='ready' >READY</button>
+		<button>SEND</button><button id='create' >CREATE</button><button id='join' >JOIN</button><button id='leave' >LEAVE</button><button id='ready' >READY</button>
 	</form>
     <script>
 		const socket = io('http://localhost:8001/');
@@ -34,7 +34,12 @@
 		const join_room = document.getElementById('join');
 		const leave_room = document.getElementById('leave');
 		const ready = document.getElementById('ready');
+		const create = document.getElementById('create');
 	  
+		window.addEventListener('beforeunload', (e) => {
+			socket.disconnect();
+		});
+
 		form.addEventListener('submit', (e) => {
 		  e.preventDefault();
 		  if (input.value) {
@@ -46,7 +51,7 @@
 		join_room.addEventListener('click', (e) => {
 			e.preventDefault();
 			if (input.value) {
-				const message = {'player': name.value, 'room': input.value};
+				const message = {'player': name.value, 'room': input.value, 'type': 'enter'};
 				socket.emit('enter_pong_room', message);
 			}
 		});
@@ -56,6 +61,14 @@
 			if (input.value) {
 				const message = {'player': name.value, 'room': input.value};
 				socket.emit('leave_pong_room', message);
+			}
+		});
+
+		create.addEventListener('click', (e) => {
+			e.preventDefault();
+			if (input.value) {
+				const message = {'player': name.value, 'room': input.value, 'type': 'create'};
+				socket.emit('enter_pong_room', message);
 			}
 		});
 

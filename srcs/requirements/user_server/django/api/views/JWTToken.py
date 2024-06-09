@@ -34,7 +34,7 @@ from rest_framework.permissions import IsAuthenticated
 class MyRefreshToken(APIView):
 	def post(self, request):
 	 
-		refresh_token = request.data['refresh_token']
+		refresh_token = request.COOKIES.get('refresh_token')
 		
 		if refresh_token is None:
 			return Response({"refresh_token": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
