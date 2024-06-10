@@ -21,8 +21,9 @@ services:
     networks:
       - elk_net
     volumes:
-      - ${PROJECT_DIR}/requirements/elasticsearch/elk_setup.sh:/usr/share/elasticsearch/elk_setup.sh
+      - ${PROJECT_DIR}/requirements/elasticsearch/elk_setup.sh:/usr/share/elasticsearch/elk_setup.sh:ro
       - certs_volume:/usr/share/elasticsearch/config/certs
+      - ${PROJECT_DIR}/requirements/elasticsearch/settings:/settings/:ro
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_PASSWORD: ${KIBANA_PASSWORD}
