@@ -4,7 +4,7 @@ import Navbar from "./Navbar.js";
 import Btn from "./utility/Btn.js";
 
 function clickLoginBtn() {
-	window.location.href = "http://localhost:8000/api/login/";
+	window.location.href = "http://localhost:8000/api/login";
 }
 
 function Login() {
