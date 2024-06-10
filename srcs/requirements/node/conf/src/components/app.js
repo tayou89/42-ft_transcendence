@@ -9,8 +9,8 @@ import Interchange from "./interchange.js";
 function App() {
 	return (
 		<div>
-			{/* <Route path="/" component={GamePage} /> */}
-			<Route path="/" component={Interchange} />
+			<Route path="/" component={GamePage} />
+			{/* <Route path="/" component={Interchange} /> */}
 			<Route path="/home" component={Home} />
 			<Route path="/profile" component={UserPage} />
 			<Route path="/login" component={Login} />

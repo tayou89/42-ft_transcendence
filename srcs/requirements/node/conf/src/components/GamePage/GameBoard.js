@@ -13,7 +13,13 @@ function PlayerSlot({id}) {
 
 function Board() {
     return (
-        <div className="col" id="board"></div>
+        <div className="col" id="board">
+            <div className="row">
+                <div className="col">hello</div>
+                <div className="col">hello</div>
+                <div className="col">hello</div>
+            </div>
+        </div>
     );
 }
 
