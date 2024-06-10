@@ -79,6 +79,8 @@ services:
   gameserver:
     image: python:gameserver
     pull_policy: never
+    depends_on:
+      - redis
     build:
       context: ${PROJECT_DIR}/requirements/game_server
       dockerfile: dockerfile
@@ -93,12 +95,12 @@ services:
     #   GAMEDATA_DB_PW: ${USERDATA_DB_PW}
     networks:
       - my_net
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8001"]
-      interval: 1s
-      timeout: 5s
-      retries: 3
-      start_period: 1s
+    # healthcheck:
+    #   test: ["CMD-SHELL", "curl -s localhost:8001"]
+    #   interval: 1s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 1s
 
   # gamedb:
   #   image: postgres:gameserver

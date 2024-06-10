@@ -1,7 +1,7 @@
 
 HEIGHT = 100
 WIDTH = 200
-END_SCORE = 1
+END_SCORE = 7
 PADDLE_LENGTH = 0
 P1 = 0
 P2 = 1
@@ -52,6 +52,14 @@ class GameState:
 			'p1': self.p1_paddle,
 			'p2': self.p2_paddle
 		}
+
+	def unearned_win(self, player):
+		if player == 'p1':
+			self.p1_score = END_SCORE
+			self.p2_score = 0
+		else:
+			self.p1_score = 0
+			self.p2_score = END_SCORE
 
 	def update_game(self):
 		x, y = self.ball_position
