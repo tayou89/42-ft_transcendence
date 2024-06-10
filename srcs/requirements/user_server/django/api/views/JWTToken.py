@@ -34,20 +34,20 @@ from rest_framework.permissions import IsAuthenticated
 class MyRefreshToken(APIView):
 	def post(self, request):
 	 
-		refresh_token = request.data['refresh_token']
+		refresh_token = request.COOKIES.get('refresh')
 		
 		if refresh_token is None:
-			return Response({"refresh_token": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
+			return Response({"refresh": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
 
 		try:
 			new_token = RefreshToken(refresh_token)
 		except:
 			return Response({"refresh_token": "blacklisted token"})
 
-		return Response({
-			"token": str(new_token.access_token),
-			"refresh": str(new_token),
-		}, status=status.HTTP_200_OK)
+		response = Response(status=204)
+		response.set_cookie('jwt', str(new_token.access_token), httponly=True)
+		response.set_cookie('refresh', str(new_token), httponly=True)
+		return Response()
 
 class log_out(APIView):
 	def post(self, request):

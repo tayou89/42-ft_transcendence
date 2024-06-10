@@ -6,54 +6,76 @@
     <title>Chat Room</title>
 </head>
 <body>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
-    <input id="chat-message-ready" type="button" value="ready">
-    {{ room_name|json_script:"room-name" }}
+	<ul id="messages"></ul>
+    <form id="form" action="">
+		<input id="name" autocomplete="off" /><input id="input" autocomplete="off" /><br>
+		<button>SEND</button><button id='create' >CREATE</button><button id='join' >JOIN</button><button id='leave' >LEAVE</button><button id='ready' >READY</button>
+	</form>
     <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+		const socket = io('http://localhost:8001/');
 
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/api/pong/'
-            + roomName
-            + '/'
-        );
+		const name = document.getElementById('name');
+		const form = document.getElementById('form');
+		const input = document.getElementById('input');
+		const messages = document.getElementById('messages');
+		const join_room = document.getElementById('join');
+		const leave_room = document.getElementById('leave');
+		const ready = document.getElementById('ready');
+		const create = document.getElementById('create');
+	  
+		window.addEventListener('beforeunload', (e) => {
+			socket.disconnect();
+		});
 
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
-        };
+		form.addEventListener('submit', (e) => {
+		  e.preventDefault();
+		  if (input.value) {
+			socket.emit('chat', input.value);
+			input.value = '';
+		  }
+		});
 
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
+		join_room.addEventListener('click', (e) => {
+			e.preventDefault();
+			if (input.value) {
+				const message = {'player': name.value, 'room': input.value, 'type': 'enter'};
+				socket.emit('enter_pong_room', message);
+			}
+		});
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
+		leave_room.addEventListener('click', (e) => {
+			e.preventDefault();
+			if (input.value) {
+				const message = {'player': name.value, 'room': input.value};
+				socket.emit('leave_pong_room', message);
+			}
+		});
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
+		create.addEventListener('click', (e) => {
+			e.preventDefault();
+			if (input.value) {
+				const message = {'player': name.value, 'room': input.value, 'type': 'create'};
+				socket.emit('enter_pong_room', message);
+			}
+		});
 
-        document.querySelector('#chat-message-ready').onclick = function(e) {
-            const message = 'ready';
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
+		ready.addEventListener('click', (e) => {
+			e.preventDefault();
+			if (input.value) {
+				const message = {
+					'player': name.value,
+					'room': input.value,
+					'status': "ready"};
+				socket.emit('make_ready', message);
+			}
+		});
+	  
+		socket.on('message', (msg) => {
+		  const item = document.createElement('li');
+		  item.textContent = JSON.stringify(msg);
+		  messages.appendChild(item);
+		  window.scrollTo(0, document.body.scrollHeight);
+		});
     </script>
 </body>
 </html>

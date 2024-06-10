@@ -1,42 +1,40 @@
 
-from . import sio, manager, room_list, room_table
+from . import sio, manager, room_list, sid_table, lock
 from .game_statge import GameState
-import asyncio
 
-lock = asyncio.Lock()
 
 @sio.event
 async def enter_pong_room(sid, message):
 	room_name = message['room']
 	player = message['player']
-	
-	if room_name in room_list and len(room_list[room_name]) == 2:
-		await sio.emit('message', 'full', room=sid)
-		return
-	
-	await sio.enter_room(sid, room_name)
+	type = message['type']
 
-	if room_name not in room_list:
+	if type == 'create':
+		if  room_name in room_list:
+			await sio.emit('message', {'err': 'already exist'}, room=sid)
+			return
+		else:
+			room_list[room_name] = {
+				"type": "single",
+				"p1": {"name": player, 'is_ready': False},
+			}
+			await sio.enter_room(sid, room_name)
+			await sio.emit('message', room_list[room_name], room=room_name)
+   
+	else:
+		if len(room_list[room_name]) == 3:
+			await sio.emit('message', {'err': 'room is full'}, room=sid)
+			return
 
-		room_list[room_name] = {
-			"p1": {"name": player, 'is_ready': False},
-		}
-  
-		await sio.emit('message', room_list[room_name], room=room_name)
-				   
-	elif "p1" not in room_list[room_name]:
-		cur_room = room_list[room_name]
-		cur_room["p1"] = {"name": player, 'is_ready': False}
-
-		await sio.emit('message', cur_room, room=room_name)
-				   
-	elif "p2" not in room_list[room_name]:
+		await sio.enter_room(sid, room_name)
+						
 		cur_room = room_list[room_name]
 		cur_room["p2"] = {"name": player, 'is_ready': False}
+		sid_table[sid] = {'player': player, 'room': room_name}
 
 		await sio.emit('message', cur_room, room=room_name)
-	
-	room_table[sid] = {'player': player, 'room': room_name}
+
+
 
 @sio.event
 async def leave_pong_room(sid, message):
@@ -49,7 +47,9 @@ async def leave_pong_room(sid, message):
 		room_list[room_name].pop('p2')
  
 	await sio.leave_room(sid, room_name)
-	room_table.pop(sid)
+	sid_table.pop(sid)
+
+
 
 @sio.event
 async def make_ready(sid, message):
@@ -68,14 +68,22 @@ async def make_ready(sid, message):
 		await sio.start_background_task(play_pong, message['room'])	
 
 
+
 async def play_pong(room_name):
 	game = GameState()
 	await sio.sleep(5)
 	
 	while game.is_ended() == False:
-
-		async with lock:		
+     
+		async with lock:
+			if len(room_list[room_name]) != 3:
+				if 'p1' in room_list[room_name]:
+					game.unearned_win('p1')
+				else:
+					game.unearned_win('p2')
+	
 			game.update_game()
+   
 		await sio.emit(
 	  		'message',
 			{
@@ -86,13 +94,15 @@ async def play_pong(room_name):
 		 	room=room_name
 		)
 
-		await sio.sleep(1/30)
+		await sio.sleep(1 / 30)
   
 	await sio.emit(
 		'message',
 		game.get_result(),
 		room=room_name
 	)
+
+
 
 @sio.event
 async def move_paddle(sid, message):
