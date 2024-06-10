@@ -10,7 +10,6 @@ function clickLoginBtn() {
 function Login() {
 	return (
 		<div>
-			<Navbar/>
 			<h1 className="container-fluid text-white text-center mt-5 mb-5 p-5 display-1">
 				42 Pong
 			</h1>

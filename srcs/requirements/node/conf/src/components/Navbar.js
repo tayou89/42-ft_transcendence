@@ -1,26 +1,16 @@
 import MyReact from "../MyReact/MyReact.js";
 import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
 import getCookieValue from "./utility/getCookieValue.js";
-import apiCall from "./utility/apiCall.js";
+import { navigate } from "../MyReact/MyReactRouter.js";
 
-function Navbar() {
-	const [name, setName] = MyReact.useState("default");
-	const [profileImg, setProfileImg] = MyReact.useState("https://www.studiopeople.kr/common/img/default_profile.png");
-	const url = "http://localhost:8000/api/users/me/";
-	MyReact.useEffect(() => {
-		apiCall(url)
-			.then(data => {
-				setName(() => data.name);
-				setProfileImg(() => data.avatar);
-			})
-	}, [getCookieValue("jwt")]);
+function Navbar({name, profileImg}) {
+	
 	return (
 		<div className="container-fluide border-bottom">
 			<div className="container">
 				<nav className="navbar navbar-expand-sm navbar-dark">
 					<div className="container-fluid">
-						<Link to="/" className="navbar-brand">42 Pong</Link>
-						<Link to="/login" className="navbar-brand">로그인</Link>
+						<Link to="/home" className="navbar-brand">42 Pong</Link>
 						<div>
 							<img className="rounded-circle"
 								width="30" height="30"
