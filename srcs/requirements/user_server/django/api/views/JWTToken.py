@@ -36,18 +36,20 @@ class MyRefreshToken(APIView):
 	 
 		refresh_token = request.COOKIES.get('refresh')
 		
-		if refresh_token is None:
+		if refresh_token:
+			try:
+				new_token = RefreshToken(refresh_token)
+			except:
+				return Response({"refresh": "blacklisted token"})
+
+			response = Response(status=204)
+			response.set_cookie('jwt', str(new_token.access_token), httponly=True)
+			response.set_cookie('refresh', str(new_token), httponly=True)
+			return response
+		else:
 			return Response({"refresh": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-		try:
-			new_token = RefreshToken(refresh_token)
-		except:
-			return Response({"refresh_token": "blacklisted token"})
-
-		response = Response(status=204)
-		response.set_cookie('jwt', str(new_token.access_token), httponly=True)
-		response.set_cookie('refresh', str(new_token), httponly=True)
-		return Response()
+		
 
 class log_out(APIView):
 	def post(self, request):

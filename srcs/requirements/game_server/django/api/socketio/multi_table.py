@@ -1,4 +1,5 @@
 
+
 from . import sio, manager, room_list, room_table, lock
 from .game_statge import GameState
 
@@ -35,4 +36,5 @@ async def enter_mtt_room(sid, message):
 		await sio.emit('message', cur_room, room=room_name)
 	
 	room_table[sid] = {'player': player, 'room': room_name}
+
 
