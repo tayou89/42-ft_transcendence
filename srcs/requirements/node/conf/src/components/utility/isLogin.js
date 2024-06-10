@@ -20,14 +20,11 @@ function isLogin() {
 				method: 'POST',
 				credentials: 'include'
 			})
-				.then(response => response.json())
-				.then(data => {
-					if (data.refresh_token === "This field is required") {
-						navigate("/login");//로그인 페이지로.
-					} else if (data.detail === "Given token not valid for any token type") {
-						navigate("/login");//로그인 페이지로.
+				.then(response => {
+					if (response.status === 204) {
+						navigate("/home");//access token 재발급 성공했으니 홈으로
 					} else {
-						navigate("/");//access token 재발급 성공했으니 다시 로그인 확인.
+						navigate("/login");//로그인 페이지로.
 					}
 				})
 				.catch(error => {
