@@ -35,7 +35,7 @@ until curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSW
     do sleep 5;
 done;
 echo "Importing kibana settings";
-until curl -s -X POST --cacert config/certs/ca/ca.crt ${KIBANA_URL}/api/saved_objects/_import -H "kbn-xsrf: true" --form file=@/settings/kibana_objects.ndjson
+until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "kbn-xsrf: true" ${KIBANA_URL}/api/saved_objects/_import --form file=@settings/kibana_objects.ndjson | grep -q '"success":true'
     do sleep 5;
 done;
 
