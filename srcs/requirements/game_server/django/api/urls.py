@@ -18,7 +18,7 @@ from django.urls import path, include
 from .views import RoomListView, index, room
 
 urlpatterns = [
-	path('rooms/', RoomListView.as_view()),
-	path('index/', index),
-	path("pong/<str:room_name>/", room),
+	path('rooms', RoomListView.as_view()),
+	path('index', index),
+	path("pong/<str:room_name>", room),
 ]

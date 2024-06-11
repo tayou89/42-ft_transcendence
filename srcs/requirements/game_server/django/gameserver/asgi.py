@@ -7,9 +7,12 @@ For more information on this file, see
 https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
 """
 
+import django
+django.setup()
+
 import os
 from django.core.asgi import get_asgi_application
-from api import *
+from api.socketio.connection import sio
 from socketio import ASGIApp
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project.settings')

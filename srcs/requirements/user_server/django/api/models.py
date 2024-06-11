@@ -28,6 +28,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 	losses = models.IntegerField(default=0)
 	friends = models.ManyToManyField('self', symmetrical=False, blank=True, related_name="friend_set", related_query_name="friend")
 
+	exp = models.PositiveBigIntegerField(default=0)
+
 	password = None
 	last_login = None
 	is_superuser = None
@@ -46,6 +48,9 @@ class MatchHistory(models.Model):
 	p1_score = models.PositiveIntegerField()
 	p2_score = models.PositiveIntegerField()
 	date = models.DateTimeField(auto_now_add=True)
+ 
+	winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='p1')
+	loser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='p2')
 
 	class Meta:
 		indexes = [
