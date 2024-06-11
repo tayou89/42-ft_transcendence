@@ -14,13 +14,27 @@ function PlayerSlot({id}) {
     );
 }
 
+function stringifyStyle(style) {
+    const styleString = Object.entries(style)
+        .map(([key, value]) => {
+            const kebabKey = key
+                .replace(/([a-z])([A-Z])/g, '$1-$2')
+                .toLowerCase();
+            return `${kebabKey}: ${value}`;
+        })
+        .join('; ');
+    return styleString;
+}
+
 function Paddle({id}) {
     const paddleStyle = new PaddleStyle(id);
     const style = paddleStyle.getStyle();
 
     console.log(style);
+    const stringStyle = stringifyStyle(style);
+    console.log("string_style", stringStyle);
     return (
-        <div id={id} style={style}></div>
+        <div id={id} style={stringStyle}></div>
     );
 }
 
