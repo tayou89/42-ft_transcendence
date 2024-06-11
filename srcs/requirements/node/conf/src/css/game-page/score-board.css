@@ -3,26 +3,27 @@
     justify-content: center;
     align-items: center;
     font-size: 32px;
-    margin-top: 30px;
+    margin-top: 40px;
 }
 
 #player1 {
     display: flex;
     justify-content: end;
     align-items: center;
-    font-size: 32px;
+    font-size: 64px;
 }
 
 #seperator {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 32px;
+    font-size: 64px;
+	flex: 0 0 500px;
 }
 
 #player2 {
     display: flex;
     justify-content: start;
     align-items: center;
-    font-size: 32px;
+    font-size: 64px;
 }

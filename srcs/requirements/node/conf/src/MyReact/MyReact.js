@@ -180,7 +180,8 @@ export function useState(initial) {
   };
   const actions = oldHook ? oldHook.queue : [];
   actions.forEach(action => {
-    hook.state = action(hook.state);
+    // hook.state = action(hook.state);
+    hook.state = typeof action === 'function' ? action(hook.state) : action;
   });
   const setState = action => {
     hook.queue.push(action);

@@ -28,16 +28,17 @@ class PaddleStyle {
     getStyle(valueY = undefined) {
         this.#setY(valueY);
         const gradientDirection = (this.#paddleNumber === 1 ? "left" : "right");
-        const style = {
-            position: `absolute`,
-            backgroundColor: `${this.#color}px`,
-            width: `${this.#width}px`,
-            height: `${this.#height}px`,
-            left: `${this.#x}px`,
-            top: `${this.#y}px`,
-            borderRadius: `${this.#radius}px`,
-            background: `linear-gradient(to ${gradientDirection}, ${this.#color} 50%, black 100%)`,
-        };
+		const style = `
+            position: absolute;
+            background-color: ${this.#color};
+            width: ${this.#width}px;
+            height: ${this.#height}px;
+            left: ${this.#x}px;
+            top: ${this.#y}px;
+            border-radius: ${this.#radius}px;
+            background: linear-gradient(to ${gradientDirection}, ${this.#color} 50%, black 100%);
+			transition: top 0.05s linear;
+		`
         return (style);
     }
     #x;

@@ -10,7 +10,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 25px;
+    font-size: 50px;
     background: linear-gradient(to top, white,  rgb(101, 101, 101));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -19,7 +19,8 @@
 
 #user {
     display: flex;
+	padding-right: 30px;
     justify-content: end;
-    align-items: flex-end;
-    font-size: 16px;
+    align-items: baseline;
+    font-size: 32px;
 }

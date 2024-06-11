@@ -20,9 +20,8 @@
     border-top: solid 1px ;
     border-bottom: solid 1px white;
     border-radius: 10px;
-    width: 700px;
-    height: 440px;
-    flex: 0 0 700px; 
+    height: 800px;
+    flex: 0 0 1300px; 
     background: rgba(250, 250, 250, 0.2);
     backdrop-filter: blur(2px);
 }
@@ -37,21 +36,3 @@
     border-radius: 10px;
     background: radial-gradient(circle at 70% 20%, white, black);
 }
-
-/* #paddle1 {
-    position: absolute;
-    background-color: white;
-    width: 6px;
-    height: 40px;
-    border-radius: 3px;
-    background: linear-gradient(to left, white 50%, black 100%)
-}
-
-#paddle2 {
-    position: absolute;
-    background-color: white;
-    width: 6px;
-    height: 40px;
-    border-radius: 3px;
-    background: linear-gradient(to left, white 50%, black 100%)
-} */

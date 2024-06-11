@@ -1,15 +1,17 @@
 export const BOARD = {
-    WIDTH: 700,
-    HEIGHT: 440,
+    WIDTH: 1300,
+    HEIGHT: 800,
 };
 
 export const PADDLE = {
-    WIDTH: 6,
-    HEIGHT: 40,
-    OFFSET_X: 40,
-    INITIAL_Y:  (BOARD.HEIGHT / 2) - (40 / 2),
+    WIDTH: 12,
+    HEIGHT: 60,
+    OFFSET_X: 50,
+    INITIAL_Y:  (BOARD.HEIGHT / 2) - (60 / 2),
     BORDER_RADIUS: 3,
-    COLOR: "white"
+    COLOR: "white",
+	MIN_Y: 0,
+	MAX_Y: BOARD.HEIGHT - 60,
 };
 
 export const BALL = {

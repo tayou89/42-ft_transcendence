@@ -14,27 +14,63 @@ function PlayerSlot({id}) {
     );
 }
 
-function stringifyStyle(style) {
-    const styleString = Object.entries(style)
-        .map(([key, value]) => {
-            const kebabKey = key
-                .replace(/([a-z])([A-Z])/g, '$1-$2')
-                .toLowerCase();
-            return `${kebabKey}: ${value}`;
-        })
-        .join('; ');
-    return styleString;
+function paddleEffect([paddleY, setPaddleY]) {
+	useEffect(() => {
+		let animationFrameId = null;
+		let direction = 0;
+		const updatePaddlePosition = () => {
+			if (direction !== 0) {
+				const newPaddleY = paddleY + direction * 4;
+
+				if (newPaddleY >= PADDLE.MIN_Y && newPaddleY <= PADDLE.MAX_Y)
+					setPaddleY(newPaddleY);
+			}
+			animationFrameId = requestAnimationFrame(updatePaddlePosition);
+		};
+		const handleKeyDown = (event) => {
+			if (event.key === 'w')
+				direction = -1;
+			else if (event.key === 's')
+				direction = 1;
+		};
+		const handleKeyUp = (event) => {
+			if (event.key === 'w' || event.key === 's')
+				direction = 0;
+		};
+		document.addEventListener("keydown", handleKeyDown);
+		document.addEventListener("keyup", handleKeyUp);
+		animationFrameId = requestAnimationFrame(updatePaddlePosition);
+		return (() => {
+			cancelAnimationFrame(animationFrameId);
+			document.removeEventListener("keydown", handleKeyDown);
+			document.removeEventListener("keyup", handleKeyUp);
+		});
+	}, [paddleY])
+
 }
 
-function Paddle({id}) {
-    const paddleStyle = new PaddleStyle(id);
-    const style = paddleStyle.getStyle();
 
-    console.log(style);
-    const stringStyle = stringifyStyle(style);
-    console.log("string_style", stringStyle);
+function Paddle({id}) {
+	const [paddleY, setPaddleY] = useState(PADDLE.INITIAL_Y);
+    const paddleStyle = new PaddleStyle(id);
+    const style = paddleStyle.getStyle(paddleY);
+
+	paddleEffect([paddleY, setPaddleY]);
+	// useEffect(() => {
+	// 	const handleKeyDown = (event) => {
+	// 		if (event.key === 'w' && paddleY > PADDLE.MIN_Y)
+	// 			setPaddleY(paddleY - 3);
+	// 		else if (event.key === 's' && paddleY < PADDLE.MAX_Y)
+	// 			setPaddleY(paddleY + 3);
+	// 	};
+	// 	document.addEventListener("keydown", handleKeyDown);
+	// 	return (() => {
+	// 		document.removeEventListener("keydown", handleKeyDown);
+	// 	});
+	// }, [paddleY])
+
     return (
-        <div id={id} style={stringStyle}></div>
+        <div id={id} style={style}></div>
     );
 }
 
