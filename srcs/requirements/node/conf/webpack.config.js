@@ -60,4 +60,9 @@ module.exports = {
   },
   devtool: "inline-source-map",
   mode: "development",
+//   devServer: {
+//     contentBase: path.join(__dirname, 'public'),
+//     compress: true,
+//     port: 3000, // 원하는 포트 번호로 변경
+//   },
 };
