@@ -30,6 +30,7 @@ watchfiles==0.21.0
 websockets==12.0
 
 hvac==2.2.0 #vault
+python-logstash-async==3.0.0
 
 # asgiref==3.8.1
 # certifi==2024.2.2

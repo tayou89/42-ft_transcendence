@@ -70,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'gameserver.middleware.RequestLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'gameserver.urls'
@@ -189,3 +190,75 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ASGI_APPLICATION = 'gameserver.asgi.application'
 
+LOG_PATH='/logs/game_server'
+os.makedirs(f'{LOG_PATH}', exist_ok=True)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'style': '{',
+        },
+        'logstash': {
+            '()': 'logstash_async.formatter.DjangoLogstashFormatter',
+            'message_type': 'python-logstash',
+            'fqdn': False, # Fully qualified domain name. Default value: false.
+            'extra': {
+                'application': "game_server",
+                'environment': 'production'
+            }
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'logstash': {
+            'level': 'DEBUG',
+            'class': 'logstash_async.handler.AsynchronousLogstashHandler',
+            'formatter': 'logstash',
+            'transport': 'logstash_async.transport.TcpTransport',
+            'host': 'logstash',
+            'port': 5959,
+            'ssl_enable': True,
+            'ssl_verify': True,
+            'ca_certs': '/certs/ca/ca.crt',
+            'certfile': '/certs/user_server/user_server.crt',
+            'keyfile': '/certs/user_server/user_server.key',
+            'database_path': '{}/logstash.db'.format(LOG_PATH),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['logstash'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

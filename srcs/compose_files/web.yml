@@ -36,7 +36,7 @@ services:
     volumes:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
       - certs_volume:/certs
-      - user_server_log_volume:/logs
+      - django_log_volume:/logs
     environment:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
@@ -92,6 +92,8 @@ services:
         condition: service_completed_successfully
       vault:
         condition: service_healthy
+      logstash:
+        condition: service_healthy
     build:
       context: ${PROJECT_DIR}/requirements/game_server
       dockerfile: dockerfile
@@ -99,6 +101,7 @@ services:
     volumes:
       - ${PROJECT_DIR}/requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
       - certs_volume:/certs
+      - django_log_volume:/logs
     ports:
       - 8001:8001
     environment:
@@ -185,6 +188,6 @@ volumes:
   gamedb_volume:
     name: gamedb_volume
     driver: local
-  user_server_log_volume:
-    name: user_server_log_voulume
+  django_log_volume:
+    name: django_log_volume
     driver: local
