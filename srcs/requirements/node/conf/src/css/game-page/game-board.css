@@ -38,7 +38,7 @@
     background: radial-gradient(circle at 70% 20%, white, black);
 }
 
-#paddle1 {
+/* #paddle1 {
     position: absolute;
     background-color: white;
     width: 6px;
@@ -54,4 +54,4 @@
     height: 40px;
     border-radius: 3px;
     background: linear-gradient(to left, white 50%, black 100%)
-}
+} */
