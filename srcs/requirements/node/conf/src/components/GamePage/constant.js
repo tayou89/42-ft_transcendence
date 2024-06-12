@@ -12,8 +12,18 @@ export const PADDLE = {
     COLOR: "white",
 	MIN_Y: 0,
 	MAX_Y: BOARD.HEIGHT - 60,
+    DIRECTION: {
+        UP: -1,
+        DOWN: 1,
+        NONE: 0,
+    },
 };
 
 export const BALL = {
     RADIUS: 7,
 };
+
+export const KEY = {
+    UP: ['w', 'ArrowUp'],
+    DOWN: ['s', 'ArrowDown'],
+}
