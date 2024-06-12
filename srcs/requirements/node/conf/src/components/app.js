@@ -1,6 +1,6 @@
 import MyReact from "../MyReact/MyReact.js";
 import { Route } from "../MyReact/MyReactRouter.js";
-import Home from "./home.js";
+import Home from "./home/home.js";
 import UserPage from "./UserPage.js";
 import Login from "./login.js";
 import Interchange from "./interchange.js";
