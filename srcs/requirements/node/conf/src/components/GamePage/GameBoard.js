@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import Paddle from "./Paddle.js";
-import {BOARD, PADDLE, BALL} from "./constant.js";
+import Ball from "./Ball.js";
 import "../../css/game-page/game-board.css";
 
 function PlayerSlot({id}) {
@@ -13,20 +13,11 @@ function PlayerSlot({id}) {
     );
 }
 
-function Ball() {
-    const ball = document.getElementById("ball");
-
-    return (
-        <div id="ball"></div>
-    );
-}
-
-
 
 function Board() {
     return (
         <div className="col" id="board">
-            <Ball />
+            <Ball id="ball" />
             <Paddle id="paddle1" />
             <Paddle id="paddle2" />
         </div>

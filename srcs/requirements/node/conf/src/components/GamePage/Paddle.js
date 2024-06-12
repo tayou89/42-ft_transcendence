@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import {BOARD, PADDLE, KEY} from "./constant.js";
+import {BOARD, PADDLE, KEY, SOCKET} from "./constant.js";
 import {io} from "socket.io-client";
 
 const socket = io("http://localhost:8080", {
@@ -12,7 +12,7 @@ function Paddle({id}) {
     const style = getStyle(paddleY, id);
 
     console.log("paddleY:", paddleY)
-    getEffect(paddleY, setPaddleY);
+    getEffect(paddleY, setPaddleY, id);
     return (
         <div id={id} style={style}></div>
     );
@@ -27,13 +27,15 @@ function getStyle(valueY, id){
         left: ${getX(id)}px;
         top: ${valueY}px;
         border-radius: ${PADDLE.BORDER_RADIUS}px;
-        background: linear-gradient(to ${getPositoin(id)}, ${PADDLE.COLOR} 50%, black 100%);
-		transition: top 0.05s linear;
+        background: ${PADDLE.BACKGROUND};
+		transition: ${PADDLE.TRANSITION};
 	`
     return (style);
 }
 
-function getEffect(paddleY, setPaddleY) {
+function getEffect(paddleY, setPaddleY, id) {
+    const myNumber = (id === "paddle1") ? 1 : 2;
+
     useEffect(() => {
         let moveDirection = 0;
         let animationFrameId = null;
@@ -48,14 +50,19 @@ function getEffect(paddleY, setPaddleY) {
         };
         const handleKeyDown = (event) => {
             if (KEY.UP.includes(event.key))
-                moveDirection = -1;
+                socket.emit(SOCKET.EVENT.KEY, -1);
             else if (KEY.DOWN.includes(event.key))
-                moveDirection = 1;
+                socket.emit(SOCKET.EVENT.KEY, 1);
         };
         const handleKeyUp = (event) => {
             if (KEY.UP.includes(event.key) || KEY.DOWN.includes(event.key))
-                moveDirection = 0;
+                socket.emit(SOCKET.EVENT.KEY, 1);
         }
+
+        socket.on(SOCKET.EVENT.PADDLE, (paddleNumber, direction) => {
+            if (paddleNumber === myNumber)
+                moveDirection = direction;
+        });
         document.addEventListener("keydown", handleKeyDown);
         document.addEventListener("keyup", handleKeyUp);
         animationFrameId = requestAnimationFrame(updatePosition);
