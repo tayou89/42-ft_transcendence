@@ -3,7 +3,7 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import Navbar from "../Navbar.js";
 import HomeMyInfo from "./homeMyInfo.js";
 import HomeFriends from "./homeFriends.js";
-import HomeMatchs from "./homeMatchs.js";
+import HomeMatches from "./homeMatches.js";
 
 const defaultMyData = {
 	"id": 0,
@@ -59,9 +59,9 @@ function Home() {
 					</div>
 					<div className="col-md-7">
 						<div className="fs-4">
-							Matchs
+							Matches
 						</div>
-						<HomeMatchs />
+						<HomeMatches />
 					</div>
 				</div>
 			</div>
