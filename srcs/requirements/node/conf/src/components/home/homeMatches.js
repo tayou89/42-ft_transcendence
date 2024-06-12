@@ -1,11 +1,25 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
+const defaultRooms = [];
+
 function HomeMatches() {
-	const openMatches = [1, 2, 3, 4, 5, 6];
+	const roomsInfoApiUrl = "http://localhost:8000/api/rooms";
+	const [rooms, setRooms] = useState(defaultRooms);
+	useEffect(() => {
+		fetch(roomsInfoApiUrl)
+			.then(response => response.json())
+			.then(data => {
+				setRooms(() => data);
+			})
+			.catch(error => {
+				console.log(error);
+				navigate("/");
+			});
+	}, rooms.length);
 	return (
 		<div className="container pt-2 pb-2 border-top border-bottom">
-			{openMatches.map(id => (
+			{rooms.map(id => (
 				<HomeMatchInfo />
 			))}
 		</div>

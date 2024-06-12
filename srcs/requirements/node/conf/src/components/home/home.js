@@ -25,9 +25,7 @@ function Home() {
 			method: 'GET',
 			credentials: 'include'
 		})
-			.then(response => {
-				return response.json();
-			})
+			.then(response => response.json())
 			.then(data => {
 				if (data.detail) {
 					tokenRefreshAndGoTo("/home");
