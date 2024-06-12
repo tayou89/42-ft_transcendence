@@ -21,6 +21,7 @@ function isLogin() {
 				credentials: 'include'
 			})
 				.then(response => {
+					console.log(response);
 					if (response.status === 204) {
 						navigate("/home");//access token 재발급 성공했으니 홈으로
 					} else {
