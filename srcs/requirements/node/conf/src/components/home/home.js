@@ -19,7 +19,6 @@ const defaultMyData = {
 
 function Home() {
 	const [myData, setMyData] = MyReact.useState(defaultMyData);
-	const [matchData, setMatchData] = MyReact.useState(defaultMyData);
 	const myDataApiUrl = "http://localhost:8000/api/users/me";
 	MyReact.useEffect(() => {
 		fetch(myDataApiUrl, {
