@@ -27,3 +27,18 @@ export const KEY = {
     UP: ['w', 'ArrowUp'],
     DOWN: ['s', 'ArrowDown'],
 }
+
+export const SOCKEY = {
+    EVNET: {
+        KEY: "key",
+        PADDLE: "paddle",
+        BALL: "ball",
+    },
+    VALUE: {
+        KEY: {
+            UP: -1,
+            DOWN: 1,
+            NONE: 0,
+        },
+    }
+}

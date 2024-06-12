@@ -58,6 +58,13 @@ module.exports = {
       },
     ],
   },
+  //socket.io 부분 추가
+  resolve: {
+    fallback: {
+      "socket.io-client": require.resolve("socket.io-client"),
+    },
+    extensions: ['.js'],
+  },
   devtool: "inline-source-map",
   mode: "development",
 //   devServer: {

@@ -1,5 +1,11 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import {BOARD, PADDLE, KEY} from "./constant.js";
+import {io} from "socket.io-client";
+
+const socket = io("http://localhost:8080", {
+    reconnection: false,
+    autoConnect: false,
+});
 
 function Paddle({id}) {
     const [paddleY, setPaddleY] = useState(PADDLE.INITIAL_Y);
@@ -50,7 +56,6 @@ function getEffect(paddleY, setPaddleY) {
             if (KEY.UP.includes(event.key) || KEY.DOWN.includes(event.key))
                 moveDirection = 0;
         }
-
         document.addEventListener("keydown", handleKeyDown);
         document.addEventListener("keyup", handleKeyUp);
         animationFrameId = requestAnimationFrame(updatePosition);
