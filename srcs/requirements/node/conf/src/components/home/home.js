@@ -59,7 +59,7 @@ function Home() {
 					</div>
 					<div className="col-md-7">
 						<div className="fs-4">
-							Matches
+							Matchs
 						</div>
 						<HomeMatches />
 					</div>
