@@ -6,12 +6,12 @@ function ScoreBoard() {
     const [score1, setScore1] = useState(0);
     const [score2, setScore2] = useState(0);
 
-    catchScoreEvent(score1, score2, setScore1, setScore2)
+    catchScoreEvent(score1, score2, setScore1, setScore2);
     return (
         <div className="row" id="score-board">
-            <div className="col">{score1}</div>
-            <div className="col">:</div>
-            <div className="col">{score2}</div>
+            <div className="col" id="score1">{score1}</div>
+            <div className="col" id="seperator">:</div>
+            <div className="col" id="score2">{score2}</div>
         </div>
     );
 }
