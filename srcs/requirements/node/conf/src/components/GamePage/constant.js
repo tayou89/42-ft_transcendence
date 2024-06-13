@@ -33,8 +33,8 @@ export const BALL = {
     HEIGHT: 30,
     COLOR: "white",
     INIT: {
-        X: BOARD.WIDTH / 2,
-        Y: BOARD.HEIGHT / 2,
+        X: (BOARD.WIDTH / 2) - 15,
+        Y: (BOARD.HEIGHT / 2) - 15,
     },
     TRANSITION: "top 0.1s linear, left 0.1s linear",
 };
@@ -49,6 +49,7 @@ export const SOCKET = {
         KEY: "key",
         PADDLE: "paddle",
         BALL: "ball",
+        SCORE: "score",
     },
     VALUE: {
         KEY: {
