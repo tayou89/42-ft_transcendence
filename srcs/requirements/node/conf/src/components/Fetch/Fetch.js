@@ -21,8 +21,9 @@ class Fetch {
             const url = DEFAULT_URL + path;
             const details = { method: 'GET', credentials: 'include' };
             const response = await fetch(url, details);
+            const blob = await fetch(response.blob());
 
-            console.log("This is photo response:", response);
+            console.log(blob);
             if (!response.ok)
                 throw new Error(`response isn't ok for url ${url}`);
             return (response);

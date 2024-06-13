@@ -24,3 +24,9 @@
     align-items: baseline;
     font-size: 32px;
 }
+
+#photo {
+    display: flex;
+    justify-content: end;
+    align-items: baseline;
+}

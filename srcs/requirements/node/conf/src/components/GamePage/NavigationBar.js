@@ -1,5 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Fetch from "../Fetch/Fetch.js";
+import { DEFAULT_URL } from "../Fetch/constant.js";
 import "../../css/game-page/navigation-bar.css"
 
 function NavigationBar({myData}) {
@@ -15,15 +16,15 @@ function NavigationBar({myData}) {
 function User({myData}) {
     try {
         const my = JSON.parse(`${myData}`);
+        const photoURL = DEFAULT_URL + my.avatar;
         return (
             <div className="row">
-                <div className="col" id="photo"></div>
+                <img className="col" id="photo" src={photoURL} />
                 <div className="col" id="userId">{my.name}</div>
             </div>
         );
     }
     catch (error) {
-        console.log("Error:", error);
     }
 }
 
