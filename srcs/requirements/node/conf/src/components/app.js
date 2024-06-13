@@ -5,7 +5,6 @@ import UserPage from "./UserPage.js";
 import Login from "./login.js";
 import Interchange from "./interchange.js";
 import GamePage from "./GamePage/GamePage.js";
-import Interchange from "./interchange.js";
 
 function App() {
 	return (
