@@ -30,16 +30,16 @@ function Home() {
 			})
 			.then(data => {
 				if (data.detail === "Given token not valid for any token type") {
-					navigate("/login");
+					navigate("/");
 				} else if (data.detail === "Authentication credentials were not provided.") {
-					navigate("/login");
+					navigate("/");
 				} else {
 					setMyData(() => data);
 				}
 			})
 			.catch(error => {
 				console.log(error);
-				navigate("/login");
+				navigate("/");
 			});
 	}, []);
 	return (
