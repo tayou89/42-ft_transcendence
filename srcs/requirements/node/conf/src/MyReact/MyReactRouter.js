@@ -29,9 +29,16 @@ export function Link({to, children, ...others}) {
     )
 }
 
+export function navigate(to) {
+    window.history.pushState({}, "", to);
+    const navigationEvent = new PopStateEvent("navigate");
+    window.dispatchEvent(navigationEvent);
+}
+
 const MyReactRouter = {
     Router: Route,
     Link,
+    navigate,
 };
 
 export default MyReactRouter;

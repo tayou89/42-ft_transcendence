@@ -1,16 +1,27 @@
 import MyReact from "../MyReact/MyReact.js";
 import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
+import getCookieValue from "./utility/getCookieValue.js";
+import { navigate } from "../MyReact/MyReactRouter.js";
 
-function Navbar() {
-  return (
-    <nav className="navbar navbar-expand-sm bg-black navbar-dark">
-      <div className="container-fluid">
-        <Link to="/" className="navbar-brand">트센</Link>
-        <a style=" text-decorator: none; text-decoration-line: none; color: white; font-size: 1.2em" href='http://localhost:8000/api/login/'>로그인</a>
-        <Link to="/room" className="navbar-brand">room</Link>
-      </div>	
-    </nav>
-  )
+function Navbar({name, profileImg}) {
+	
+	return (
+		<div className="container-fluide border-bottom">
+			<div className="container">
+				<nav className="navbar navbar-expand-sm navbar-dark">
+					<div className="container-fluid">
+						<Link to="/home" className="navbar-brand">42 Pong</Link>
+						<div>
+							<img className="rounded-circle"
+								width="30" height="30"
+								src={profileImg} />
+							<Link to="/profile" className="navbar-brand ps-2 text-light">{name}</Link>
+						</div>
+					</div>
+				</nav>
+			</div>
+		</div>
+	);
 }
 
 export default Navbar;
