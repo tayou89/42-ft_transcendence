@@ -2,7 +2,6 @@
 # from django.core.cache import cache
 # from django.http import JsonResponse
 
-from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.renderers import JSONRenderer
@@ -11,7 +10,7 @@ from .models import Room, RoomSerializer
 
 from django.shortcuts import render
 
-class RoomViewset(viewsets.Viewset):
+class RoomViewset(viewsets.ViewSet):
 	renderer_classes = [JSONRenderer]
 	# permission_classes = [CustomPermission]
  
@@ -27,10 +26,6 @@ class RoomViewset(viewsets.Viewset):
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-	
-
-
-class RoomCreateView(ListAPIView):
 
 def index(request):
 	return render(request, "index.html")

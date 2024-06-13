@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+
 import random
 
 class UserManager(BaseUserManager):
@@ -48,9 +49,6 @@ class MatchHistory(models.Model):
 	p1_score = models.PositiveIntegerField()
 	p2_score = models.PositiveIntegerField()
 	date = models.DateTimeField(auto_now_add=True)
- 
-	winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='p1')
-	loser = models.ForeignKey(User, on_delete=models.CASCADE, related_name='p2')
 
 	class Meta:
 		indexes = [
@@ -61,7 +59,12 @@ class MatchHistory(models.Model):
 class OTPModel(models.Model):
 	code = models.CharField(max_length=6)
 	created_at = models.DateTimeField(auto_now_add=True)
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
+ 
+	class Meta:
+		indexes = [
+			models.Index(fields=['user'])
+		]
 
 	def save(self, *args, **kwargs):
 		key_set = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"

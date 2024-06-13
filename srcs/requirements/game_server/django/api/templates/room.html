@@ -22,7 +22,7 @@
 	<ul id="messages"></ul>
     <form id="form" action="">
 		<input id="name" autocomplete="off" /><input id="input" autocomplete="off" /><br>
-		<button>SEND</button><button id='create' >CREATE</button><button id='join' >JOIN</button><button id='leave' >LEAVE</button><button id='ready' >READY</button>
+		<button id='move'>MOVE</button><button id='create' >CREATE</button><button id='join' >JOIN</button><button id='leave' >LEAVE</button><button id='ready' >READY</button>
 	</form>
     <script>
 		const socket = io('http://localhost:8001/api/pong');
@@ -35,6 +35,8 @@
 		const leave_room = document.getElementById('leave');
 		const ready = document.getElementById('ready');
 		const create = document.getElementById('create');
+		const move = document.getElementById('move');
+
 	  
 		window.addEventListener('beforeunload', (e) => {
 			socket.disconnect();
@@ -51,18 +53,26 @@
 		join_room.addEventListener('click', (e) => {
 			e.preventDefault();
 			if (input.value) {
-				const message = {'player': name.value, 'room': input.value, 'type': 'enter'};
-				socket.emit('enter_pong_room', message);
+				const message = {'pid': 1, 'room': "hello world!"};
+				socket.emit('join_room', message);
 			}
 		});
 
 		leave_room.addEventListener('click', (e) => {
 			e.preventDefault();
 			if (input.value) {
-				const message = {'player': name.value, 'room': input.value};
-				socket.emit('leave_pong_room', message);
+				const message = {'pid': 1, 'room': "hello world!"};
+				socket.emit('leave_room', message);
 			}
 		});
+
+		move.addEventListener('click', (e) => {
+			e.preventDefault();
+			const message = {'dir': 1};
+			socket.emit('move_paddle', message);
+		});
+
+
 
 		create.addEventListener('click', (e) => {
 			e.preventDefault();
@@ -76,10 +86,8 @@
 			e.preventDefault();
 			if (input.value) {
 				const message = {
-					'player': name.value,
-					'room': input.value,
-					'status': "ready"};
-				socket.emit('make_ready', message);
+					'ready': true};
+				socket.emit('ready', message);
 			}
 		});
 	  

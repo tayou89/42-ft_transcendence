@@ -2,13 +2,10 @@
 import requests
 import os
 
-from django.http import JsonResponse
 from django.views.generic import RedirectView
 from django.core.files.base import ContentFile
 
 from django.shortcuts import redirect
-
-from rest_framework_simplejwt.tokens import RefreshToken
 
 from ..models import User, OTPModel
 from ._serializer import UserSerializer
@@ -29,8 +26,10 @@ def after_login(request):
 	user = get_user_info(access_token)
 	user_instance = save_user_info(user)
 	make_otp_code(user_instance)
-	response = make_jwt_token(user_instance)
-
+ 
+	# response = redirect('http://localhost:8080/emailotp')
+	response = redirect('http://localhost:8080')
+	response.set_cookie('pk', user_instance.pk, httponly=True)
 	return response
 
 
@@ -72,6 +71,7 @@ def save_user_info(data):
 	return user
 
 
+
 def get_user_info(access_token):
 
 	url = 'https://api.intra.42.fr/v2/me'
@@ -90,22 +90,12 @@ def make_otp_code(user_instance):
 	user_otp, tmp = OTPModel.objects.get_or_create(user=user_instance)
 	user_otp.save()
 
-	# send_mail(
-	# 	"ft_transcendence OTP",
-	# 	f'''your OTP code is
-	# 	{user_otp.code}
-	# 	input in 5 minute''',
-	# 	"tkdwjd4512@gmail.coms", 
-	# 	[user.email]
-	# )
-
-
-def make_jwt_token(user_instance):
-
-	token = RefreshToken.for_user(user_instance)
-
-	response = redirect('http://localhost:8080/')
-	response.set_cookie('jwt', str(token.access_token), httponly=True)
-	response.set_cookie('refresh', str(token), httponly=True)
-
-	return response
+	send_mail(
+		"ft_transcendence OTP",
+		f'''your OTP code is
+		{user_otp.code}
+		input in 3 minute''',
+		"Don't Reply <do_not_reply@domain.example>", 
+		[user_instance.email]
+	)
+ 

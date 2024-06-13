@@ -1,10 +1,16 @@
 
-HEIGHT = 100
-WIDTH = 200
-END_SCORE = 7
-PADDLE_LENGTH = 0
-P1 = 0
-P2 = 1
+from enum import Enum
+
+class GameInfo(Enum):
+	HEIGHT = 800
+	WIDTH = 1300
+ 
+	PADDLE_HEIGHT = 60
+	PADDLE_WIDTH = 12
+	PADDLE_OFFSET = 50
+ 
+	BALL_RADIUS = 15
+	END_SCORE = 7
 
 class GameState:
 
@@ -55,43 +61,47 @@ class GameState:
 
 	def unearned_win(self, player):
 		if player == 'p1':
-			self.p1_score = END_SCORE
+			self.p1_score = GameInfo.END_SCORE
 			self.p2_score = 0
 		else:
 			self.p1_score = 0
-			self.p2_score = END_SCORE
+			self.p2_score = GameInfo.END_SCORE
+
 
 	def update_game(self):
 		x, y = self.ball_position
 		dx, dy = self.ball_dir
 
-		if y >= HEIGHT or y <= -HEIGHT:
+		# 공의 위치 업데이트
+		if y >= GameInfo.HEIGHT - GameInfo.BALL_RADIUS or y <= GameInfo.BALL_RADIUS:
 			dy = -dy
-		
-		if x >= WIDTH:
-			if abs(self.p2_paddle - y) < PADDLE_LENGTH:
+
+		if x >= GameInfo.WIDTH - GameInfo.BALL_RADIUS - GameInfo.PADDLE_OFFSET - GameInfo.PADDLE_WIDTH:
+			if self.p2_paddle - GameInfo.PADDLE_HEIGHT // 2 <= y <= self.p2_paddle + GameInfo.PADDLE_HEIGHT // 2:
 				dx = -dx
 			else:
-				x, y = 0, 0
-				self.p2_score += 1
-		
-		if x <= -WIDTH:
-			if abs(self.p1_paddle - y) < PADDLE_LENGTH:
-				dx = -dx
-			else:
-				x, y = 0, 0
+				x, y = GameInfo.WIDTH // 2, GameInfo.HEIGHT // 2
 				self.p1_score += 1
+				dx = -dx
+
+		if x <= GameInfo.BALL_RADIUS + GameInfo.PADDLE_OFFSET + GameInfo.PADDLE_WIDTH:
+			if self.p1_paddle - GameInfo.PADDLE_HEIGHT // 2 <= y <= self.p1_paddle + GameInfo.PADDLE_HEIGHT // 2:
+				dx = -dx
+			else:
+				x, y = GameInfo.WIDTH // 2, GameInfo.HEIGHT // 2
+				self.p2_score += 1
+				dx = -dx
 
 		self.ball_position = (x + dx, y + dy)
 		self.ball_dir = (dx, dy)
 
-		if abs(self.p1_paddle + self.p1_paddle_dir) <= HEIGHT - (PADDLE_LENGTH / 2):
+		if 0 <= self.p1_paddle + self.p1_paddle_dir <= GameInfo.HEIGHT - GameInfo.PADDLE_HEIGHT:
 			self.p1_paddle += self.p1_paddle_dir
-   
-		if abs(self.p2_paddle + self.p2_paddle_dir) <= HEIGHT - (PADDLE_LENGTH / 2):
+
+		if 0 <= self.p2_paddle + self.p2_paddle_dir <= GameInfo.HEIGHT - GameInfo.PADDLE_HEIGHT:
 			self.p2_paddle += self.p2_paddle_dir
 
-		if self.p1_score == END_SCORE or self.p2_score == END_SCORE:
+		if self.p1_score == GameInfo.END_SCORE or self.p2_score == GameInfo.END_SCORE:
 			self.game_end = True
 
 	def update_paddle_dir(self, player, dir):
