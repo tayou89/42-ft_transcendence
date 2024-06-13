@@ -6,11 +6,26 @@ class Fetch {
             const url = `${DEFAULT_URL}/api/users/me`;
             const details = { method: 'GET', credentials: 'include' };
             const response = await fetch(url, details);
-            const myData = await response.json();
+            const data = await response.json();
 
             if (!response.ok)
                 throw new Error(`response isn't ok for url ${url}`);
-            return (myData);
+            return (data);
+        }
+        catch (error) {
+            console.error("Error", error);
+        }
+    }
+    static async photo(path) {
+        try {
+            const url = DEFAULT_URL + path;
+            const details = { method: 'GET', credentials: 'include' };
+            const response = await fetch(url, details);
+
+            console.log("This is photo response:", response);
+            if (!response.ok)
+                throw new Error(`response isn't ok for url ${url}`);
+            return (response);
         }
         catch (error) {
             console.error("Error", error);

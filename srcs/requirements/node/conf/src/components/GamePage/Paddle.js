@@ -5,7 +5,6 @@ function Paddle({id}) {
     const [paddleY, setPaddleY] = useState(PADDLE.INITIAL_Y);
     const style = getStyle(paddleY, id);
 
-    console.log("paddleY:", paddleY)
     getEffect(paddleY, setPaddleY, id);
     return (
         <div id={id} style={style}></div>
