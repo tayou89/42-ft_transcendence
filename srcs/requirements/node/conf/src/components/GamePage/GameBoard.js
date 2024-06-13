@@ -26,7 +26,7 @@ function PlayerSlot({id}) {
 function Board() {
     return (
         <div className="col" id="board">
-            {/* <Ball id="ball" /> */}
+            <Ball id="ball" />
             <Paddle id="paddle1" />
             <Paddle id="paddle2" />
         </div>

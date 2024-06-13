@@ -2,6 +2,7 @@ import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import NavigationBar from "./NavigationBar.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
+import { KEY, SOCKET, socket } from "./constant.js";
 import "../../css/game-page/game-page.css";
 
 function GamePage() {
