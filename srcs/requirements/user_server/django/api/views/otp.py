@@ -14,10 +14,9 @@ class OTPCheckView(APIView):
 		otp = OTPModel.objects.get(user=pk)
   
 		form_data = request.POST.get('code', None)
-  
+
 		if now - otp.created_at > timedelta(minutes=3):
 			return Response({'result': 'code has expired'})
-
 
 		if form_data == otp.code:
 			user_instance = User.objects.get(pk=pk)
