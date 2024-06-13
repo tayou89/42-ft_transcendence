@@ -1,6 +1,22 @@
 
+import socketio
 from . import sio, manager, room_list, sid_table, lock
 from .game_statge import GameState
+
+from asgiref.sync import sync_to_async
+
+class Pong(socketio.AsyncNamespace):
+	async def on_connect(self, sid, environ):
+		pass
+	
+	async def on_disconnect(self, sid, environ):
+		pass
+	
+	@sync_to_async
+	def make_room(self)
+	
+
+sio.register_namespace(Pong('/api/pong'))
 
 
 @sio.event
@@ -74,7 +90,7 @@ async def play_pong(room_name):
 	await sio.sleep(5)
 	
 	while game.is_ended() == False:
-     
+	 
 		async with lock:
 			if len(room_list[room_name]) != 3:
 				if 'p1' in room_list[room_name]:

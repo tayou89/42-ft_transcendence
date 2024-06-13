@@ -41,16 +41,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 	
 
 class MatchHistory(models.Model):
-	left = models.ForeignKey(User, on_delete=models.CASCADE, related_name='left')
-	right = models.ForeignKey(User, on_delete=models.CASCADE, related_name='right')
-	left_score = models.PositiveIntegerField()
-	right_score = models.PositiveIntegerField()
+	p1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='p1')
+	p2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='p2')
+	p1_score = models.PositiveIntegerField()
+	p2_score = models.PositiveIntegerField()
 	date = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
 		indexes = [
-			models.Index(fields=['left']),
-			models.Index(fields=['right']),
+			models.Index(fields=['p1']),
+			models.Index(fields=['p2']),
 		]
 
 class OTPModel(models.Model):

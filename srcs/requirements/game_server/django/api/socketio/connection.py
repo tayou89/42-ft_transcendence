@@ -6,16 +6,10 @@ sio = socketio.AsyncServer(
     async_mode='asgi',
     client_manager=manager,
     cors_allowed_origins=[
-		'http://localhost:8001',
-		'https://admin.socket.io',
+		'http://localhost:8080',
 	],
 	logger=True, engineio_logger=True
 )
-
-sio.instrument(auth={
-    'username': 'admin',
-    'password': '1234',
-})
 
 lock = asyncio.Lock()
 

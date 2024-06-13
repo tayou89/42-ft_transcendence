@@ -66,6 +66,9 @@ module.exports = {
     extensions: ['.js'],
   },
   devtool: "inline-source-map",
+  devServer: {
+    historyApiFallback: true,
+  },
   mode: "development",
 //   devServer: {
 //     contentBase: path.join(__dirname, 'public'),
