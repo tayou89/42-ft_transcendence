@@ -3,14 +3,13 @@ import NavigationBar from "./NavigationBar.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import Fetch from "../Fetch/Fetch.js";
-import { KEY, SOCKET } from "./constant.js";
+import { KEY, SOCKET, socket } from "./constant.js";
 import "../../css/game-page/game-page.css";
-
-const socket = io("http://localhost:8001/api/pong")
-
 
 function GamePage() {
     const [myData, setMyData] = useState("");
+
+	
 
     // getMyData(myData, setMyData);
     addKeyEvent();
@@ -57,7 +56,7 @@ function handleKeyDown(event) {
 
 function handleKeyUp(event) {
     if (KEY.UP.includes(event.key) || KEY.DOWN.includes(event.key))
-        socket.emit(SOCKET.EVENT.KEY, 1);
+        socket.emit(SOCKET.EVENT.KEY, 0);
 }
 
 export default GamePage;

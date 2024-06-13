@@ -1,9 +1,6 @@
 import {io} from "socket.io-client";
 
-export const socket = io("http://localhost:8001/api/pong", {
-    reconnection: false,
-    autoConnect: false,
-});
+export const socket = io("http://localhost:8001/api/pong");
 
 export const BOARD = {
     WIDTH: 1300,

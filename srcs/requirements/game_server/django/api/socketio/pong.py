@@ -1,4 +1,5 @@
 
+
 import socketio
 import asyncio
 
@@ -18,7 +19,55 @@ class Pong(socketio.AsyncNamespace):
 		super().__init__(namespace)
  
 	async def on_connect(self, sid, environ):
-		pass
+		field_list = ['p1', 'p2']
+		pid = '1'
+		room_name = 'hello'
+  
+		room = await sync_to_async(Room.objects.get)(name=room_name)
+  
+		if room.cur_users == 2:
+			await sio.emit(
+	   			'message',
+		  		{'err': 'room is full'},
+				room=sid,
+			 	namespace=self.namespace
+			)
+			return
+		
+		for field in field_list:
+			if getattr(room, field, None) is None:
+				setattr(room, field, pid)
+				break
+  
+		room.cur_users += 1
+		await self.enter_room(sid, room_name)
+  
+		cur_room = self.rooms.get(room_name)
+		if cur_room is None:
+			self.rooms[room_name] = {
+				"p1": {"pid": pid, "ready": False},
+				"p2": None,
+			}
+			await self.save_session(sid, {'me': 'p1', 'room': room_name})
+		else:
+			for key, value in cur_room.items():
+				if value is None:
+					self.rooms[room_name][key] = {"pid": pid, "ready": False} 
+					break
+			await self.save_session(sid, {'me': 'p2', 'room': room_name})
+  
+		await sync_to_async(room.save)()
+   
+		await sio.emit(
+				'message',
+				self.rooms[room_name],
+				room=room_name,
+				namespace=self.namespace
+		)
+  
+		if room.cur_users == 2:
+			await self.play_pong(room_name)
+  
 	
 	async def on_disconnect(self, sid):
 		field_list = ['p1', 'p2']
@@ -159,15 +208,36 @@ class Pong(socketio.AsyncNamespace):
 				game.update_game()
 
 			await sio.emit(
-				'message',
-				{
-					"ball_position": game.get_ball_position(),
-					'paddle': game.get_bar_position(),
-					'score': game.get_score()
-				},
+				'ball',
+				game.get_ball_position(),
 				room=room_name,
 				namespace=self.namespace
 			)
+   
+			await sio.emit(
+				'paddle',
+				game.get_bar_position(),
+				room=room_name,
+				namespace=self.namespace
+			)
+   
+			await sio.emit(
+				'score',
+				game.get_score(),
+				room=room_name,
+				namespace=self.namespace
+			)
+
+			# await sio.emit(
+			# 	'message',
+			# 	{
+			# 		"ball_position": game.get_ball_position(),
+			# 		'paddle': game.get_bar_position(),
+			# 		'score': game.get_score()
+			# 	},
+			# 	room=room_name,
+			# 	namespace=self.namespace
+			# )
 
 			await sio.sleep(1)
 	

@@ -39,7 +39,7 @@ function getEffect(ball) {
                 ball.setY(() => newY);
             animationFrameId = requestAnimationFrame(updatePosition);
         };
-        const handleBallEvent = (([ x, y ]) => {
+        const handleBallEvent = (( x, y ) => {
             newX = x;
             newY = y;
         });
