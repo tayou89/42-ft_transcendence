@@ -23,7 +23,7 @@ function getStyle(ballX, ballY) {
         width: ${BALL.WIDTH}px;
         height: ${BALL.HEIGHT}px;
         border-radius: ${BALL.RADIUS}px;
-        background: ${BALL.BACKGROUND};
+        background: radial-gradient(circle at 30% 30%, ${BALL.COLOR}, #808080);
         transition: 'top 0.1s linear, left 0.1s linear',
     `;
 

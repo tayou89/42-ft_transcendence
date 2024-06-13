@@ -27,7 +27,7 @@ function getStyle(valueY, id){
         left: ${getX(id)}px;
         top: ${valueY}px;
         border-radius: ${PADDLE.BORDER_RADIUS}px;
-        background: ${PADDLE.BACKGROUND};
+        background: linear-gradient(to ${getPositoin(id)}, ${PADDLE.COLOR} 50%, black 100%);
 		transition: ${PADDLE.TRANSITION};
 	`
     return (style);
