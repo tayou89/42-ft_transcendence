@@ -1,11 +1,5 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import {BOARD, PADDLE, KEY, SOCKET} from "./constant.js";
-import {io} from "socket.io-client";
-
-const socket = io("http://localhost:8080", {
-    reconnection: false,
-    autoConnect: false,
-});
+import {BOARD, PADDLE, KEY, SOCKET, socket} from "./constant.js";
 
 function Paddle({id}) {
     const [paddleY, setPaddleY] = useState(PADDLE.INITIAL_Y);
@@ -34,42 +28,23 @@ function getStyle(valueY, id){
 }
 
 function getEffect(paddleY, setPaddleY, id) {
-    const myNumber = (id === "paddle1") ? 1 : 2;
+    let newY = paddleY;
 
     useEffect(() => {
-        let moveDirection = 0;
         let animationFrameId = null;
         const updatePosition = () => {
-            const newPaddleY = paddleY + moveDirection * 16;
-
-            if (moveDirection !== PADDLE.DIRECTION.NONE){
-                if (newPaddleY >= PADDLE.MIN_Y && newPaddleY <= PADDLE.MAX_Y)
-                    setPaddleY(newPaddleY);
-            }
+            if (newY != paddleY && newY >= PADDLE.MIN_Y && newY <= PADDLE.MAX_Y)
+                setPaddleY((_) => newY);
             animationFrameId = requestAnimationFrame(updatePosition);
         };
-        const handleKeyDown = (event) => {
-            if (KEY.UP.includes(event.key))
-                socket.emit(SOCKET.EVENT.KEY, -1);
-            else if (KEY.DOWN.includes(event.key))
-                socket.emit(SOCKET.EVENT.KEY, 1);
+        const handlePaddleEvent = ({ p1, p2 }) => {
+            newY = (id === "paddle1") ? p1 : p2;
         };
-        const handleKeyUp = (event) => {
-            if (KEY.UP.includes(event.key) || KEY.DOWN.includes(event.key))
-                socket.emit(SOCKET.EVENT.KEY, 1);
-        }
 
-        socket.on(SOCKET.EVENT.PADDLE, (paddleNumber, direction) => {
-            if (paddleNumber === myNumber)
-                moveDirection = direction;
-        });
-        document.addEventListener("keydown", handleKeyDown);
-        document.addEventListener("keyup", handleKeyUp);
         animationFrameId = requestAnimationFrame(updatePosition);
+        socket.on(SOCKET.EVENT.PADDLE, handlePaddleEvent);
         return (() => {
-            cancelAnimationFrame(animationFrameId);
-            document.removeEventListener("keydown", handleKeyDown);
-            document.removeEventListener("keyup", handleKeyUp);
+            socket.off(SOCKET.EVENT.PADDLE);
         });
     }, [paddleY]);
 }

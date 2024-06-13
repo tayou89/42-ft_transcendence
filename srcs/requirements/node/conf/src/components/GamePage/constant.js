@@ -1,4 +1,9 @@
-export const socket = io("http://localhost:8080");
+import {io} from "socket.io-client";
+
+export const socket = io("http://localhost:8080", {
+    reconnection: false,
+    autoConnect: false,
+});
 
 export const BOARD = {
     WIDTH: 1300,
