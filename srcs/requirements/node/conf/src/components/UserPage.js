@@ -2,6 +2,7 @@ import { useEffect, useState, MyReact } from "../MyReact/MyReact.js";
 import Navbar from "./Navbar.js";
 import Btn from "./utility/Btn.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
+import tokenRefreshAndGoTo from "./utility/tokenRefreshAndGoTo";
 
 function UserPage() {
 	const [name, setName] = MyReact.useState("default");
@@ -16,10 +17,8 @@ function UserPage() {
 				return response.json();
 			})
 			.then(data => {
-				if (data.detail === "Given token not valid for any token type") {
-					navigate("/login");
-				} else if (data.detail === "Authentication credentials were not provided.") {
-					navigate("/login");
+				if (data.detail) {
+					tokenRefreshAndGoTo("/profile");
 				} else {
 					setName(() => data.name);
 					setProfileImg(() => data.avatar);
