@@ -61,7 +61,7 @@ class UserVeiwSet(viewsets.ModelViewSet):
 	def matches(self, request):
 		user = self.get_object()
 
-		matches = MatchHistory.objects.filter(left=user) | MatchHistory.objects.filter(right=user)
+		matches = MatchHistory.objects.filter(p1=user) | MatchHistory.objects.filter(p2=user)
 		serializer = MatchSerializer(matches, many=True)
 
 		return Response(serializer.data)

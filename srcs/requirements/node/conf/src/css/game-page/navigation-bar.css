@@ -1,0 +1,26 @@
+#navigation-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: solid white 0.5px;
+    color: white;
+}
+
+#title {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    font-size: 60px;
+    background: linear-gradient(to top, white,  rgb(120, 120, 120));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+#user {
+    display: flex;
+	padding-right: 30px;
+    justify-content: end;
+    align-items: baseline;
+    font-size: 32px;
+}

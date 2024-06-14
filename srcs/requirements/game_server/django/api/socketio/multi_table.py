@@ -1,7 +1,7 @@
 
 
 from . import sio, manager, room_list, room_table, lock
-from .game_statge import GameState
+from .game_state import GameState
 
 @sio.event
 async def enter_mtt_room(sid, message):

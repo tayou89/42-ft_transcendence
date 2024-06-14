@@ -40,7 +40,7 @@ class MyRefreshToken(APIView):
 			try:
 				new_token = RefreshToken(refresh_token)
 			except:
-				return Response({"refresh": "blacklisted token"})
+				return Response({"refresh": "blacklisted token"}, status=status.HTTP_401_UNAUTHORIZED)
 
 			response = Response(status=204)
 			response.set_cookie('jwt', str(new_token.access_token), httponly=True)
@@ -49,7 +49,6 @@ class MyRefreshToken(APIView):
 		else:
 			return Response({"refresh": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-		
 
 class log_out(APIView):
 	def post(self, request):

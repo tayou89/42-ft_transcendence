@@ -1,131 +1,268 @@
 
+
 import socketio
-from . import sio, manager, room_list, sid_table, lock
-from .game_statge import GameState
+import asyncio
+
+from . import sio, manager
+from .game_state import GameState
+from ..models import Room, RoomSerializer
 
 from asgiref.sync import sync_to_async
 
 class Pong(socketio.AsyncNamespace):
+	
+	rooms = {}
+	locker = {}
+	games = {}
+	
+	def __init__(self, namespace=None):
+		super().__init__(namespace)
+ 
 	async def on_connect(self, sid, environ):
-		pass
-	
-	async def on_disconnect(self, sid, environ):
-		pass
-	
-	@sync_to_async
-	def make_room(self)
-	
+		await self.enter_room(sid, "hello")
+		await sio.start_background_task(self.play_pong, "hello")
 
-sio.register_namespace(Pong('/api/pong'))
-
-
-@sio.event
-async def enter_pong_room(sid, message):
-	room_name = message['room']
-	player = message['player']
-	type = message['type']
-
-	if type == 'create':
-		if  room_name in room_list:
-			await sio.emit('message', {'err': 'already exist'}, room=sid)
-			return
-		else:
-			room_list[room_name] = {
-				"type": "single",
-				"p1": {"name": player, 'is_ready': False},
-			}
-			await sio.enter_room(sid, room_name)
-			await sio.emit('message', room_list[room_name], room=room_name)
-   
-	else:
-		if len(room_list[room_name]) == 3:
-			await sio.emit('message', {'err': 'room is full'}, room=sid)
-			return
-
-		await sio.enter_room(sid, room_name)
-						
-		cur_room = room_list[room_name]
-		cur_room["p2"] = {"name": player, 'is_ready': False}
-		sid_table[sid] = {'player': player, 'room': room_name}
-
-		await sio.emit('message', cur_room, room=room_name)
-
-
-
-@sio.event
-async def leave_pong_room(sid, message):
-	room_name = message['room']
-	player = message['player']
- 
-	if room_list[room_name]['p1']['name'] == player:
-		room_list[room_name].pop('p1')
-	else :
-		room_list[room_name].pop('p2')
- 
-	await sio.leave_room(sid, room_name)
-	sid_table.pop(sid)
-
-
-
-@sio.event
-async def make_ready(sid, message):
-	player = message['player']
-	cur_room = room_list[message['room']]
-	flag = True if message['status'] == 'ready' else False
-	
-	if cur_room['p1']['name'] == player:
-		cur_room['p1']['is_ready'] = flag
-	else:
-		cur_room['p2']['is_ready'] = flag
+		# field_list = ['p1', 'p2']
+		# pid = '1'
+		# room_name = 'hello'
   
-	await sio.emit('message', cur_room, room=message['room'])
-
-	if cur_room['p1']['is_ready'] and cur_room['p2']['is_ready']:
-		await sio.start_background_task(play_pong, message['room'])	
-
-
-
-async def play_pong(room_name):
-	game = GameState()
-	await sio.sleep(5)
+		# room = await sync_to_async(Room.objects.get)(name=room_name)
+  
+		# if room.cur_users == 2:
+		# 	# await sio.emit(
+	   	# 	# 	'message',
+		#   	# 	{'err': 'room is full'},
+		# 	# 	room=sid,
+		# 	#  	namespace=self.namespace
+		# 	# )
+		# 	return
+		
+		# for field in field_list:
+		# 	if getattr(room, field, None) is None:
+		# 		setattr(room, field, pid)
+		# 		break
+  
+		# room.cur_users += 1
+		# await self.enter_room(sid, room_name)
+  
+		# cur_room = self.rooms.get(room_name)
+		# if cur_room is None:
+		# 	self.rooms[room_name] = {
+		# 		"p1": {"pid": pid, "ready": False},
+		# 		"p2": None,
+		# 	}
+		# 	await self.save_session(sid, {'me': 'p1', 'room': room_name})
+		# else:
+		# 	for key, value in cur_room.items():
+		# 		if value is None:
+		# 			self.rooms[room_name][key] = {"pid": pid, "ready": False} 
+		# 			break
+		# 	await self.save_session(sid, {'me': 'p2', 'room': room_name})
+  
+		# await sync_to_async(room.save)()
+   
+		# await sio.emit(
+		# 		'message',
+		# 		self.rooms[room_name],
+		# 		room=room_name,
+		# 		namespace=self.namespace
+		# )
+  
+		# if room.cur_users == 2:
+		# 	await sio.start_background_task(self.play_pong, room_name)
+  
 	
-	while game.is_ended() == False:
-	 
-		async with lock:
-			if len(room_list[room_name]) != 3:
-				if 'p1' in room_list[room_name]:
-					game.unearned_win('p1')
-				else:
-					game.unearned_win('p2')
+	async def on_disconnect(self, sid):
+		field_list = ['p1', 'p2']
+		info = await self.get_session(sid)
+		me = info.get('me')
+		room_name = info.get('room')
+  
+		self.rooms[room_name][me] = None
+		await self.save_session(sid, None)
+		room_db = await sync_to_async(Room.objects.get)(name=room_name)
+		
+		for field in field_list:
+			if field == me:
+				setattr(room_db, field, None)
+				break
+		room_db.cur_users -= 1
+		if room_db.cur_users == 0:
+			await sync_to_async(room_db.delete)()
+		else:
+			await sync_to_async(room_db.save)()
+			await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
+		
+
 	
-			game.update_game()
+	async def on_join_room(self, sid, message):
+		field_list = ['p1', 'p2']
+		pid = message['pid']
+		room_name = message['room']
+  
+		room = await sync_to_async(Room.objects.get)(name=room_name)
+  
+		if room.cur_users == 2:
+			await sio.emit(
+	   			'message',
+		  		{'err': 'room is full'},
+				room=sid,
+			 	namespace=self.namespace
+			)
+			return
+		
+		for field in field_list:
+			if getattr(room, field, None) is None:
+				setattr(room, field, pid)
+				break
+  
+		room.cur_users += 1
+		await self.enter_room(sid, room_name)
+  
+		cur_room = self.rooms.get(room_name)
+		if cur_room is None:
+			self.rooms[room_name] = {
+				"p1": {"pid": pid, "ready": False},
+				"p2": None,
+			}
+			await self.save_session(sid, {'me': 'p1', 'room': room_name})
+		else:
+			for key, value in cur_room.items():
+				if value is None:
+					self.rooms[room_name][key] = {"pid": pid, "ready": False} 
+					break
+			await self.save_session(sid, {'me': 'p2', 'room': room_name})
+  
+		await sync_to_async(room.save)()
    
 		await sio.emit(
-	  		'message',
-			{
-				"ball_position": game.get_ball_position(),
-				'paddle': game.get_bar_position(),
-				'score': game.get_score()
-			},
-		 	room=room_name
+				'message',
+				self.rooms[room_name],
+				room=room_name,
+				namespace=self.namespace
+		)
+  
+  
+	async def on_leave_room(self, sid, message):
+		field_list = ['p1', 'p2']
+		info = await self.get_session(sid)
+		me = info.get('me')
+		room_name = info.get('room')
+  
+		room = await sync_to_async(Room.objects.get)(name=room_name)
+		
+		for field in field_list:
+			if field == me:
+				setattr(room, field, None)
+				break
+  
+		room.cur_users -= 1
+		await self.leave_room(sid, room_name)
+		self.rooms[room_name][me] = None
+		await self.save_session(sid, None)
+  
+		if room.cur_users == 0:
+			await sync_to_async(room.delete)()
+			self.rooms.pop(room_name)
+		else:
+			await sync_to_async(room.save)()
+			await self.emit(
+	   			'message',
+				self.rooms[room_name],
+				room=room_name,
+				namespace=self.namespace
+			)
+  
+	async def on_ready(self, sid, message):
+		flag = message['ready']
+		info = await self.get_session(sid)
+		me = info.get('me')
+		room_name = info.get('room')
+  
+		self.rooms[room_name][me]['ready'] = flag
+		await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
+  
+		cur_room = self.rooms[room_name]
+		if cur_room['p2'] is not None and cur_room['p2']['ready'] and cur_room['p1']['ready']:
+			await self.play_pong(room_name)
+
+
+	async def play_pong(self, room_name):
+		game = self.games[room_name] = GameState()
+		lock = self.locker[room_name] = asyncio.Lock()
+  
+		# room_db = await sync_to_async(Room.objects.get)(name=room_name)
+		# room_db.in_game = True
+		# await sync_to_async(room_db.save)()
+  
+		await self.emit('message', {'status': 'game starts soon...'}, room=room_name, namespace=self.namespace)
+		await sio.sleep(5)
+		
+		while game.is_ended() == False:
+      
+			# if len(self.rooms[room_name]) != 2:
+			# 	if 'p1' in self.rooms[room_name]:
+			# 		game.unearned_win('p1')
+			# 	else:
+			# 		game.unearned_win('p2')
+			# 	break
+	
+			async with lock:
+				game.update_game()
+
+			await sio.emit(
+				'ball',
+				game.get_ball_position(),
+				room=room_name,
+				namespace=self.namespace
+			)
+   
+			await sio.emit(
+				'paddle',
+				game.get_bar_position(),
+				room=room_name,
+				namespace=self.namespace
+			)
+   
+			await sio.emit(
+				'score',
+				game.get_score(),
+				room=room_name,
+				namespace=self.namespace
+			)
+
+			# await sio.emit(
+			# 	'message',
+			# 	{
+			# 		"ball_position": game.get_ball_position(),
+			# 		'paddle': game.get_bar_position(),
+			# 		'score': game.get_score()
+			# 	},
+			# 	room=room_name,
+			# 	namespace=self.namespace
+			# )
+
+			await sio.sleep(1)
+	
+		await sio.emit(
+			'message',
+			game.get_result(),
+			room=room_name,
+			namespace=self.namespace
 		)
 
-		await sio.sleep(1 / 30)
+	async def move_paddle(self, sid, message):
+		paddle_dir = message['dir']
+		info = await self.get_session(sid)
+		me = info.get('me')
+		room_name = info.get('room')
   
-	await sio.emit(
-		'message',
-		game.get_result(),
-		room=room_name
-	)
+		game = self.games[room_name]
+		lock = self.locker[room_name]
+
+		async with lock:
+			game.update_paddle_dir(me, paddle_dir)
+		self.emit('message', {'json': 'wow'}, room=room_name, namespace=self.namespace)
 
 
-
-@sio.event
-async def move_paddle(sid, message):
-	player = message['player']
-	cur_room = room_list[message['room']]
-	paddle_dir = message['paddle_dir']
-
-	game = room_list['cur_room']
-	async with lock:
-		game.update_paddle_dir(player, paddle_dir)
+sio.register_namespace(Pong('/api/pong'))

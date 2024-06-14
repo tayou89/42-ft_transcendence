@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+
 import random
 
 class UserManager(BaseUserManager):
@@ -27,6 +28,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 	friends = models.ManyToManyField('self', symmetrical=False, blank=True, related_name="friend_set", related_query_name="friend")
+
+	exp = models.PositiveBigIntegerField(default=0)
 
 	password = None
 	last_login = None
@@ -56,7 +59,12 @@ class MatchHistory(models.Model):
 class OTPModel(models.Model):
 	code = models.CharField(max_length=6)
 	created_at = models.DateTimeField(auto_now_add=True)
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
+ 
+	class Meta:
+		indexes = [
+			models.Index(fields=['user'])
+		]
 
 	def save(self, *args, **kwargs):
 		key_set = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
