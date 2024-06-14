@@ -4,9 +4,11 @@ keyShare=4
 keyThreshold=2
 keyFile=/vault/keys/generated_keys.txt
 vaultURL=https://vault:8200
-CERT_PATH="/certs/ca"
-CA_CERT="${CERT_PATH}/ca.crt"
-CA_KEY="${CERT_PATH}/ca.key"
+CERT_PATH="/certs"
+CA_PATH="${CERT_PATH}/ca"
+CA_CERT="${CA_PATH}/ca.crt"
+CA_KEY="${CA_PATH}/ca.key"
+CA_NAME="42_cert"
 JSON_PATH="/vault/settings"
 
 #init vault
@@ -163,8 +165,23 @@ curl --cacert ${CA_CERT} -s -XPOST \
 #creating pki role
 echo "creating pki role."
 curl --cacert ${CA_CERT} -s -XPOST \
-    ${vaultURL}/v1/pki/roles/42_cert \
+    ${vaultURL}/v1/pki/roles/${CA_NAME} \
     -H "X-Vault-Token: ${TOKEN}" \
     --data @${JSON_PATH}/pki_role.json
+
+#creating certificates
+echo "creating certificates."
+CERT_NAMES="es01 es02 kibana logstash filebeat nginx grafana user_server"
+for CERT_NAME in ${CERT_NAMES}; do
+    response=$(curl --cacert ${CA_CERT} -s -XPOST \
+        ${vaultURL}/v1/pki/issue/${CA_NAME} \
+        -H "X-Vault-Token: ${TOKEN}" \
+        --data "{\"common_name\": \"${CERT_NAME}\"}")
+    cert=$(echo ${response} | jq -r .data.certificate | tr ' ' '\n')
+    key=$(echo ${response} | jq -r .data.private_key | tr ' ' '\n')
+    mkdir -p "${CERT_PATH}/${CERT_NAME}"
+    echo ${cert} > "${CERT_PATH}/${CERT_NAME}/${CERT_NAME}.crt"
+    echo ${key} > "${CERT_PATH}/${CERT_NAME}/${CERT_NAME}.key"
+done
 
 echo "==========DONE=========="
