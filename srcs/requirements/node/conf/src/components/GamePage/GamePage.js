@@ -3,34 +3,19 @@ import NavigationBar from "./NavigationBar.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
-import Fetch from "../Fetch/Fetch.js";
 import { KEY, SOCKET, socket } from "./constant.js";
 import "../../css/game-page/game-page.css";
 
 function GamePage() {
-    const [myData, setMyData] = useState("");
-
-    getMyData(myData, setMyData);
     addKeyEvent();
     return (
         <div className="container-fluid" id="game-page">
-            <NavigationBar myData={myData}/>
+            <NavigationBar / >
             <ScoreBoard />
             <GameBoard />
             <BottomLine />
         </div>
     );
-}
-
-function getMyData(myData, setMyData) {
-    useEffect(() => {
-        const callMyData = async() => { 
-            const data = await Fetch.myData();
-
-            setMyData(() => JSON.stringify(data));
-        };
-        callMyData();
-    }, []);
 }
 
 function addKeyEvent() {

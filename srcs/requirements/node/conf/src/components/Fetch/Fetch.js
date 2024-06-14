@@ -1,9 +1,9 @@
 import { DEFAULT_URL} from "./constant.js";
 
 class Fetch {
-    static async myData() {
+    static async userData(id = "me") {
         try {
-            const url = `${DEFAULT_URL}/api/users/me`;
+            const url = `${DEFAULT_URL}/api/users/${id}`;
             const details = { method: 'GET', credentials: 'include' };
             const response = await fetch(url, details);
             const data = await response.json();
