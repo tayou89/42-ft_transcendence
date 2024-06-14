@@ -4,7 +4,7 @@ import Home from "./home/home.js";
 import UserPage from "./UserPage.js";
 import Login from "./login.js";
 import Interchange from "./interchange.js";
-import GamePage from "./GamePage/GamePage.js";
+import GamePage from "./Game/GamePage.js";
 
 function App() {
 	return (

@@ -1,8 +1,8 @@
-import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
+import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Paddle from "./Paddle.js";
 import Ball from "./Ball.js";
 import PlayerSlot from "./PlayerSlot.js";
-import "../../css/game-page/game-board.css";
+import "../../css/game/game-board.css";
 
 function GameBoard() {
     return (

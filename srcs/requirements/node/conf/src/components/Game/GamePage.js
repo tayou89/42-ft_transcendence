@@ -1,10 +1,10 @@
-import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import NavigationBar from "./NavigationBar.js";
+import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import NavigationBar from "../utility/NavigationBar.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
 import { KEY, SOCKET, socket } from "./constant.js";
-import "../../css/game-page/game-page.css";
+import "../../css/game/game-page.css";
 
 function GamePage() {
     addKeyEvent();

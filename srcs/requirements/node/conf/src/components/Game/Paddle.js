@@ -1,4 +1,4 @@
-import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
+import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import {BOARD, PADDLE, KEY, SOCKET, socket} from "./constant.js";
 
 function Paddle({id}) {

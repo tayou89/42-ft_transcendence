@@ -1,29 +1,25 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Fetch from "../Fetch/Fetch.js";
-import "../../css/game-page/navigation-bar.css"
+import "../../css/game/navigation-bar.css"
 
 function NavigationBar() {
-    const [myData, setMyData] = useState("");
+    const [myData, setMyData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    let   data = "";
 
-    getMyData(myData, setMyData);
+    Fetch.setUserData(setMyData, setIsLoading);
+    data = JSON.stringify(myData);
     return (
         <div className="row" id="navigation-bar">
             <div className="col" id="nothing"></div>
-            <div className="col" id="title">42 Pong</div>
-            <div className="col" id="user"><User myData={myData}/></div>
+            <div className="col" id="title-box">
+                <div id="title">42 Pong</div>
+            </div>
+            <div className="col" id="user-box">
+                <User myData={data}/>
+            </div>
         </div>
     );
-}
-
-function getMyData(myData, setMyData) {
-    useEffect(() => {
-        const callMyData = async() => { 
-            const data = await Fetch.myData();
-
-            setMyData(() => JSON.stringify(data));
-        };
-        callMyData();
-    }, []);
 }
 
 function User({myData}) {

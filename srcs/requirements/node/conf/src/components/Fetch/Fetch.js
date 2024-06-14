@@ -1,7 +1,21 @@
+import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import { DEFAULT_URL} from "./constant.js";
 
 class Fetch {
-    static async userData(id = "me") {
+    static setUserData(setData, setIsLoading, userId = "me") {
+        useEffect(() => {
+            const callMyData = async() => { 
+                const userData = await Fetch.userData(userId);
+
+                setData(() => userData);
+                setIsLoading(() => false);
+            };
+            callMyData();
+        }, []);
+    }
+    static async userData(id) {
+        if (!id)
+            throw Error(`Fetch.userData: id doesn't exist: ${id}`);
         try {
             const url = `${DEFAULT_URL}/api/users/${id}`;
             const details = { method: 'GET', credentials: 'include' };
@@ -10,6 +24,8 @@ class Fetch {
 
             if (data.detail)
 				tokenRefreshAndGoTo("/home");
+            if (!response.ok)
+                throw new Error(`response isn't ok for url ${url}`);
             data.photoURL = await this.#photoURL(`/api/users/${data.id}/avatar`);
             return (data);
         }

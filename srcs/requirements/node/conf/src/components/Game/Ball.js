@@ -1,4 +1,4 @@
-import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
+import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { BALL, SOCKET, socket } from "./constant.js";
 
 function Ball({id}) {

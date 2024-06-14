@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { socket, SOCKET } from "./constant.js";
-import "../../css/game-page/score-board.css";
+import "../../css/game/score-board.css";
 
 function ScoreBoard() {
     const [score1, setScore1] = useState(0);
