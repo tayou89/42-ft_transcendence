@@ -4,14 +4,19 @@ keyShare=4
 keyThreshold=2
 keyFile=/vault/keys/generated_keys.txt
 vaultURL=https://vault:8200
+CERT_PATH="/certs/ca"
+CA_CERT="${CERT_PATH}/ca.crt"
+CA_KEY="${CERT_PATH}/ca.key"
+JSON_PATH="/vault/settings"
 
 #init vault
-curl -k -s  ${vaultURL}/v1/sys/init | grep -q -x '{"initialized":true}'
+echo "initializing vault."
+curl --cacert ${CA_CERT} -s  ${vaultURL}/v1/sys/init | grep -q -x '{"initialized":true}'
 if [ $? -eq 0 ]; then
     echo "vault was already initialized."
     exit 0
 else
-    curl -k -s -XPOST \
+    curl --cacert ${CA_CERT} -s -XPOST \
         ${vaultURL}/v1/sys/init \
         --data "{
                 \"secret_shares\": ${keyShare}, \
@@ -28,15 +33,16 @@ else
 fi
 
 #unseal vault
+echo "unsealing vault."
 TOKEN=$(jq -r '.root_token' ${keyFile})
 for i in $(seq 0 $((${keyThreshold} - 1)))
 do
     key=$(jq ".keys[$i]" ${keyFile})
-    curl -k -s -XPOST \
+    curl --cacert ${CA_CERT} -s -XPOST \
         ${vaultURL}/v1/sys/unseal \
         --data "{\"key\": ${key}}"
 done
-curl -k -i -s  ${vaultURL}/v1/sys/health | grep 'HTTP' | awk '{print $2}' | grep -q -x '200'
+curl --cacert ${CA_CERT} -i -s  ${vaultURL}/v1/sys/health | grep 'HTTP' | awk '{print $2}' | grep -q -x '200'
 if [ $? -eq 0 ]; then
     echo "vault was successfully unsealed."
 else
@@ -45,21 +51,22 @@ else
 fi
 
 #create polices
-curl -k -s -XPOST \
+echo "creating policies."
+curl --cacert ${CA_CERT} -s -XPOST \
     ${vaultURL}/v1/sys/policy/server-policy \
     -H "X-Vault-Token: ${TOKEN}" \
     --data @/vault/policies/server_policy.json
-echo "policies were created."
 
 #enable userpass
-curl -k -s -XPOST \
+echo "enabling userpass."
+curl --cacert ${CA_CERT} -s -XPOST \
     ${vaultURL}/v1/sys/auth/userpass \
     -H "X-Vault-Token: ${TOKEN}" \
     --data '{
         "type": "userpass",
         "description": "For Django server"
     }'
-curl -k -s  ${vaultURL}/v1/sys/auth -H "X-Vault-Token: ${TOKEN}" | grep 'userpass/'
+curl --cacert ${CA_CERT} -s  ${vaultURL}/v1/sys/auth -H "X-Vault-Token: ${TOKEN}" | grep 'userpass/'
 if [ $? -eq 0 ]; then
     echo "enable userpass."
 else
@@ -68,14 +75,15 @@ else
 fi
 
 #create userpass
-curl -k -s -XPOST \
+echo "creating userpass."
+curl --cacert ${CA_CERT} -s -XPOST \
     ${vaultURL}/v1/auth/userpass/users/server \
     -H "X-Vault-Token: ${TOKEN}" \
     --data "{
         \"password\": \"${VAULT_SERVER_PASSWORD}\",
         \"token_policies\": [\"server-policy\"]
     }"
-curl -k -s ${vaultURL}/v1/auth/userpass/users/server -H "X-Vault-Token: ${TOKEN}" | grep -q 'request_id'
+curl --cacert ${CA_CERT} -s ${vaultURL}/v1/auth/userpass/users/server -H "X-Vault-Token: ${TOKEN}" | grep -q 'request_id'
 if [ $? -eq 0 ]; then
     echo "create user 'server'."
 else
@@ -84,7 +92,8 @@ else
 fi
 
 #enable kv
-curl -k -s -XPOST \
+echo "enabling kv engine."
+curl --cacert ${CA_CERT} -s -XPOST \
     ${vaultURL}/v1/sys/mounts/kv \
     -H "X-Vault-Token: ${TOKEN}" \
     --data '{
@@ -93,14 +102,14 @@ curl -k -s -XPOST \
                 "version": "2"
             }
         }'
-curl -k -s -XPOST \
+curl --cacert ${CA_CERT} -s -XPOST \
     ${vaultURL}/v1/kv/config \
     -H "X-Vault-Token: ${TOKEN}" \
     --data '{
         "max_versions": 5,
         "cas_required": false
     }'
-curl -s -k -H "X-Vault-Token: ${TOKEN}" ${vaultURL}/v1/sys/mounts | grep -q 'kv/'
+curl -s --cacert ${CA_CERT} -H "X-Vault-Token: ${TOKEN}" ${vaultURL}/v1/sys/mounts | grep -q 'kv/'
 if [ $? -eq 0 ]; then
     echo "enable kv engine."
 else
@@ -108,8 +117,9 @@ else
     exit 1
 fi
 
-#create secrets
-curl -k -s -XPOST \
+#creating secrets.
+echo "creating secrets."
+curl --cacert ${CA_CERT} -s -XPOST \
     ${vaultURL}/v1/kv/data/django-secret \
     -H "X-Vault-Token: ${TOKEN}" \
     --data "{
@@ -118,12 +128,43 @@ curl -k -s -XPOST \
             \"GAME_SERVER_SECRET_KEY\": \"${GAME_SERVER_SECRET_KEY}\"
         }
     }"
-echo "create secrets."
 
-#create prometheus token
+#creating prometheus token
+echo "creating prometheus token."
 TOKEN_PATH="/certs/prometheus/"
 mkdir -p ${TOKEN_PATH}
 echo "${TOKEN}" > ${TOKEN_PATH}/vault_token.txt
-echo "create prometheus token."
+
+#enabling pki engine
+echo "enabling pki engine."
+curl --cacert ${CA_CERT} -s -XPOST \
+    ${vaultURL}/v1/sys/mounts/pki \
+    -H "X-Vault-Token: ${TOKEN}" \
+    --data '{
+            "type": "pki"
+        }'
+
+#importing pki CA
+echo "importing pki CA"
+PKI_JSON="pki.json"
+echo "{\"pem_bundle\":\"$(cat ${CA_CERT})\n$(cat ${CA_KEY})\"}" | sed ':a;N;$!ba;s/\n/\\n/g' > ${PKI_JSON}
+curl --cacert ${CA_CERT} -s -XPOST \
+    ${vaultURL}/v1/pki/config/ca \
+    -H "X-Vault-Token: ${TOKEN}" \
+    --data @${PKI_JSON}
+
+#configuring pki
+echo "configuring pki."
+curl --cacert ${CA_CERT} -s -XPOST \
+    ${vaultURL}/v1/pki/config/urls \
+    -H "X-Vault-Token: ${TOKEN}" \
+    --data @${JSON_PATH}/pki_config.json
+
+#creating pki role
+echo "creating pki role."
+curl --cacert ${CA_CERT} -s -XPOST \
+    ${vaultURL}/v1/pki/roles/42_cert \
+    -H "X-Vault-Token: ${TOKEN}" \
+    --data @${JSON_PATH}/pki_role.json
 
 echo "==========DONE=========="

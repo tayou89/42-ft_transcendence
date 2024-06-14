@@ -31,7 +31,7 @@ until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASS
     do sleep 5;
 done;
 echo "Setting log policies";
-until curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" ${ES_URL}/_ilm/policy/django-policy -d '{"policy":{"phases":{"hot":{"min_age":"0ms","actions":{"rollover":{"max_age":"30d","max_size":"1gb","max_primary_shard_size":"1gb"}}},"warm":{"min_age":"1m","actions":{"set_priority":{"priority":50}}},"cold":{"min_age":"5m","actions":{"set_priority":{"priority":0}}},"delete":{"min_age":"20m","actions":{"delete":{"delete_searchable_snapshot":true}}}}}}' | grep -q '{"acknowledged":true}';
+until curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" ${ES_URL}/_ilm/policy/django-policy -d '{"policy":{"phases":{"hot":{"min_age":"0ms","actions":{"rollover":{"max_age":"10m","max_size":"100kb","max_primary_shard_size":"100kb"},"set_priority":{"priority":100}}},"warm":{"min_age":"1m","actions":{"readonly":{},"set_priority":{"priority":50},"shrink":{"number_of_shards":1}}},"cold":{"min_age":"5m","actions":{"readonly":{},"set_priority":{"priority":0}}},"delete":{"min_age":"20m","actions":{"delete":{"delete_searchable_snapshot":true}}}}}}' | grep -q '{"acknowledged":true}';
     do sleep 5;
 done;
 echo "Importing kibana settings";
