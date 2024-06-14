@@ -13,8 +13,8 @@ END_SCORE = 7
 class GameState:
 
 	def __init__(self):
-		self.p1_paddle = 400
-		self.p2_paddle = 400
+		self.p1_paddle = HEIGHT // 2
+		self.p2_paddle = HEIGHT // 2
   
 		self.p1_paddle_dir = 0
 		self.p2_paddle_dir = 0
@@ -22,7 +22,7 @@ class GameState:
 		self.p1_score = 0
 		self.p2_score = 0
 
-		self.ball_position = (650, 650)
+		self.ball_position = (WIDTH // 2, WIDTH // 2)
 		self.ball_dir = (1, 1)
 
 		self.game_end = False

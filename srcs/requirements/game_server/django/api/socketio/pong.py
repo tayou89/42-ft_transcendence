@@ -19,54 +19,57 @@ class Pong(socketio.AsyncNamespace):
 		super().__init__(namespace)
  
 	async def on_connect(self, sid, environ):
-		field_list = ['p1', 'p2']
-		pid = '1'
-		room_name = 'hello'
+		await self.enter_room(sid, "hello")
+		await sio.start_background_task(self.play_pong, "hello")
+
+		# field_list = ['p1', 'p2']
+		# pid = '1'
+		# room_name = 'hello'
   
-		room = await sync_to_async(Room.objects.get)(name=room_name)
+		# room = await sync_to_async(Room.objects.get)(name=room_name)
   
-		if room.cur_users == 2:
-			await sio.emit(
-	   			'message',
-		  		{'err': 'room is full'},
-				room=sid,
-			 	namespace=self.namespace
-			)
-			return
+		# if room.cur_users == 2:
+		# 	# await sio.emit(
+	   	# 	# 	'message',
+		#   	# 	{'err': 'room is full'},
+		# 	# 	room=sid,
+		# 	#  	namespace=self.namespace
+		# 	# )
+		# 	return
 		
-		for field in field_list:
-			if getattr(room, field, None) is None:
-				setattr(room, field, pid)
-				break
+		# for field in field_list:
+		# 	if getattr(room, field, None) is None:
+		# 		setattr(room, field, pid)
+		# 		break
   
-		room.cur_users += 1
-		await self.enter_room(sid, room_name)
+		# room.cur_users += 1
+		# await self.enter_room(sid, room_name)
   
-		cur_room = self.rooms.get(room_name)
-		if cur_room is None:
-			self.rooms[room_name] = {
-				"p1": {"pid": pid, "ready": False},
-				"p2": None,
-			}
-			await self.save_session(sid, {'me': 'p1', 'room': room_name})
-		else:
-			for key, value in cur_room.items():
-				if value is None:
-					self.rooms[room_name][key] = {"pid": pid, "ready": False} 
-					break
-			await self.save_session(sid, {'me': 'p2', 'room': room_name})
+		# cur_room = self.rooms.get(room_name)
+		# if cur_room is None:
+		# 	self.rooms[room_name] = {
+		# 		"p1": {"pid": pid, "ready": False},
+		# 		"p2": None,
+		# 	}
+		# 	await self.save_session(sid, {'me': 'p1', 'room': room_name})
+		# else:
+		# 	for key, value in cur_room.items():
+		# 		if value is None:
+		# 			self.rooms[room_name][key] = {"pid": pid, "ready": False} 
+		# 			break
+		# 	await self.save_session(sid, {'me': 'p2', 'room': room_name})
   
-		await sync_to_async(room.save)()
+		# await sync_to_async(room.save)()
    
-		await sio.emit(
-				'message',
-				self.rooms[room_name],
-				room=room_name,
-				namespace=self.namespace
-		)
+		# await sio.emit(
+		# 		'message',
+		# 		self.rooms[room_name],
+		# 		room=room_name,
+		# 		namespace=self.namespace
+		# )
   
-		if room.cur_users == 2:
-			await self.play_pong(room_name)
+		# if room.cur_users == 2:
+		# 	await sio.start_background_task(self.play_pong, room_name)
   
 	
 	async def on_disconnect(self, sid):
@@ -188,21 +191,21 @@ class Pong(socketio.AsyncNamespace):
 		game = self.games[room_name] = GameState()
 		lock = self.locker[room_name] = asyncio.Lock()
   
-		room_db = await sync_to_async(Room.objects.get)(name=room_name)
-		room_db.in_game = True
-		await sync_to_async(room_db.save)()
+		# room_db = await sync_to_async(Room.objects.get)(name=room_name)
+		# room_db.in_game = True
+		# await sync_to_async(room_db.save)()
   
 		await self.emit('message', {'status': 'game starts soon...'}, room=room_name, namespace=self.namespace)
 		await sio.sleep(5)
 		
 		while game.is_ended() == False:
       
-			if len(self.rooms[room_name]) != 2:
-				if 'p1' in self.rooms[room_name]:
-					game.unearned_win('p1')
-				else:
-					game.unearned_win('p2')
-				break
+			# if len(self.rooms[room_name]) != 2:
+			# 	if 'p1' in self.rooms[room_name]:
+			# 		game.unearned_win('p1')
+			# 	else:
+			# 		game.unearned_win('p2')
+			# 	break
 	
 			async with lock:
 				game.update_game()

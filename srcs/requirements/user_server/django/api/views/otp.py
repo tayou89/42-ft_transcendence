@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from ..models import User, OTPModel
 from django.utils import timezone
 from datetime import timedelta
+import json
 
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
@@ -13,12 +14,12 @@ class OTPCheckView(APIView):
 		pk = request.COOKIES.get('pk')
 		otp = OTPModel.objects.get(user=pk)
   
-		form_data = request.POST.get('code', None)
+		form_data = json.loads(request.body)
 
 		if now - otp.created_at > timedelta(minutes=3):
 			return Response({'result': 'code has expired'})
 
-		if form_data == otp.code:
+		if form_data['code'] == otp.code:
 			user_instance = User.objects.get(pk=pk)
 			response = Response({'result': 'success'})
 			token = RefreshToken.for_user(user_instance)
@@ -26,6 +27,6 @@ class OTPCheckView(APIView):
 			response.set_cookie('refresh', str(token), httponly=True)
 			response.delete_cookie('pk')
 			otp.delete()
-			return Response({'result': 'success'})
+			return response
 		else:
 			return Response({'result': 'failed'})

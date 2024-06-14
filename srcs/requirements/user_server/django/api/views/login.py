@@ -28,7 +28,7 @@ def after_login(request):
 	make_otp_code(user_instance)
  
 	# response = redirect('http://localhost:8080/emailotp')
-	response = redirect('http://localhost:8080')
+	response = redirect('http://localhost:8080/emailotp')
 	response.set_cookie('pk', user_instance.pk, httponly=True)
 	return response
 
