@@ -16,10 +16,12 @@ function NavigationBar({myData}) {
 function User({myData}) {
     try {
         const my = JSON.parse(`${myData}`);
-        const photoURL = DEFAULT_URL + my.avatar;
+
         return (
             <div className="row">
-                <img className="col" id="photo" src={photoURL} />
+                <div className="col" id="photo-box">
+                    <img className="col" id="photo" src={my.photoURL} />
+                </div>
                 <div className="col" id="userId">{my.name}</div>
             </div>
         );

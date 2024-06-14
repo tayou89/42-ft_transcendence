@@ -21,10 +21,9 @@ function getStyle(ballX, ballY) {
         width: ${BALL.WIDTH}px;
         height: ${BALL.HEIGHT}px;
         border-radius: ${BALL.RADIUS}px;
-        background: radial-gradient(circle at 30% 30%, ${BALL.COLOR}, #808080);
+        box-shadow: inset -5px -5px 5px 0px rgba(0, 0, 0, 0.25);
         transition: 'top 0.1s linear, left 0.1s linear',
     `;
-
     return (style);
 }
 

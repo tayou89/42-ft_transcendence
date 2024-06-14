@@ -1,0 +1,6 @@
+#gamepage-bottom {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-top: 50px;
+}

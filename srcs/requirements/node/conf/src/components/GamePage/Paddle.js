@@ -12,6 +12,7 @@ function Paddle({id}) {
 }
 
 function getStyle(valueY, id){
+    const shadow_x = (getPositoin(id) === "left") ? "+" : "-";
 	const style = `
         position: absolute;
         background-color: ${PADDLE.COLOR};
@@ -20,9 +21,9 @@ function getStyle(valueY, id){
         left: ${getX(id)}px;
         top: ${valueY}px;
         border-radius: ${PADDLE.BORDER_RADIUS}px;
-        background: linear-gradient(to ${getPositoin(id)}, ${PADDLE.COLOR} 50%, black 100%);
+        box-shadow: inset ${shadow_x}3px -3px 3px 0px rgba(0, 0, 0, 0.5);
 		transition: ${PADDLE.TRANSITION};
-	`
+	`;
     return (style);
 }
 
