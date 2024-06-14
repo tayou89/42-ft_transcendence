@@ -25,8 +25,12 @@ function Home() {
 			method: 'GET',
 			credentials: 'include'
 		})
-			.then(response => response.json())
+			.then(response => {
+				console.log(response);
+				return response.json();
+			})
 			.then(data => {
+				console.log(data);
 				if (data.detail) {
 					tokenRefreshAndGoTo("/home");
 				} else {
