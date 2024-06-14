@@ -1,6 +1,7 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import Paddle from "./Paddle.js";
 import Ball from "./Ball.js";
+import PlayerSlot from "./PlayerSlot.js";
 import "../../css/game-page/game-board.css";
 
 function GameBoard() {
@@ -9,16 +10,6 @@ function GameBoard() {
             <PlayerSlot id="player1" />
             <Board />
             <PlayerSlot id="player2" />
-        </div>
-    );
-}
-
-function PlayerSlot({id}) {
-    return (
-        <div className="col" id={id}>
-            <div className="row">image</div>
-            <div className="row">name</div>
-            <div className="row">level</div>
         </div>
     );
 }
@@ -32,7 +23,5 @@ function Board() {
         </div>
     );
 }
-
-
 
 export default GameBoard;

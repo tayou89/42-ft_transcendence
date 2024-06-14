@@ -50,6 +50,8 @@ export const SOCKET = {
         PADDLE: "paddle",
         BALL: "ball",
         SCORE: "score",
+        ROOM: "room",
+        GAME: "game",
     },
     VALUE: {
         KEY: {
