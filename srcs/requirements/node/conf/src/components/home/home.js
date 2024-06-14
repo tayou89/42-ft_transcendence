@@ -1,5 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
+import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import Navbar from "../Navbar.js";
 import HomeMyInfo from "./homeMyInfo.js";
 import HomeFriends from "./homeFriends.js";
@@ -29,17 +30,15 @@ function Home() {
 				return response.json();
 			})
 			.then(data => {
-				if (data.detail === "Given token not valid for any token type") {
-					navigate("/login");
-				} else if (data.detail === "Authentication credentials were not provided.") {
-					navigate("/login");
+				if (data.detail) {
+					tokenRefreshAndGoTo("/home");
 				} else {
 					setMyData(() => data);
 				}
 			})
 			.catch(error => {
 				console.log(error);
-				navigate("/login");
+				navigate("/");
 			});
 	}, []);
 	return (
