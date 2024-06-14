@@ -176,12 +176,14 @@ for CERT_NAME in ${CERT_NAMES}; do
     response=$(curl --cacert ${CA_CERT} -s -XPOST \
         ${vaultURL}/v1/pki/issue/${CA_NAME} \
         -H "X-Vault-Token: ${TOKEN}" \
-        --data "{\"common_name\": \"${CERT_NAME}\"}")
-    cert=$(echo ${response} | jq -r .data.certificate | tr ' ' '\n')
-    key=$(echo ${response} | jq -r .data.private_key | tr ' ' '\n')
+        --data "{
+            \"common_name\": \"${CERT_NAME}\",
+            \"alt_names\": \"localhost\",
+            \"ip_sans\": \"127.0.0.1\"
+        }")
     mkdir -p "${CERT_PATH}/${CERT_NAME}"
-    echo ${cert} > "${CERT_PATH}/${CERT_NAME}/${CERT_NAME}.crt"
-    echo ${key} > "${CERT_PATH}/${CERT_NAME}/${CERT_NAME}.key"
+    echo ${response} | jq -r .data.certificate > "${CERT_PATH}/${CERT_NAME}/${CERT_NAME}.crt"
+    echo ${response} | jq -r .data.private_key > "${CERT_PATH}/${CERT_NAME}/${CERT_NAME}.key"
 done
 
 echo "==========DONE=========="

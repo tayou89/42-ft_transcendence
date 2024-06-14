@@ -156,7 +156,7 @@ services:
 
   nginx:
     depends_on:
-      cert_setup:
+      vault_init:
         condition: service_completed_successfully
       userserver:
         condition: service_healthy
