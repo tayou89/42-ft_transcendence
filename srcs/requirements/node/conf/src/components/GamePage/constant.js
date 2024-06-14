@@ -1,6 +1,8 @@
 import {io} from "socket.io-client";
 
-export const socket = io("http://localhost:8001/api/pong");
+export const socket = io("http://localhost:8001/api/pong", {
+	transports: ['websocket']
+});
 
 export const BOARD = {
     WIDTH: 1300,

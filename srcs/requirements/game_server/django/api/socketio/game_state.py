@@ -22,7 +22,7 @@ class GameState:
 		self.p1_score = 0
 		self.p2_score = 0
 
-		self.ball_position = (WIDTH // 2, WIDTH // 2)
+		self.ball_position = (WIDTH // 2, HEIGHT // 2)
 		self.ball_dir = (1, 1)
 
 		self.game_end = False
