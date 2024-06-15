@@ -7,11 +7,7 @@ class Fetch {
             const callMyData = async() => { 
                 const userData = await this.userData(userId);
 
-                console.log(id, data);
                 setData((prev) => ({...prev, ...userData}));
-                console.log(userData);
-                console.log(id, data);
-                // setData(() => userData);
             };
             callMyData();
         }, []);
