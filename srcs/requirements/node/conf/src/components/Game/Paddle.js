@@ -1,24 +1,25 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import {BOARD, PADDLE, KEY, SOCKET, socket} from "./constant.js";
+import {PADDLE, INIT, SOCKET, socket} from "./constant.js";
 
-function Paddle({id}) {
-    const [paddleY, setPaddleY] = useState(PADDLE.INITIAL_Y);
+function Paddle({ id, position }) {
+    const paddle = JSON.parse(position);
+    const paddleY = (id === "paddle1") ? paddle.p1 : paddle.p2;
     const style = getStyle(paddleY, id);
 
-    getEffect(paddleY, setPaddleY, id);
     return (
         <div id={id} style={style}></div>
     );
 }
 
 function getStyle(valueY, id){
+    const x = (id === "paddle1") ? INIT.PADDLE1.X : INIT.PADDLE2.X;
     const shadow_x = (getPositoin(id) === "left") ? "+" : "-";
 	const style = `
         position: absolute;
         background-color: ${PADDLE.COLOR};
         width: ${PADDLE.WIDTH}px;
         height: ${PADDLE.HEIGHT}px;
-        left: ${getX(id)}px;
+        left: ${x}px;
         top: ${valueY}px;
         border-radius: ${PADDLE.BORDER_RADIUS}px;
         box-shadow: inset ${shadow_x}3px -3px 3px 0px rgba(0, 0, 0, 0.5);
@@ -47,13 +48,6 @@ function getEffect(paddleY, setPaddleY, id) {
             socket.off(SOCKET.EVENT.PADDLE);
         });
     }, [paddleY]);
-}
-
-function getX(id) {
-    if (id === "paddle1")
-        return (PADDLE.OFFSET_X - (PADDLE.WIDTH / 2));
-    else
-        return (BOARD.WIDTH - (PADDLE.OFFSET_X + (PADDLE.WIDTH / 2)));
 }
 
 function getPositoin(id) {

@@ -4,36 +4,31 @@ import Fetch from "../Fetch/Fetch.js";
 import "../../css/game/player-slot.css";
 
 function PlayerSlot({id}) {
-    // const [playerId, setPlayerId] = useState(0);
-    const [playerData, setPlayerData] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+    const [playerData, setPlayerData] = useState({});
     const playerId = 1;
 
-    try {
-        // getPlayerId(playerId, setPlayerId, slotId);
-        // if (!playerId)
-        //     throw (Error("player slot can't find player"));
-        Fetch.setUserData(setPlayerData, setIsLoading, playerId);
-        if (!playerData)
-            throw Error("player data doesn't exist");
-        console.log("playerData:", playerData);
-        console.log("name:", playerData.name)
-        console.log("Level:", Math.floor(playerData.id / 1000))
-        return (
-            <div className="col" id={id}>
-                <div className="row" id="game-slot-photo-box">
-                    <img className="col" id="game-slot-photo" src={playerData.photoURL} />
-                </div>
-                <div className="row" id="player-name">{playerData.name}</div>
-                <div className="row" id="player-level">Level { Math.floor(playerData.id / 1000) }</div>
+    // Fetch.setUserData(playerData, setPlayerData, 1, id);
+    useEffect(() => {
+        const callMyData = async() => { 
+            const pid = (id === "player1" ? "me" : playerId);
+            const userData = await Fetch.userData(pid);
+
+            setPlayerData((prev) => ({...prev, ...userData}));
+            console.log("userData:",id, userData);
+            // setData(() => userData);
+        };
+        callMyData();
+    }, []);
+    console.log("playerData:",id, playerData);
+    return (
+        <div className="col" id={id}>
+            <div className="row" id="game-slot-photo-box">
+                <img className="col" id="game-slot-photo" src={playerData.photoURL} />
             </div>
-        );
-    }
-    catch (error) {
-        return (
-            <div className="col" id={id}>Loading...</div>
-        );
-    }
+            <div className="row" id="player-name">{playerData.name}</div>
+            <div className="row" id="player-level">Level { Math.floor(playerData.id / 1000) }</div>
+        </div>
+    );
 }
 
 function getPlayerId(playerId, setPlayerId, slotId) {

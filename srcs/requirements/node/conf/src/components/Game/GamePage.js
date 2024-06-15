@@ -3,42 +3,34 @@ import NavigationBar from "../utility/NavigationBar.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
-import { KEY, SOCKET, socket } from "./constant.js";
+import handleKey from "./handleKey.js";
+import handleSocket from "./handleSocket.js";
+import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
 function GamePage() {
-    addKeyEvent();
+    const [score, setScore] = useState({ p1: 0, p2: 0});
+    const [ball, setBall] = useState({ x: INIT.BALL.X, y: INIT.BALL.Y }); 
+    const [paddle, setPaddle] = useState({ p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y });
+    const scoreString = JSON.stringify(score);
+    const ballString = JSON.stringify(ball);
+    const paddleString = JSON.stringify(paddle);
+    const game = { 
+        ball: ball, setBall: setBall, 
+        paddle: paddle, setPaddle, setPaddle, 
+        score: score, setScore: setScore
+    };
+
+    handleKey();
+    handleSocket(game);
     return (
         <div className="container-fluid" id="game-page">
-            <NavigationBar / >
-            <ScoreBoard />
-            <GameBoard />
+            <NavigationBar />
+            <ScoreBoard scoreString={ scoreString }/>
+            <GameBoard ball={ ballString } paddle={ paddleString }/>
             <BottomLine />
         </div>
     );
-}
-
-function addKeyEvent() {
-    useEffect(() => {
-        document.addEventListener("keydown", handleKeyDown);
-        document.addEventListener("keyup", handleKeyUp);
-        return (() => {
-            document.removeEventListener("keydown", handleKeyDown);
-            document.removeEventListener("keyup", handleKeyUp);
-        });
-    }, []);
-}
-
-function handleKeyDown(event) {
-    if (KEY.UP.includes(event.key))
-        socket.emit(SOCKET.EVENT.KEY, -1);
-    else if (KEY.DOWN.includes(event.key))
-        socket.emit(SOCKET.EVENT.KEY, 1);
-};
-
-function handleKeyUp(event) {
-    if (KEY.UP.includes(event.key) || KEY.DOWN.includes(event.key))
-        socket.emit(SOCKET.EVENT.KEY, 1);
 }
 
 export default GamePage;

@@ -14,7 +14,6 @@ export const PADDLE = {
     WIDTH: 12,
     HEIGHT: 60,
     OFFSET_X: 50,
-    INITIAL_Y:  (BOARD.HEIGHT / 2) - (60 / 2),
     BORDER_RADIUS: 3,
     COLOR: "white",
 	MIN_Y: 0,
@@ -32,11 +31,22 @@ export const BALL = {
     WIDTH: 30,
     HEIGHT: 30,
     COLOR: "white",
-    INIT: {
-        X: (BOARD.WIDTH / 2) - 15,
-        Y: (BOARD.HEIGHT / 2) - 15,
-    },
     TRANSITION: "top 0.1s linear, left 0.1s linear",
+};
+
+export const INIT = {
+    BALL: {
+        X: (BOARD.WIDTH / 2) - BALL.RADIUS,
+        Y: (BOARD.HEIGHT / 2) - BALL.RADIUS,
+    },
+    PADDLE1: {
+        X: PADDLE.OFFSET_X - (PADDLE.WIDTH / 2),
+        Y:  (BOARD.HEIGHT / 2) - (60 / 2),
+    },
+    PADDLE2: {
+        X: BOARD.WIDTH - (PADDLE.OFFSET_X + (PADDLE.WIDTH / 2)),
+        Y:  (BOARD.HEIGHT / 2) - (60 / 2),
+    }
 };
 
 export const KEY = {
@@ -47,9 +57,6 @@ export const KEY = {
 export const SOCKET = {
     EVENT: {
         KEY: "key",
-        PADDLE: "paddle",
-        BALL: "ball",
-        SCORE: "score",
         ROOM: "room",
         GAME: "game",
     },

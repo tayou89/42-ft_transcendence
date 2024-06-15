@@ -4,6 +4,7 @@ import "../../css/utility/navigation-bar.css"
 
 function NavigationBar() {
     const [myData, setMyData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     let   data = "";
 
     Fetch.setUserData(myData, setMyData);

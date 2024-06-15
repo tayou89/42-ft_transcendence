@@ -1,12 +1,10 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { BALL, SOCKET, socket } from "./constant.js";
 
-function Ball({id}) {
-    const [ballX, setBallX] = useState(BALL.INIT.X);
-    const [ballY, setBallY] = useState(BALL.INIT.Y);
-    const style = getStyle(ballX, ballY);
+function Ball({ id, position }) {
+    const ball = JSON.parse(position);
+    const style = getStyle(ball.x, ball.y);
 
-    getEffect({x: ballX, y: ballY, setX: setBallX, setY: setBallY});
     return (
         <div id={id} style={style}></div>
     );
