@@ -89,10 +89,12 @@ DATABASES = {
 JWT_SECRET_KEY='hihi'
 
 SIMPLE_JWT = {
-    'SIGNING_KEY': 'hihi',
+    'ALGORITHM': 'HS256',
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ALGORITHM': 'HS256',
+
+    'SIGNING_KEY': 'hihi',
+    
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
