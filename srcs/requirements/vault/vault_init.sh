@@ -10,6 +10,7 @@ CA_CERT="${CA_PATH}/ca.crt"
 CA_KEY="${CA_PATH}/ca.key"
 CA_NAME="42_cert"
 JSON_PATH="/vault/settings"
+POLICY_PATH="/vault/policies"
 
 #init vault
 echo "initializing vault."
@@ -55,9 +56,13 @@ fi
 #create polices
 echo "creating policies."
 curl --cacert ${CA_CERT} -s -XPOST \
-    ${vaultURL}/v1/sys/policy/server-policy \
+    ${vaultURL}/v1/sys/policy/server \
     -H "X-Vault-Token: ${TOKEN}" \
-    --data @/vault/policies/server_policy.json
+    --data @${POLICY_PATH}/server_policy.json
+curl --cacert ${CA_CERT} -s -XPOST \
+    ${vaultURL}/v1/sys/policy/prometheus \
+    -H "X-Vault-Token: ${TOKEN}" \
+    --data @${POLICY_PATH}/prometheus_policy.json
 
 #enable userpass
 echo "enabling userpass."
@@ -83,7 +88,7 @@ curl --cacert ${CA_CERT} -s -XPOST \
     -H "X-Vault-Token: ${TOKEN}" \
     --data "{
         \"password\": \"${VAULT_SERVER_PASSWORD}\",
-        \"token_policies\": [\"server-policy\"]
+        \"token_policies\": [\"server\"]
     }"
 curl --cacert ${CA_CERT} -s ${vaultURL}/v1/auth/userpass/users/server -H "X-Vault-Token: ${TOKEN}" | grep -q 'request_id'
 if [ $? -eq 0 ]; then
@@ -135,7 +140,11 @@ curl --cacert ${CA_CERT} -s -XPOST \
 echo "creating prometheus token."
 TOKEN_PATH="/certs/prometheus/"
 mkdir -p ${TOKEN_PATH}
-echo "${TOKEN}" > ${TOKEN_PATH}/vault_token.txt
+curl --cacert ${CA_CERT} -s -XPOST \
+    ${vaultURL}/v1/auth/token/create \
+    -H "X-Vault-Token: ${TOKEN}" \
+    --data @${JSON_PATH}/prometheus_token.json \
+    | jq -r .auth.client_token > ${TOKEN_PATH}/vault_token.txt
 
 #enabling pki engine
 echo "enabling pki engine."
