@@ -5,26 +5,35 @@ services:
     networks:
       - elk_net
     volumes:
-      - ${PROJECT_DIR}/scripts/cert_setup.sh:/usr/share/elasticsearch/cert_setup.sh
+      - ${PROJECT_DIR}/requirements/elasticsearch/cert_setup.sh:/usr/share/elasticsearch/cert_setup.sh
       - certs_volume:/usr/share/elasticsearch/config/certs
     user: "0"
     command: "bash ./cert_setup.sh"
-    healthcheck:
-      test: ["CMD-SHELL", "[ -f config/certs/es01/es01.crt ]"]
-      interval: 1s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+
+  elk_setup:
+    depends_on:
+      cert_setup:
+        condition: service_completed_successfully
+      es01:
+        condition: service_healthy
+    image: elasticsearch:${STACK_VERSION}
+    container_name: elk_setup
+    networks:
+      - elk_net
+    volumes:
+      - ${PROJECT_DIR}/requirements/elasticsearch/elk_setup.sh:/usr/share/elasticsearch/elk_setup.sh
+      - certs_volume:/usr/share/elasticsearch/config/certs
     environment:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
       KIBANA_PASSWORD: ${KIBANA_PASSWORD}
       LOGSTASH_PASSWORD: ${LOGSTASH_PASSWORD}
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD}
+    command: "bash ./elk_setup.sh"
 
   es01:
     depends_on:
       cert_setup:
-        condition: service_healthy
+        condition: service_completed_successfully
     image: elasticsearch:${STACK_VERSION}
     container_name: es01
     volumes:
@@ -61,9 +70,9 @@ services:
           "CMD-SHELL",
           "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'"
         ]
-      interval: 10s
-      timeout: 10s
-      retries: 120
+      interval: 30s
+      timeout: 3s
+      retries: 5
 
   es02:
     depends_on:
@@ -103,9 +112,9 @@ services:
           "CMD-SHELL",
           "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
         ]
-      interval: 10s
-      timeout: 10s
-      retries: 120
+      interval: 30s
+      timeout: 3s
+      retries: 5
 
   kibana:
     depends_on:
@@ -138,9 +147,9 @@ services:
           "CMD-SHELL",
           "curl -s --cacert config/certs/ca/ca.crt -I https://localhost:5601 | grep -q 'HTTP/1.1 302 Found'"
         ]
-      interval: 10s
-      timeout: 10s
-      retries: 120
+      interval: 30s
+      timeout: 3s
+      retries: 5
 
   logstash:
     depends_on:
@@ -174,9 +183,9 @@ services:
       - elk_net
     healthcheck:
       test: ["CMD-SHELL", "curl -XGET 'localhost:9600/?pretty' | grep -q '\"status\" : \"green\"'"]
-      interval: 10s
-      timeout: 10s
-      retries: 120
+      interval: 30s
+      timeout: 3s
+      retries: 5
 
   filebeat:
     depends_on:
