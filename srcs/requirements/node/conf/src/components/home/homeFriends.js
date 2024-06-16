@@ -44,10 +44,15 @@ function HomeFriendsFriendInfo({ id }) {
 
 function HomeFriends({ myFriends }) {
 	return (
-		<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">
-			{myFriends.map(id => (
-				<HomeFriendsFriendInfo key={id} id={id} />
-			))}
+		<div>
+			<div className="fs-4">
+				Friends
+			</div>
+			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">
+				{myFriends.map(id => (
+					<HomeFriendsFriendInfo key={id} id={id} />
+				))}
+			</div>
 		</div>
 	);
 }

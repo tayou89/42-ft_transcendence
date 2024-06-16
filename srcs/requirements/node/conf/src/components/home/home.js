@@ -48,19 +48,10 @@ function Home() {
 			<div className="container text-light">
 				<div className="row mt-3">
 					<div className="col-md-5">
-						<div className="fs-4">
-							My Info
-						</div>
 						<HomeMyInfo myData={myData} />
-						<div className="fs-4">
-							Friends
-						</div>
 						<HomeFriends myFriends={myData.friends} />
 					</div>
 					<div className="col-md-7">
-						<div className="fs-4">
-							Matches
-						</div>
 						<HomeMatches />
 					</div>
 				</div>

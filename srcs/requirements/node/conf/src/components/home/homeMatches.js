@@ -1,5 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
+import Btn from "../utility/Btn.js";
 
 const sampleRooms = [
 	{
@@ -57,22 +58,35 @@ function HomeMatches() {
 		// .catch(console.log());
 	}, []);
 	return (
-		<div className="container pt-2 pb-2 border-top border-bottom">
-			<div>
-				{rooms.map((room) => {
-					if (room.cur_users !== room.max_users && room.in_game === false) {
-						return (<HomeMatchInfo room={room} active={true} />)
-					} else {
-						return (<HomeMatchInfo room={room} active={false} />)
-					}
-				})}
+		<div>
+			<div className="fs-4 row">
+				<div className="container col-6">
+					Matches
+				</div>
+				<div className="container col-6 text-end pe-4">
+					<Btn size="sm" text="Create Room" onClickFunc={onClickCreateRoom} />
+				</div>
+			</div>
+			<div className="container pt-2 pb-2 border-top border-bottom">
+				<div>
+					{rooms.map((room) => {
+						if (room.cur_users !== room.max_users && room.in_game === false) {
+							return (<HomeMatchInfo room={room} active={true} />)
+						} else {
+							return (<HomeMatchInfo room={room} active={false} />)
+						}
+					})}
+				</div>
 			</div>
 		</div>
 	);
 }
 
+function onClickCreateRoom(event) {
+	event.preventDefault();
+}
+
 function HomeMatchInfo({ room, active }) {
-	console.log(room);
 	const opt1 = "text-center my-1 py-2 text-light border bg-primary";
 	const opt2 = "text-center my-1 py-2 text-light border bg-secondary";
 	return (
