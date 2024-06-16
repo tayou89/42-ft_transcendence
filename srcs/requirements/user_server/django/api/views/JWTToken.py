@@ -20,6 +20,7 @@ class MyRefreshToken(TokenRefreshView):
 		token = response.data["access"]
 		response.data = None
 		response.set_cookie('jwt', token, httponly=True)
+		response.status_code = 204
 		return response
 
 

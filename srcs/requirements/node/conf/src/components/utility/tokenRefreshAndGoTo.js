@@ -8,7 +8,9 @@ function tokenRefreshAndGoTo(successGoTo) {
 		credentials: 'include'
 	})
 		.then(response => {
-			if (response.status === 204) {
+			if (response.status === 204
+
+			) {
 				console.log(successGoTo, "에서 access token 재발급 성공");
 				navigate(successGoTo);//access token 재발급 성공
 			} else {
