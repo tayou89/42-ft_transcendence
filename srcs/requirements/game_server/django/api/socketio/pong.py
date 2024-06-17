@@ -1,14 +1,13 @@
-
+import httpx
 
 import socketio
 import asyncio
 
 from . import sio, manager
 from .game_state import GameState
-from ..models import Room, RoomSerializer
+from ..models import Room
 
 from asgiref.sync import sync_to_async
-
 
 
 class Pong(socketio.AsyncNamespace):
@@ -28,10 +27,13 @@ class Pong(socketio.AsyncNamespace):
 		info = await self.get_session(sid)
 		me = info.get('me')
 		room_name = info.get('room')
+		room_db = await sync_to_async(Room.objects.get)(name=room_name)
+
+		if room_db.in_game:
+			return
   
 		self.rooms[room_name][me] = None
 		await self.save_session(sid, None)
-		room_db = await sync_to_async(Room.objects.get)(name=room_name)
 		
 		for field in field_list:
 			if field == me:
@@ -73,7 +75,7 @@ class Pong(socketio.AsyncNamespace):
 				if value is None:
 					self.rooms[room_name][key] = {"pid": pid, "ready": False} 
 					break
-			await self.save_session(sid, {'me': 'p2', 'room': room_name})
+			await self.save_session(sid, {'me': key, 'room': room_name})
   
 		await sync_to_async(room.save)()
    
@@ -136,7 +138,6 @@ class Pong(socketio.AsyncNamespace):
 		room_db.in_game = True
 		await sync_to_async(room_db.save)()
   
-		# await self.emit('message', {'status': 'game starts soon...'}, room=room_name, namespace=self.namespace)
 		await sio.sleep(5)
 		
 		while game.status != 'end':
@@ -156,9 +157,27 @@ class Pong(socketio.AsyncNamespace):
 			)
 
 			await sio.sleep(1 / 30)
+		
+		await sio.emit(
+			'result',
+			game.get_result(),
+			room=room_name,
+			namespace=self.namespace
+		)
+  
+		await self.save_result(self.rooms[room_name], game)
    
-	async def save_result(self):
-		pass
+	async def save_result(self, room, game: GameState):
+    
+		body = {
+        	"p1": room['p1']['pid'],
+        	"p2": room['p2']['pid'],
+			"p1_score": game.score[0],
+        	"p2_score": game.score[1],
+		}
+  
+		async with httpx.AsyncClient() as client:
+			await client.post("http://localhost:8000/api/matches", json=body)
 		
 
 
@@ -167,6 +186,8 @@ class Pong(socketio.AsyncNamespace):
 		room_name = info.get('room')
   
 		game = self.games[room_name]
-		game.set_player_dy(sid, message)
+		pid = game[info['me']]['pid']
+		game.set_player_dy(pid, message)
+
 
 sio.register_namespace(Pong('/api/pong'))

@@ -44,8 +44,8 @@ class GameState:
 		self.ball_dir = [1, 0]
 		self.ball_speed = 5
 
-		self.p1_sid: int
-		self.p2_sid: int
+		self.p1_pid: int
+		self.p2_pid: int
 
 		self.p1_dir = 0
 		self.p2_dir = 0
@@ -59,9 +59,9 @@ class GameState:
 		self.pause = 15
 
 	def set_player_dy(self, pid, direction):
-		if pid == self.p1_sid:
+		if pid == self.p1_pid:
 			self.p1_dir = direction
-		elif pid == self.p2_sid:
+		elif pid == self.p2_pid:
 			self.p2_dir = direction
 
 	def next_frame(self) -> None:
@@ -135,6 +135,18 @@ class GameState:
 			self.score[P1] = 0
 			self.score[P2] = 7
 		self.status = 'end'
+
+	def get_result(self):
+		if self.score[P1] >= END_SCORE:
+			return {
+				"p1": "win",
+				"p2": "lose",
+			}
+		else:
+			return {
+				"p1": "lose",
+				"p2": "win",
+			}
 
 	def init_position(self):
 		self.ball_coords = [WIDTH // 2 - BALL_RADIUS, HEIGHT // 2 - BALL_RADIUS]
