@@ -6,6 +6,8 @@ import HomeMyInfo from "./homeMyInfo.js";
 import HomeFriends from "./homeFriends.js";
 import HomeMatches from "./homeMatches.js";
 
+import Btn from "../utility/Btn.js";
+
 const defaultMyData = {
 	"id": 0,
 	"name": "default",
@@ -20,6 +22,11 @@ const defaultMyData = {
 function Home() {
 	const [myData, setMyData] = MyReact.useState(defaultMyData);
 	const myDataApiUrl = "http://localhost:8000/api/users/me";
+
+	function onClickTest(params) {
+		tokenRefreshAndGoTo("/home");
+	}
+
 	MyReact.useEffect(() => {
 		fetch(myDataApiUrl, {
 			method: 'GET',
@@ -46,6 +53,7 @@ function Home() {
 		<div>
 			<Navbar name={myData.name} profileImg={myData.avatar} />
 			<div className="container text-light">
+				<Btn size="lg" text="Test" onClickFunc={onClickTest} />
 				<div className="row mt-3">
 					<div className="col-md-5">
 						<HomeMyInfo myData={myData} />
