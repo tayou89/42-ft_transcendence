@@ -1,4 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import Btn from "../utility/Btn.js";
 
 const defaultUserData = {
 	"id": 0,
@@ -9,6 +10,30 @@ const defaultUserData = {
 	"wins": 0,
 	"losses": 0,
 	"friends": []
+}
+
+function onClickAddFriend() {
+	console.log("Add new Friend");
+}
+
+function HomeFriends({ myFriends }) {
+	return (
+		<div>
+			<div className="fs-4 row">
+				<div className="container col-6">
+					Friends
+				</div>
+				<div className="container col-6 text-end pe-4">
+					<Btn size="sm" text="add Friend" onClickFunc={onClickAddFriend} />
+				</div>
+			</div>
+			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">
+				{myFriends.map(id => (
+					<HomeFriendsFriendInfo key={id} id={id} />
+				))}
+			</div>
+		</div>
+	);
 }
 
 function HomeFriendsFriendInfo({ id }) {
@@ -37,21 +62,6 @@ function HomeFriendsFriendInfo({ id }) {
 				</div>
 				<div className="col-8 border">{userInfo.name}</div>
 				<div className="col-2 border">{userInfo.status === "login" ? "login" : "logout"}</div>
-			</div>
-		</div>
-	);
-}
-
-function HomeFriends({ myFriends }) {
-	return (
-		<div>
-			<div className="fs-4">
-				Friends
-			</div>
-			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">
-				{myFriends.map(id => (
-					<HomeFriendsFriendInfo key={id} id={id} />
-				))}
 			</div>
 		</div>
 	);
