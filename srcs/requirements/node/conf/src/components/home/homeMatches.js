@@ -86,22 +86,47 @@ function onClickCreateRoom(event) {
 	event.preventDefault();
 }
 
+function enterCreatedRoom() {
+	console.log("enter CreateRoom");
+}
+
 function HomeMatchInfo({ room, active }) {
-	const opt1 = "text-center my-1 py-2 text-light border bg-primary";
-	const opt2 = "text-center my-1 py-2 text-light border bg-secondary";
-	return (
-		<div className={active === true ? opt1 : opt2}>
-			<div className="container-fluid">{room.name}</div>
-			<div className="row">
-				<div className="col-6">
-					{room.mtt === true ? "Tournerment" : "1 vs 1"}
-				</div>
-				<div className="col-6">
-					{room.cur_users} / {room.max_users}
+	const opt1 = "container rounded text-center my-2 py-3 text-light border bg-primary";
+	const opt2 = "container rounded text-center my-2 py-3 text-light border bg-secondary";
+	const [mouseEntered, setMouseEntered] = useState(false);
+	function MouseEnter() {
+		setMouseEntered(() => true);
+	}
+	function MouseLeave(event) {
+		setMouseEntered(() => false);
+	}
+	if (!mouseEntered || active === false) {
+		return (
+			<div className={active === true ? opt1 : opt2} style="height: 82px; user-select: none;" onMouseEnter={MouseEnter} onMouseLeave={MouseLeave}>
+				<div className="container-fluid">{room.name}</div>
+				<div className="row">
+					<div className="col-6">
+						{room.mtt === true ? "Tournerment" : "1 vs 1"}
+					</div>
+					<div className="col-6">
+						{room.cur_users} / {room.max_users}
+					</div>
 				</div>
 			</div>
-		</div>
-	);
+		);
+	} else {
+		return (
+			<div className="my-2 py-4 fs-4 text-center bg-primary rounded border"
+				style="height: 82px; user-select: none; cursor: pointer;"
+				onMouseEnter={MouseEnter} onMouseLeave={MouseLeave}
+				onClick={enterCreatedRoom}
+			>
+				<div>
+					Enter Room
+				</div>
+			</div>
+		);
+	}
 }
 
 export default HomeMatches;
