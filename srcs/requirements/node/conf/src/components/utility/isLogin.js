@@ -17,7 +17,7 @@ function isLogin() {
 			}
 		}))
 		.then(successGoTo => {
-			tokenRefresh(successGoTo);
+			tokenRefreshAndGoTo(successGoTo);
 		})
 		.catch(error => {//요청 실패 시
 			console.log(error);

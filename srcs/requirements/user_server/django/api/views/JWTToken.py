@@ -7,53 +7,29 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
 
 
-# class MyMakeToken(APIView):
-# 	def post(self, request):
-# 		name = request.data.get('name')
-
-# 		if not name:
-# 			return Response({"name": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-# 		try:
-# 			user = User.objects.get(name=name)
-# 		except User.DoesNotExist:
-# 			return Response({"error": "Invalid user"}, status=status.HTTP_404_NOT_FOUND)
-
-# 		token = RefreshToken.for_user(user)
-
-# 		return Response({
-# 			"token": str(token.access_token),
-# 			"refresh": str(token),
-# 		}, status=status.HTTP_200_OK)
-
-
-class MyRefreshToken(APIView):
-	def post(self, request):
-	 
+class MyRefreshToken(TokenRefreshView):
+	def post(self, request, *args, **kwargs):
 		refresh_token = request.COOKIES.get('refresh')
 		
-		if refresh_token:
-			try:
-				new_token = RefreshToken(refresh_token)
-			except:
-				return Response({"refresh": "blacklisted token"})
+		request.data["refresh"] = refresh_token
+		response = super().post(request, *args, **kwargs)
+		token = response.data["access"]
+		response.data = None
+		response.set_cookie('jwt', token, httponly=True)
+		return response
 
-			response = Response(status=204)
-			response.set_cookie('jwt', str(new_token.access_token), httponly=True)
-			response.set_cookie('refresh', str(new_token), httponly=True)
-			return response
-		else:
-			return Response({"refresh": "This field is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-		
 
 class log_out(APIView):
 	def post(self, request):
 		refresh_token = request.data['refresh_token']
-		token = RefreshToken(refresh_token)
-		token.blacklist()
-		return Response({"success": f"hi"}, status=status.HTTP_205_RESET_CONTENT)
+		if refresh_token:
+			refresh = RefreshToken(refresh_token)
+			refresh.blacklist()
+		response = Response(status=status.HTTP_204_NO_CONTENT)
+		response.delete_cookie('jwt')
+		response.delete_cookie('refresh')
+  

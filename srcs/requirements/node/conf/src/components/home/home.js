@@ -19,7 +19,6 @@ const defaultMyData = {
 
 function Home() {
 	const [myData, setMyData] = MyReact.useState(defaultMyData);
-	const [matchData, setMatchData] = MyReact.useState(defaultMyData);
 	const myDataApiUrl = "http://localhost:8000/api/users/me";
 	MyReact.useEffect(() => {
 		fetch(myDataApiUrl, {
@@ -27,9 +26,11 @@ function Home() {
 			credentials: 'include'
 		})
 			.then(response => {
+				console.log(response);
 				return response.json();
 			})
 			.then(data => {
+				console.log(data);
 				if (data.detail) {
 					tokenRefreshAndGoTo("/home");
 				} else {
@@ -47,19 +48,10 @@ function Home() {
 			<div className="container text-light">
 				<div className="row mt-3">
 					<div className="col-md-5">
-						<div className="fs-4">
-							My Info
-						</div>
 						<HomeMyInfo myData={myData} />
-						<div className="fs-4">
-							Friends
-						</div>
 						<HomeFriends myFriends={myData.friends} />
 					</div>
 					<div className="col-md-7">
-						<div className="fs-4">
-							Matches
-						</div>
 						<HomeMatches />
 					</div>
 				</div>

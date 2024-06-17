@@ -17,6 +17,8 @@ urlpatterns = [
  
 	path('token/refresh', views.MyRefreshToken.as_view()),
 	path('logout', views.log_out.as_view()),
+ 
+	path('otp', views.OTPCheckView.as_view()),
 
 	path('', include(userRouter.urls)),
 	path('', include(matchRouter.urls)),
