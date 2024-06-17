@@ -2,14 +2,14 @@ import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import { DEFAULT_URL} from "./constant.js";
 
 class Fetch {
-    static setUserData(data, setData, userId = "me", id = "default") {
+    static setUserData(setFunction, userId = "me") {
         useEffect(() => {
-            const callMyData = async() => { 
+            const setData = async() => { 
                 const userData = await this.userData(userId);
 
-                setData((prev) => ({...prev, ...userData}));
+                setFunction((prev) => ({...prev, ...userData}));
             };
-            callMyData();
+            setData();
         }, []);
     }
     static async userData(id) {

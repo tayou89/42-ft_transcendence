@@ -16,8 +16,8 @@ function App() {
 			{/* <Route path="/home" component={Home} /> */}
 			<Route path="/profile" component={UserPage} />
 			{/* <Route path="/login" component={Login} /> */}
-			<Route path="/" component={Game} />
-			{/* <Route path="/home" component={Room1vs1} /> */}
+			{/* <Route path="/" component={Game} /> */}
+			<Route path="/" component={Room1vs1} />
 		</div>
 	);
 }
