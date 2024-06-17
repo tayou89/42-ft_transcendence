@@ -4,10 +4,9 @@ import "../../css/utility/navigation-bar.css"
 
 function NavigationBar() {
     const [myData, setMyData] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
     let   data = "";
 
-    Fetch.setUserData(myData, setMyData);
+    Fetch.setUserData(setMyData);
     data = JSON.stringify(myData);
     return (
         <div className="row" id="navigation-bar">

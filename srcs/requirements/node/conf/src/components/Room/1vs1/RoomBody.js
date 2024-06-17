@@ -5,8 +5,8 @@ import "../../../css/room/1vs1/room.css";
 function RoomBody({ player1, player2 }) {
     return (
         <div className="row" id="room-body">
-            <PlayerSlot />
-            <PlayerSlot />
+            <PlayerSlot player={ player1 } />
+            <PlayerSlot player={ player2 } />
         </div>
     );
 }

@@ -1,5 +1,5 @@
 import { socket, SOCKET } from "../../utility/socket.js";
-import { Fetch } from "../../Fetch/Fetch.js";
+import Fetch from "../../Fetch/Fetch.js";
 
 function handleRoomSocket(room) {
     socket.on(SOCKET.EVENT.ROOM, (data) => handleRoomEvent(data, room));
