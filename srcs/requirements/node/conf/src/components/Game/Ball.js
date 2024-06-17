@@ -1,8 +1,7 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { BALL, SOCKET, socket } from "./constant.js";
+import { BALL } from "./constant.js";
 
-function Ball({ id, position }) {
-    const ball = JSON.parse(position);
+function Ball({ id, ball }) {
     const style = getStyle(ball.x, ball.y);
 
     return (
@@ -23,31 +22,6 @@ function getStyle(ballX, ballY) {
         transition: 'top 0.1s linear, left 0.1s linear',
     `;
     return (style);
-}
-
-function getEffect(ball) {
-    useEffect(() => {
-        let animationFrameId = null;
-        let [newX, newY] = [ball.x, ball.y];
-        const updatePosition = () => {
-            if (newX != ball.x)
-                ball.setX(() => newX);
-            if (newY != ball.y)
-                ball.setY(() => newY);
-            animationFrameId = requestAnimationFrame(updatePosition);
-        };
-        const handleBallEvent = (([ x, y ]) => {
-            newX = x;
-            newY = y;
-        });
-
-        socket.on(SOCKET.EVENT.BALL, handleBallEvent);
-        animationFrameId = requestAnimationFrame(updatePosition);
-        return (() => {
-            socket.off(SOCKET.EVENT.BALL);
-            cancelAnimationFrame(animationFrameId);
-        });
-    }, [ball.x, ball.y])
 }
 
 export default Ball;

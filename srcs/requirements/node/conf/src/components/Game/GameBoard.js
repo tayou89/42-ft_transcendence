@@ -4,12 +4,12 @@ import Ball from "./Ball.js";
 import PlayerSlot from "./PlayerSlot.js";
 import "../../css/game/game-board.css";
 
-function GameBoard({ ball, paddle }) {
+function GameBoard({ player, ball, paddle }) {
     return (
         <div className="row" id="game-board">
-            <PlayerSlot id="player1" />
+            <PlayerSlot id="player1" player={ player.left }/>
             <Board ball={ ball } paddle={ paddle }/>
-            <PlayerSlot id="player2" />
+            <PlayerSlot id="player2" player={ player.right }/>
         </div>
     );
 }
@@ -17,9 +17,9 @@ function GameBoard({ ball, paddle }) {
 function Board({ ball, paddle }) {
     return (
         <div className="col" id="board">
-            <Ball id="ball" position={ ball } />
-            <Paddle id="paddle1" position={ paddle } />
-            <Paddle id="paddle2" position={ paddle }/>
+            <Ball id="ball" ball={ ball } />
+            <Paddle id="paddle1" paddle={ paddle } />
+            <Paddle id="paddle2" paddle={ paddle }/>
         </div>
     );
 }

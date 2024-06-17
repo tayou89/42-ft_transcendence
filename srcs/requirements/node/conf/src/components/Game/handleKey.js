@@ -1,5 +1,6 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import { KEY, SOCKET, socket } from "../utility/socket.js";
+import { KEY } from "./constant.js";
+import { SOCKET, socket } from "../utility/socket.js";
 
 function handleKey() {
     useEffect(() => {

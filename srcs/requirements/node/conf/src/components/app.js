@@ -11,13 +11,13 @@ import Room1vs1 from "./Room/1vs1/Room1vs1.js";
 function App() {
 	return (
 		<div>
-			<Route path="/" component={Interchange} />
+			{/* <Route path="/" component={Interchange} /> */}
 			<Route path="/emailotp" component={EmailOTP} />
 			{/* <Route path="/home" component={Home} /> */}
 			<Route path="/profile" component={UserPage} />
-			<Route path="/login" component={Login} />
-			{/* <Route path="/home" component={Game} /> */}
-			<Route path="/home" component={Room1vs1} />
+			{/* <Route path="/login" component={Login} /> */}
+			<Route path="/" component={Game} />
+			{/* <Route path="/home" component={Room1vs1} /> */}
 		</div>
 	);
 }

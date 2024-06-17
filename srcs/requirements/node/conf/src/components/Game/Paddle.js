@@ -1,8 +1,7 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import {PADDLE, INIT, SOCKET, socket} from "./constant.js";
+import {PADDLE, INIT } from "./constant.js";
 
-function Paddle({ id, position }) {
-    const paddle = JSON.parse(position);
+function Paddle({ id, paddle }) {
     const paddleY = (id === "paddle1") ? paddle.p1 : paddle.p2;
     const style = getStyle(paddleY, id);
 
