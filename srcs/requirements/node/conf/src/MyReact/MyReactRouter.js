@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "./MyReact.js";
 
-export function Route({path, Component}) {
+export function Route({path, component: Component}) {
     const [curPath, setCurPath] = useState(window.location.pathname);
     const [props, setProps] = useState({});
 
