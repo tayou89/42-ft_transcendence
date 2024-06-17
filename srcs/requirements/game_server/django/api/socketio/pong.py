@@ -9,6 +9,16 @@ from ..models import Room, RoomSerializer
 
 from asgiref.sync import sync_to_async
 
+async def func():
+	for i in range(10):
+		await sio.emit(
+			'ball',
+			(i * 10, i * 10),
+			room='hello',
+			namespace='/api/pong'
+		)
+		await asyncio.sleep(1)
+
 class Pong(socketio.AsyncNamespace):
 	
 	rooms = {}
@@ -20,8 +30,11 @@ class Pong(socketio.AsyncNamespace):
  
 	async def on_connect(self, sid, environ):
 		await self.enter_room(sid, "hello")
-		await sio.start_background_task(self.play_pong, "hello")
 
+		asyncio.create_task(self.play_pong("hello"))
+
+		# await self.play_pong("hello")
+  
 		# field_list = ['p1', 'p2']
 		# pid = '1'
 		# room_name = 'hello'
@@ -73,26 +86,26 @@ class Pong(socketio.AsyncNamespace):
   
 	
 	async def on_disconnect(self, sid):
-		field_list = ['p1', 'p2']
-		info = await self.get_session(sid)
-		me = info.get('me')
-		room_name = info.get('room')
+		# field_list = ['p1', 'p2']
+		# info = await self.get_session(sid)
+		# me = info.get('me')
+		# room_name = info.get('room')
   
-		self.rooms[room_name][me] = None
-		await self.save_session(sid, None)
-		room_db = await sync_to_async(Room.objects.get)(name=room_name)
+		# self.rooms[room_name][me] = None
+		# await self.save_session(sid, None)
+		# room_db = await sync_to_async(Room.objects.get)(name=room_name)
 		
-		for field in field_list:
-			if field == me:
-				setattr(room_db, field, None)
-				break
-		room_db.cur_users -= 1
-		if room_db.cur_users == 0:
-			await sync_to_async(room_db.delete)()
-		else:
-			await sync_to_async(room_db.save)()
-			await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
-		
+		# for field in field_list:
+		# 	if field == me:
+		# 		setattr(room_db, field, None)
+		# 		break
+		# room_db.cur_users -= 1
+		# if room_db.cur_users == 0:
+		# 	await sync_to_async(room_db.delete)()
+		# else:
+		# 	await sync_to_async(room_db.save)()
+		# 	await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
+		pass
 
 	
 	async def on_join_room(self, sid, message):
@@ -195,10 +208,10 @@ class Pong(socketio.AsyncNamespace):
 		# room_db.in_game = True
 		# await sync_to_async(room_db.save)()
   
-		await self.emit('message', {'status': 'game starts soon...'}, room=room_name, namespace=self.namespace)
-		await sio.sleep(5)
+		# await self.emit('message', {'status': 'game starts soon...'}, room=room_name, namespace=self.namespace)
+		# await sio.sleep(5)
 		
-		while game.is_ended() == False:
+		while game.status != 'end':
       
 			# if len(self.rooms[room_name]) != 2:
 			# 	if 'p1' in self.rooms[room_name]:
@@ -206,9 +219,8 @@ class Pong(socketio.AsyncNamespace):
 			# 	else:
 			# 		game.unearned_win('p2')
 			# 	break
-	
-			async with lock:
-				game.update_game()
+
+			game.next_frame()
 
 			await sio.emit(
 				'ball',
@@ -217,19 +229,19 @@ class Pong(socketio.AsyncNamespace):
 				namespace=self.namespace
 			)
    
-			await sio.emit(
-				'paddle',
-				game.get_bar_position(),
-				room=room_name,
-				namespace=self.namespace
-			)
+			# await sio.emit(
+			# 	'paddle',
+			# 	game.get_bar_position(),
+			# 	room=room_name,
+			# 	namespace=self.namespace
+			# )
    
-			await sio.emit(
-				'score',
-				game.get_score(),
-				room=room_name,
-				namespace=self.namespace
-			)
+			# await sio.emit(
+			# 	'score',
+			# 	game.get_score(),
+			# 	room=room_name,
+			# 	namespace=self.namespace
+			# )
 
 			# await sio.emit(
 			# 	'message',
@@ -242,14 +254,14 @@ class Pong(socketio.AsyncNamespace):
 			# 	namespace=self.namespace
 			# )
 
-			await sio.sleep(1)
+			await sio.sleep(1 / 30)
 	
-		await sio.emit(
-			'message',
-			game.get_result(),
-			room=room_name,
-			namespace=self.namespace
-		)
+		# await sio.emit(
+		# 	'message',
+		# 	game.get_result(),
+		# 	room=room_name,
+		# 	namespace=self.namespace
+		# )
 
 	async def move_paddle(self, sid, message):
 		paddle_dir = message['dir']
@@ -262,7 +274,5 @@ class Pong(socketio.AsyncNamespace):
 
 		async with lock:
 			game.update_paddle_dir(me, paddle_dir)
-		self.emit('message', {'json': 'wow'}, room=room_name, namespace=self.namespace)
-
 
 sio.register_namespace(Pong('/api/pong'))

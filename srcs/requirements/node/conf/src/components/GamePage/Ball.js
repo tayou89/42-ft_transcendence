@@ -39,10 +39,11 @@ function getEffect(ball) {
                 ball.setY(() => newY);
             animationFrameId = requestAnimationFrame(updatePosition);
         };
-        const handleBallEvent = (( x, y ) => {
+        const handleBallEvent = ([x, y]) => {
+			console.log(x, y);
             newX = x;
             newY = y;
-        });
+        };
 
         socket.on(SOCKET.EVENT.BALL, handleBallEvent);
         animationFrameId = requestAnimationFrame(updatePosition);

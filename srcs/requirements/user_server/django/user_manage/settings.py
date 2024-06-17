@@ -195,6 +195,7 @@ SIMPLE_JWT = {
         'rest_framework_simplejwt.tokens.RefreshToken',
     ),
     'BLACKLIST_AFTER_ROTATION': True,
+    'ROTATE_REFRESH_TOKENS': False,
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
 

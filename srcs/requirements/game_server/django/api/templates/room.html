@@ -12,7 +12,9 @@
 		<button id='move'>MOVE</button><button id='create' >CREATE</button><button id='join' >JOIN</button><button id='leave' >LEAVE</button><button id='ready' >READY</button>
 	</form>
     <script>
-		const socket = io('http://localhost:8001/api/pong');
+		const socket = io('http://localhost:8001/api/pong', {
+			transports: ['websocket']
+		});
 
 		const name = document.getElementById('name');
 		const form = document.getElementById('form');
