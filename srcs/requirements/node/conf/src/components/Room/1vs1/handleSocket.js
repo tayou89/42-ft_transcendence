@@ -1,7 +1,9 @@
-import { socket, SOCKET } from "../../utility/socket.js";
+import { pongSocket, SOCKET } from "../../utility/socket.js";
 import Fetch from "../../Fetch/Fetch.js";
 
 function handleRoomSocket(room) {
+    const socket = pongSocket;
+
     socket.on(SOCKET.EVENT.ROOM, (data) => handleRoomEvent(data, room));
 }
 

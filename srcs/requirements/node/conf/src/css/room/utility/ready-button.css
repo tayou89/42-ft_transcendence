@@ -1,0 +1,27 @@
+.ready-button {
+    width: 250px;
+    border-radius: 30px;
+    font-size: 40px;
+    margin-top: 40px;
+    color: white;
+}
+
+#not-ready {
+    background: #ff3434;
+    box-shadow: inset -4px -4px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+#not-ready:hover {
+    background: linear-gradient(0deg, rgba(255, 52, 52, 1) 0%, rgba(153, 31, 31, 1) 100%);
+    box-shadow: inset -4px -4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+#ready {
+    background: #3ec74c;
+    box-shadow: inset -4px -4px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+#ready:hover {
+    background: linear-gradient(0deg, rgba(62, 199, 76, 1) 0%, rgba(30, 97, 37, 1) 100%);
+    box-shadow: inset -4px -4px 4px 0px rgba(0, 0, 0, 0.25);
+}

@@ -1,8 +1,15 @@
 import {io} from "socket.io-client";
 
-export const socket = io("http://localhost:8080", {
+export const pongSocket = io("http://localhost:8001/api/pong", {
     reconnection: false,
     autoConnect: false,
+    transports: ['websocket'],
+});
+
+export const mttSocket = io("http://localhost:8001/api/mtt", {
+    reconnection: false,
+    autoConnect: false,
+    transports: ['websocket'],
 });
 
 export const SOCKET = {
@@ -10,6 +17,7 @@ export const SOCKET = {
         KEY: "key",
         ROOM: "room",
         GAME: "game",
+        READY: "ready",
     },
     VALUE: {
         KEY: {
@@ -17,5 +25,9 @@ export const SOCKET = {
             DOWN: 1,
             NONE: 0,
         },
-    }
+    },
+    TYPE: {
+        PONG: "pong",
+        MTT: "mtt",
+    },
 }
