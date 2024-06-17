@@ -1,6 +1,10 @@
 #room-body {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 100px;
     margin-top: 60px;
+    position: relative;
+    height: 100%;
+    width: 100%;
 }

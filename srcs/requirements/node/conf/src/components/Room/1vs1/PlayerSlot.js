@@ -4,8 +4,6 @@ import { pongSocket } from "../../utility/socket.js";
 import "../../../css/room/1vs1/player-slot.css";
 
 function PlayerSlot({ player }) {
-    player.exp = 3000;
-
     return (
         <div className="col" id="player-slot">
             <div id="room-slot-photo-box">
