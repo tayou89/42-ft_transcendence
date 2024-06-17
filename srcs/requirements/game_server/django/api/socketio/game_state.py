@@ -44,8 +44,8 @@ class GameState:
 		self.ball_dir = [1, 0]
 		self.ball_speed = 5
 
-		self.p1_sid: str
-		self.p2_sid: str
+		self.p1_sid: int
+		self.p2_sid: int
 
 		self.p1_dir = 0
 		self.p2_dir = 0
@@ -58,11 +58,10 @@ class GameState:
 		self.bounce_time = 0
 		self.pause = 15
 
-	def set_player_dy(self, player_channel_name, direction):
-		if player_channel_name == self.p1_sid:
+	def set_player_dy(self, pid, direction):
+		if pid == self.p1_sid:
 			self.p1_dir = direction
-			self.p2_dir = direction
-		elif player_channel_name == self.p2_sid:
+		elif pid == self.p2_sid:
 			self.p2_dir = direction
 
 	def next_frame(self) -> None:
@@ -111,7 +110,6 @@ class GameState:
 			self.goal(P1)
 		if self.ball_coords[Y] <= BALL_RADIUS or self.ball_coords[Y] >= HEIGHT - BALL_RADIUS * 2:
 			self.ball_dir[Y] *= -1
-
 
 	def goal(self, player):
 		self.init_position()

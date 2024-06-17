@@ -52,15 +52,6 @@ class Pong(socketio.AsyncNamespace):
 		room_name = message['room']
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
-  
-		if room.cur_users == 2:
-			await sio.emit(
-	   			'message',
-		  		{'err': 'room is full'},
-				room=sid,
-			 	namespace=self.namespace
-			)
-			return
 		
 		for field in field_list:
 			if getattr(room, field, None) is None:
@@ -87,7 +78,7 @@ class Pong(socketio.AsyncNamespace):
 		await sync_to_async(room.save)()
    
 		await sio.emit(
-				'message',
+				'room',
 				self.rooms[room_name],
 				room=room_name,
 				namespace=self.namespace
@@ -118,36 +109,34 @@ class Pong(socketio.AsyncNamespace):
 		else:
 			await sync_to_async(room.save)()
 			await self.emit(
-	   			'message',
+	   			'room',
 				self.rooms[room_name],
 				room=room_name,
 				namespace=self.namespace
 			)
   
 	async def on_ready(self, sid, message):
-		flag = message['ready']
+		flag = message
 		info = await self.get_session(sid)
 		me = info.get('me')
 		room_name = info.get('room')
   
 		self.rooms[room_name][me]['ready'] = flag
-		await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
+		await self.emit('room', self.rooms[room_name], room=room_name, namespace=self.namespace)
   
 		cur_room = self.rooms[room_name]
 		if cur_room['p2'] is not None and cur_room['p2']['ready'] and cur_room['p1']['ready']:
-			await self.play_pong(room_name)
+			await asyncio.create_task(self.play_pong(room_name))
 
 
 	async def play_pong(self, room_name):
 		game = self.games[room_name] = GameState()
-		game.p1_sid = self.rooms[room_name]['p1']['sid']
-		lock = self.locker[room_name] = asyncio.Lock()
   
 		room_db = await sync_to_async(Room.objects.get)(name=room_name)
 		room_db.in_game = True
 		await sync_to_async(room_db.save)()
   
-		await self.emit('message', {'status': 'game starts soon...'}, room=room_name, namespace=self.namespace)
+		# await self.emit('message', {'status': 'game starts soon...'}, room=room_name, namespace=self.namespace)
 		await sio.sleep(5)
 		
 		while game.status != 'end':
@@ -169,17 +158,15 @@ class Pong(socketio.AsyncNamespace):
 			await sio.sleep(1 / 30)
    
 	async def save_result(self):
-		
+		pass
 		
 
 
 	async def on_key(self, sid, message):
-		# info = await self.get_session(sid)
-		# me = info.get('me')
-		# room_name = info.get('room')
+		info = await self.get_session(sid)
+		room_name = info.get('room')
   
-		game = self.games['hello']
-		# lock = self.locker[room_name]
+		game = self.games[room_name]
 		game.set_player_dy(sid, message)
 
 sio.register_namespace(Pong('/api/pong'))
