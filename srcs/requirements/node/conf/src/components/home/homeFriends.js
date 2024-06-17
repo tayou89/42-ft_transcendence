@@ -12,8 +12,43 @@ const defaultUserData = {
 	"friends": []
 }
 
-function onClickAddFriend() {
-	console.log("Add new Friend");
+function AddNewFriend() {
+	const [addFriendMsg, setAddFriendMsg] = useState("");
+	function onClickSubmit(event) {
+		event.preventDefault();
+		const input = event.target.parentNode.querySelector("input");
+		console.log(input.value);
+		setAddFriendMsg(() => "Successfully Added!");
+	}
+	return (
+		<div>
+			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+				add Friend
+			</button>
+			<div className="modal text-center" id="myModal">
+				<div className="modal-dialog">
+					<div className="modal-content">
+
+						<div className="modal-header text-dark">
+							<h4 className="modal-title">Add Your New Friend!</h4>
+							<button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+						</div>
+
+						<div className="modal-body">
+							<form className="container my-1 py-1">
+								<input className="me-1" type="text" placeholder="Friend name" />
+								<Btn size="md" text="Submit" onClickFunc={onClickSubmit} />
+							</form>
+							<div className="container mt-2 text-success">
+								{addFriendMsg}
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 function HomeFriends({ myFriends }) {
@@ -24,7 +59,7 @@ function HomeFriends({ myFriends }) {
 					Friends
 				</div>
 				<div className="container col-6 text-end pe-4">
-					<Btn size="sm" text="add Friend" onClickFunc={onClickAddFriend} />
+					<AddNewFriend />
 				</div>
 			</div>
 			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">

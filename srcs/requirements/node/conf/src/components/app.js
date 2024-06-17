@@ -5,7 +5,6 @@ import UserPage from "./UserPage.js";
 import Login from "./login.js";
 import Interchange from "./interchange.js";
 import EmailOTP from "./emailOTP.js";
-import Test from "./Test.js";
 
 function App() {
 	return (
@@ -15,7 +14,6 @@ function App() {
 			<Route path="/home" component={Home} />
 			<Route path="/profile" component={UserPage} />
 			<Route path="/login" component={Login} />
-			<Route path="/test" component={Test} />
 		</div>
 	);
 }

@@ -23,10 +23,6 @@ function Home() {
 	const [myData, setMyData] = MyReact.useState(defaultMyData);
 	const myDataApiUrl = "http://localhost:8000/api/users/me";
 
-	function onClickTest(params) {
-		tokenRefreshAndGoTo("/home");
-	}
-
 	MyReact.useEffect(() => {
 		fetch(myDataApiUrl, {
 			method: 'GET',
@@ -53,7 +49,6 @@ function Home() {
 		<div>
 			<Navbar name={myData.name} profileImg={myData.avatar} />
 			<div className="container text-light">
-				<Btn size="lg" text="Test" onClickFunc={onClickTest} />
 				<div className="row mt-3">
 					<div className="col-md-5">
 						<HomeMyInfo myData={myData} />
