@@ -7,19 +7,7 @@ function PlayerSlot({id}) {
     const [playerData, setPlayerData] = useState({});
     const playerId = 1;
 
-    // Fetch.setUserData(playerData, setPlayerData, 1, id);
-    useEffect(() => {
-        const callMyData = async() => { 
-            const pid = (id === "player1" ? "me" : playerId);
-            const userData = await Fetch.userData(pid);
-
-            setPlayerData((prev) => ({...prev, ...userData}));
-            console.log("userData:",id, userData);
-            // setData(() => userData);
-        };
-        callMyData();
-    }, []);
-    console.log("playerData:",id, playerData);
+    Fetch.setUserData(playerData, setPlayerData, 1, id);
     return (
         <div className="col" id={id}>
             <div className="row" id="game-slot-photo-box">

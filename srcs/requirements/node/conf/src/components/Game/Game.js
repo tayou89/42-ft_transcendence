@@ -4,7 +4,7 @@ import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
 import handleKey from "./handleKey.js";
-import handleSocket from "./handleSocket.js";
+import handleGameSocket from "./handleSocket.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
@@ -22,7 +22,7 @@ function Game() {
     };
 
     handleKey();
-    handleSocket(game);
+    handleGameSocket(game);
     return (
         <div className="container-fluid" id="game-page">
             <NavigationBar />
