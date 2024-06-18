@@ -35,6 +35,7 @@ export function Link({to, children, props, ...others}) {
 
 export function navigate(to, props) {
     const state = props ? props : {};
+    console.log("state:", state);
     window.history.pushState(state, "", to);
     const navigationEvent = new PopStateEvent("navigate", { state: state });
     window.dispatchEvent(navigationEvent);

@@ -16,7 +16,7 @@ function App() {
 			<Route path="/main" component={Home} />
 			<Route path="/profile" component={UserPage} />
 			<Route path="/login" component={Login} />
-			{/* <Route path="/" component={Game} /> */}
+			<Route path="/game" component={Game} />
 			<Route path="/home" component={Room1vs1} />
 		</div>
 	);

@@ -23,15 +23,14 @@ function Room1vs1({ title }) {
     }
 
     Fetch.setUserData(setPlayer1, 1);
-    Fetch.setUserData(setPlayer1, 1);
-    console.log("clickQuitButton:", clickQuitButton);
+    Fetch.setUserData(setPlayer2, 1);
     // handleRoomSocket(room);
     title = "1:1 하실 분 들어오세요!";
     return (
         <div className="container-fluid" id="room-page">
             <NavigationBar />
             <Title title={title}/>
-            <RoomBody player1={ player1 } set1={ setPlayer1 } player2={ player2 } set2={ setPlayer2 }/>
+            <RoomBody player1={ player1 } set1={ setPlayer1 } player2={ player2 } set2={ setPlayer2 } />
             <BottomLine socketType={ SOCKET.TYPE.PONG } setClickStatus={ setClickQuitButton } />
             { clickQuitButton ? <QuitPopUp setClickStatus={ setClickQuitButton }/> : null }
         </div>
