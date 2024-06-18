@@ -29,11 +29,9 @@ function Home() {
 			credentials: 'include'
 		})
 			.then(response => {
-				console.log(response);
 				return response.json();
 			})
 			.then(data => {
-				console.log(data);
 				if (data.detail) {
 					tokenRefreshAndGoTo("/home");
 				} else {
@@ -52,7 +50,7 @@ function Home() {
 				<div className="row mt-3">
 					<div className="col-md-5">
 						<HomeMyInfo myData={myData} />
-						<HomeFriends myFriends={myData.friends} />
+						<HomeFriends myData={myData} />
 					</div>
 					<div className="col-md-7">
 						<HomeMatches />
