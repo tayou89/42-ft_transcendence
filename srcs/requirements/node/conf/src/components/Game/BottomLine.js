@@ -1,4 +1,4 @@
-import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { MyReact, useState, useEffect } from "../../MyReact/MyReact.js";
 import QuitButton from "../utility/QuitButton.js";
 import "../../css/game/bottom-line.css";
 
