@@ -14,7 +14,7 @@ export function Route({path, component: Component}) {
         return () => {
             window.removeEventListener("navigate", onLocationChange);
         };
-    }, [setCurPath]);
+    }, [setCurPath, setProps]);
     return curPath === path ? <div><Component {...props} /></div> : null;
 }
 

@@ -15,7 +15,7 @@ function Room1vs1({ title }) {
     const [ player1, setPlayer1 ] = useState(defaultPlayer);
     const [ player2, setPlayer2 ] = useState(defaultPlayer);
     const [ clickQuitButton, setClickQuitButton ] = useState(false);
-    const room = {
+    const roomData = {
         player1: player1,
         setPlayer1: setPlayer1,
         player2: player2,
@@ -24,13 +24,13 @@ function Room1vs1({ title }) {
 
     Fetch.setUserData(setPlayer1, 1);
     Fetch.setUserData(setPlayer2, 1);
-    // handleRoomSocket(room);
+    // handleRoomSocket(roomData);
     title = "1:1 하실 분 들어오세요!";
     return (
         <div className="container-fluid" id="room-page">
             <NavigationBar />
             <Title title={title}/>
-            <RoomBody player1={ player1 } set1={ setPlayer1 } player2={ player2 } set2={ setPlayer2 } />
+            <RoomBody roomData={ roomData } socketType={ SOCKET.TYPE.PONG } />
             <BottomLine socketType={ SOCKET.TYPE.PONG } setClickStatus={ setClickQuitButton } />
             { clickQuitButton ? <QuitPopUp setClickStatus={ setClickQuitButton }/> : null }
         </div>

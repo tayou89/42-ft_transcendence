@@ -8,7 +8,9 @@ import handleGameSocket from "./handleSocket.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
-function Game({ player, type }) {
+function Game({ player, socketType }) {
+    console.log("player:", player);
+    console.log("socketType:", socketType);
     const [score, setScore] = useState({ p1: 0, p2: 0});
     const [ball, setBall] = useState({ x: INIT.BALL.X, y: INIT.BALL.Y }); 
     const [paddle, setPaddle] = useState({ p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y });
@@ -18,23 +20,8 @@ function Game({ player, type }) {
         score: score, setScore: setScore
     };
 
-    //temporary code for test
-    player = {
-        left: {
-            name: "tayou",
-            photoURL: "",
-            level: 5,
-        },
-        right: {
-            name: "tayou",
-            photoURL: "",
-            level: 5,
-        },
-    };
-    //
-
-    handleKey(type);
-    handleGameSocket(game, type);
+    handleKey(socketType);
+    handleGameSocket(game, socketType);
     return (
         <div className="container-fluid" id="game-page">
             <NavigationBar />
