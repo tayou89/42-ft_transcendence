@@ -85,6 +85,8 @@ function commitWork(fiber) {
   }
   else if (fiber.effectTag === "DELETION") {
     commitDeletion(fiber, domParent);
+    commitWork(fiber.sibling);
+    return;
   }
   else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate.props, fiber.props);
