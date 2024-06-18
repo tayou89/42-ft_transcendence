@@ -118,6 +118,7 @@ class Pong(socketio.AsyncNamespace):
 			)
   
 	async def on_ready(self, sid, message):
+		field_list = ['p1', 'p2', 'p3', 'p4']
 		flag = message
 		info = await self.get_session(sid)
 		me = info.get('me')
