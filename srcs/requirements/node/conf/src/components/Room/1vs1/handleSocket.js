@@ -1,13 +1,11 @@
 import { pongSocket, SOCKET } from "../../utility/socket.js";
 import Fetch from "../../Fetch/Fetch.js";
 
-function handleRoomSocket(room) {
-    const socket = pongSocket;
-
-    socket.on(SOCKET.EVENT.ROOM, (data) => handleRoomEvent(data, room));
+export function receivePlayerData(room) {
+    pongSocket.on(SOCKET.EVENT.ROOM, (data) => receiveRoomEvent(data, room));
 }
 
-function handleRoomEvent({ p1, p2 }, room) {
+function receiveRoomEvent({ p1, p2 }, room) {
     if (p1.pid !== room.player1.id)
         Fetch.setUserData(room.setPlayer1, p1.pid);
     if (p2.pid !== room.player2.id)
@@ -18,4 +16,6 @@ function handleRoomEvent({ p1, p2 }, room) {
         setPlayer2((prev) => ({ ...prev, ready: p2.ready }));
 }
 
-export default handleRoomSocket;
+export function sendRoomJoinMessage(id, title) {
+    pongSocket.emit("room", { pid: id, room_name: title });
+}

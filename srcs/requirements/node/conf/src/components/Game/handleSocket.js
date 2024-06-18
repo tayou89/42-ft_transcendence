@@ -1,9 +1,7 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import { SOCKET, pongSocket, mttSocket } from "../utility/socket.js";
+import { SOCKET } from "../utility/socket.js";
 
-function handleGameSocket(game, type) {
-    const socket = (type === SOCKET.TYPE.PONG) ? pongSocket : mttSocket;
-
+function handleGameSocket(game, socket) {
     socket.on(SOCKET.EVENT.GAME, (data) => handleGameEvent(data, game));
 }
 

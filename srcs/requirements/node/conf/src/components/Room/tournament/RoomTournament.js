@@ -1,34 +1,32 @@
 import { useEffect, useState, MyReact } from "../../../MyReact/MyReact.js";
 import NavigationBar from "../../utility/NavigationBar.js";
 import Title from "../utility/Title.js";
-import RoomBody from "./RoomBody.js";
 import BottomLine from "../utility/BottomLine.js";
 import QuitPopUp from "../../utility/QuitPopUp.js";
 import Fetch from "../../Fetch/Fetch.js";
-import { pongSocket } from "../../utility/socket.js";
+import { mttSocket } from "../../utility/socket.js";
 import { sendRoomJoinMessage, receivePlayerData } from "./handleSocket.js";
-import "../../../css/room/1vs1/room.css";
+import handleRoomSocket from "./handleSocket.js";
 
-function Room1vs1({ title, id }) {
+function RoomTournament({ title, id }) {
     const [ player1, setPlayer1 ] = useState({});
     const [ player2, setPlayer2 ] = useState({});
+    const [ player3, setPlayer3 ] = useState({});
+    const [ player4, setPlayer4 ] = useState({});
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
-    const roomData = { player1, setPlayer1, player2, setPlayer2 };
+    const roomData = { 
+        player1, setPlayer1, player2, setPlayer2, 
+        player3, setPlayer3, player4, setPlayer4 
+    };
 
     sendRoomJoinMessage(id, title);
-    Fetch.setUserData(setPlayer1, 1);
-    Fetch.setUserData(setPlayer2, 1);
-    // receivePlayerData(roomData);
     title = "1:1 하실 분 들어오세요!";
+    // receivePlayerData(roomData);
     return (
         <div className="container-fluid" id="room-page">
             <NavigationBar />
+            <RoomBody roomData={ roomData } socket={ mttSocket } />
             <Title title={title}/>
-            <RoomBody roomData={ roomData } socket={ pongSocket } />
-            <BottomLine setIsQuitClicked={ setIsQuitClicked } />
-            { isQuitClicked ? <QuitPopUp setIsQuitClicked={ setIsQuitClicked }/> : null }
         </div>
     );
 }
-
-export default Room1vs1;

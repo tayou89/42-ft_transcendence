@@ -1,9 +1,8 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import { KEY } from "./constant.js";
-import { SOCKET, pongSocket , mttSocket } from "../utility/socket.js";
+import { SOCKET } from "../utility/socket.js";
 
-function handleKey(type) {
-    const socket = (type === SOCKET.TYPE.PONG) ? pongSocket : mttSocket;
+function handleKey(socket) {
     const handleKeyDown = (event) => {
         if (KEY.UP.includes(event.key))
             socket.emit(SOCKET.EVENT.KEY, -1);

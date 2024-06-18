@@ -2,12 +2,12 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import "../../css/utility/quit-popup.css";
 
-function QuitPopUp({ setClickStatus }) {
+function QuitPopUp({ setIsQuitClicked }) {
     const handleClickYes = () => {
         navigate("/main");
     }
     const handleClickNo = () => {
-        setClickStatus((prev) => (!prev));
+        setIsQuitClicked((prev) => (!prev));
     }
     return (
         <div className="container-fluid" id="quit-popup">

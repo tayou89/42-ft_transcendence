@@ -7,20 +7,29 @@ export function Route({path, component: Component}) {
     useEffect(() => {
         const onLocationChange = (event) => {
             setCurPath(_ => window.location.pathname);
-            if (event.state)
-                setProps(() => event.state);
+            if (event.state) {
+                console.log("event.state1:", event.state);
+                setProps((prev) => {
+                    console.log("prev:", prev);
+                    console.log("event.state2:", event.state);
+                    return ({...prev, ...event.state});
+                });
+            }
         }
         window.addEventListener("navigate", onLocationChange);
         return () => {
             window.removeEventListener("navigate", onLocationChange);
         };
     }, [setCurPath, setProps]);
+    console.log("path:". path);
+    console.log("props:", props);
     return curPath === path ? <div><Component {...props} /></div> : null;
 }
 
 export function Link({to, children, props, ...others}) {
     const preventReload = (event) => {
         const state = props ? props : {};
+        console.log("Link state:", state);
         event.preventDefault();
         window.history.pushState(state, "", to);
         const navigationEvent = new PopStateEvent("navigate", { state:  state });
@@ -35,7 +44,7 @@ export function Link({to, children, props, ...others}) {
 
 export function navigate(to, props) {
     const state = props ? props : {};
-    console.log("state:", state);
+    console.log("Navigate state:", state);
     window.history.pushState(state, "", to);
     const navigationEvent = new PopStateEvent("navigate", { state: state });
     window.dispatchEvent(navigationEvent);
