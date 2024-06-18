@@ -26,14 +26,24 @@ function HomeFriends({ myData }) {
 			</div>
 			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">
 				{myData.friends.map(id => (
-					<HomeFriendsFriendInfo key={id} id={id} />
+					<HomeFriendsFriendInfo id={id} />
 				))}
 			</div>
 		</div>
 	);
 }
 
+function unFriend(event) {
+	// console.log(event);
+	console.log(`u clicked unfriend`);
+	const unFriendApiUrl = "http://localhost:8000/";
+	fetch(unFriendApiUrl, {
+		method: 'DELETE',
+		credentials: 'include'
+	})
+}
 
+//!!!??? 로그아웃/로그인 이쁘게 바꿔야함.
 function HomeFriendsFriendInfo({ id }) {
 	const [userInfo, setUserInfo] = useState(defaultUserData);
 	const userInfoApiUrl = `http://localhost:8000/api/users/${id}`;
@@ -51,12 +61,6 @@ function HomeFriendsFriendInfo({ id }) {
 				console.log(error);
 			});
 	}, [])
-
-	function unFriend(event) {
-		// console.log(event);
-		console.log(`u clicked unfriend`);
-		const unFriendApiUrl = "http://localhost:8000/";
-	}
 	return (
 		<div className="container mt-1">
 			<div className="row border text-light">
@@ -83,7 +87,7 @@ function HomeFriendsFriendInfo({ id }) {
 }
 
 function modifyCommentMsg(msg, isSuccess) {
-	const comment = document.querySelector("#add-friend-status");
+	const comment = document.querySelector("input");
 	if (comment) {
 		comment.classList.remove("text-success");
 		comment.classList.remove("text-danger");
@@ -96,27 +100,32 @@ function modifyCommentMsg(msg, isSuccess) {
 	}
 }
 
-function AddNewFriend() {
-	function onClickSubmit(event) {
-		event.preventDefault();
-		const input = event.target.parentNode.querySelector("input");
-		fetch(`http://localhost:8000/api/users?name=${input.value}`, {
-			method: 'GET',
-			credentials: 'include'
+//!!!??? 성공했을 때 친구 목록이 바로 업데이트되게끔 바꿔야함.
+function onClickSubmit(event) {
+	event.preventDefault();
+	const input = event.target.parentNode.querySelector("input");
+	fetch("http://localhost:8000/api/users/me/friend", {
+		method: 'POST',
+		credentials: 'include',
+		body: JSON.stringify({
+			name: input.value
 		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.status === "success") {
-					modifyCommentMsg("Successfully Added!", true);
-				} else {
-					modifyCommentMsg(data.result, false);
-				}
-				setTimeout(() => {
-					modifyCommentMsg("", true);
-				}, 3000);
-			})
-			.catch(console.log);
-	}
+	})
+		.then(response => response.json())
+		.then(data => {
+			if (data.status === "success") {
+				modifyCommentMsg("Successfully Added!", true);
+			} else {
+				modifyCommentMsg(data.result, false);
+			}
+			setTimeout(() => {
+				modifyCommentMsg("", true);
+			}, 3000);
+		})
+		.catch(console.log);
+}
+
+function AddNewFriend() {
 	return (
 		<div>
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
@@ -133,7 +142,7 @@ function AddNewFriend() {
 
 						<div className="modal-body">
 							<form className="container my-1 py-1">
-								<input className="me-1" type="text" placeholder="Friend name" />
+								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" />
 								<Btn size="md" text="Submit" onClickFunc={onClickSubmit} />
 							</form>
 							<div id="add-friend-status" className="container mt-2 text-success">
