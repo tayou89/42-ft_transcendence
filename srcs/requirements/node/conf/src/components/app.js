@@ -13,7 +13,7 @@ function App() {
 		<div>
 			<Route path="/" component={Interchange} />
 			<Route path="/emailotp" component={EmailOTP} />
-			<Route path="/main" component={Home} />
+			{/* <Route path="/home" component={Home} /> */}
 			<Route path="/profile" component={UserPage} />
 			<Route path="/login" component={Login} />
 			<Route path="/game" component={Game} />

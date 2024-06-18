@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "./MyReact.js";
 
-export function Route({path, component}) {
+export function Route({path, component: Component}) {
     const [curPath, setCurPath] = useState(window.location.pathname);
     const [props, setProps] = useState({});
 
@@ -15,7 +15,7 @@ export function Route({path, component}) {
             window.removeEventListener("navigate", onLocationChange);
         };
     }, [setCurPath]);
-    return curPath === path ? component(props) : null;
+    return curPath === path ? <div><Component {...props} /></div> : null;
 }
 
 export function Link({to, children, props, ...others}) {
