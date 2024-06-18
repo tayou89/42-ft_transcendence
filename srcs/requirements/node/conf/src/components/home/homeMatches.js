@@ -41,6 +41,59 @@ const sampleRooms = [
 	}
 ]
 
+function onClickSubmit(event) {
+	event.preventDefault();
+	const title = event.target.parentNode.querySelector("#create-room-input").value;
+	const selectedRadio = event.target.parentNode.querySelector("input[name='optradio']:checked").value;
+	if (selectedRadio === "1vs1") {
+		navigate("/room/1vs1", { title });
+	} else {
+		navigate("/room/tournament", { title });
+	}
+}
+
+function CreateRoom() {
+	return (
+		<div>
+			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal">
+				Create Room
+			</button>
+			<div className="modal" id="createRoomModal">
+				<div className="modal-dialog">
+					<div className="modal-content">
+
+						<div className="modal-header text-dark">
+							<h4 className="modal-title">Create New Room</h4>
+							<button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+						</div>
+
+						<div className="modal-body">
+							<div className="row">
+								<div className="col-2"></div>
+								<div className="col-10">
+									<form className="text-start">
+										<div className="form-check">
+											<input type="radio" className="form-check-input" id="radio1" name="optradio" value="1vs1" checked />
+											<label className="form-check-label text-dark" for="radio1">1 vs 1</label>
+										</div>
+										<div className="form-check">
+											<input type="radio" className="form-check-input" id="radio2" name="optradio" value="tournament" />
+											<label className="form-check-label text-dark" for="radio2">Tournerment(4P)</label>
+										</div>
+										<input id="create-room-input" className="me-1" type="text" placeholder="Room name" />
+									</form>
+									<Btn size="md" text="Submit" onClickFunc={onClickSubmit} />
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
 function HomeMatches() {
 	const [rooms, setRooms] = useState([]);
 	const roomsInfoApiUrl = "http://localhost:8000/api/rooms";
@@ -64,7 +117,7 @@ function HomeMatches() {
 					Matches
 				</div>
 				<div className="container col-6 text-end pe-4">
-					<Btn size="sm" text="Create Room" onClickFunc={onClickCreateRoom} />
+					<CreateRoom />
 				</div>
 			</div>
 			<div className="container pt-2 pb-2 border-top border-bottom">
