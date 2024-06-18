@@ -32,4 +32,5 @@ class log_out(APIView):
 		response = Response(status=status.HTTP_204_NO_CONTENT)
 		response.delete_cookie('jwt')
 		response.delete_cookie('refresh')
+		return response
   
