@@ -64,8 +64,11 @@ class UserVeiwSet(viewsets.ModelViewSet):
   
 		try:
 			friend = User.objects.get(name=friend_name)
-			if friend.pk in user.friends:
+			friend_list = user.friends.filter(pk=friend.pk)
+			
+			if friend_list is None:
 				return Response({"result": "already friend"})
+	
 			user.friends.add(friend.pk)
 			user.save()
 		except:
