@@ -41,18 +41,18 @@ const sampleRooms = [
 	}
 ]
 
-function onClickSubmit(event) {
+function onClickSubmit(event, myId) {
 	event.preventDefault();
 	const title = event.target.parentNode.querySelector("#create-room-input").value;
 	const selectedRadio = event.target.parentNode.querySelector("input[name='optradio']:checked").value;
 	if (selectedRadio === "1vs1") {
-		navigate("/room/1vs1", { title });
+		navigate("/room/1vs1", { title, myId });
 	} else {
-		navigate("/room/tournament", { title });
+		navigate("/room/tournament", { title, myId });
 	}
 }
 
-function CreateRoom() {
+function CreateRoom({ myId }) {
 	return (
 		<div>
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal">
@@ -82,7 +82,7 @@ function CreateRoom() {
 										</div>
 										<input id="create-room-input" className="me-1" type="text" placeholder="Room name" />
 									</form>
-									<Btn size="md" text="Submit" onClickFunc={onClickSubmit} />
+									<Btn size="md" text="Submit" onClick={(event) => onClickSubmit(event, myId)} />
 								</div>
 							</div>
 						</div>
@@ -94,7 +94,7 @@ function CreateRoom() {
 	);
 }
 
-function HomeMatches() {
+function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
 	const roomsInfoApiUrl = "http://localhost:8000/api/rooms";
 	useEffect(() => {
@@ -117,7 +117,7 @@ function HomeMatches() {
 					Matches
 				</div>
 				<div className="container col-6 text-end pe-4">
-					<CreateRoom />
+					<CreateRoom myId />
 				</div>
 			</div>
 			<div className="container pt-2 pb-2 border-top border-bottom">

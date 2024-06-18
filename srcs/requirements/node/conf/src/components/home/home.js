@@ -49,11 +49,11 @@ function Home() {
 			<div className="container text-light">
 				<div className="row mt-3">
 					<div className="col-md-5">
-						<HomeMyInfo myData={myData} />
+						<HomeMyInfo myData={myData} />s
 						<HomeFriends myData={myData} />
 					</div>
 					<div className="col-md-7">
-						<HomeMatches />
+						<HomeMatches myId={myData.id} />
 					</div>
 				</div>
 			</div>
