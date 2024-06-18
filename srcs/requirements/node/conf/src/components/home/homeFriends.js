@@ -87,7 +87,7 @@ function HomeFriendsFriendInfo({ id }) {
 }
 
 function modifyCommentMsg(msg, isSuccess) {
-	const comment = document.querySelector("input");
+	const comment = document.querySelector("#add-friend-status");
 	if (comment) {
 		comment.classList.remove("text-success");
 		comment.classList.remove("text-danger");
@@ -101,9 +101,10 @@ function modifyCommentMsg(msg, isSuccess) {
 }
 
 //!!!??? 성공했을 때 친구 목록이 바로 업데이트되게끔 바꿔야함.
+//!!!??? 성공/실패 메세지 뜨고 잠시뒤에 or 창 닫으면 사라지게 하고싶음. settimeout 쓰면 1초에 한번씩 눌렀을 때 처음 누른 settimeout 때문에 3번째에 나온 메세지가 1초만에 사라짐.
 function onClickSubmit(event) {
 	event.preventDefault();
-	const input = event.target.parentNode.querySelector("input");
+	const input = event.target.parentNode.querySelector("#add-friend-input");
 	fetch("http://localhost:8000/api/users/me/friend", {
 		method: 'POST',
 		credentials: 'include',
@@ -118,11 +119,11 @@ function onClickSubmit(event) {
 			} else {
 				modifyCommentMsg(data.result, false);
 			}
-			setTimeout(() => {
-				modifyCommentMsg("", true);
-			}, 3000);
 		})
-		.catch(console.log);
+		.catch(error => {
+			modifyCommentMsg("Network Error!", false);
+			console.log(error);
+		});
 }
 
 function AddNewFriend() {
