@@ -36,7 +36,7 @@ class log_out(APIView):
 		if refresh_token:
 			refresh = RefreshToken(refresh_token)
 			refresh.blacklist()
-		response = Response(status=status.HTTP_204_NO_CONTENT)
+		response = Response(status=status.HTTP_200_OK)
 		response.delete_cookie('jwt')
 		response.delete_cookie('refresh')
   
