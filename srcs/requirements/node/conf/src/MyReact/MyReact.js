@@ -48,12 +48,26 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(prevProps)
     .filter(isProperty)
     .filter(isGone(prevProps, nextProps))
-    .forEach(name => dom[name] = "");
+    .forEach(name => {
+      if (name.startsWith("data-")) {
+        dom.removeAttribute(name);
+      }
+      else {
+        dom[name] = "";
+      }
+    });
   //Set new or changed properties
   Object.keys(nextProps)
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
-    .forEach(name => dom[name] = nextProps[name]);
+    .forEach(name => {
+      if (name.startsWith("data-")) {
+        dom.setAttribute(name, nextProps[name]);
+      }
+      else {
+        dom[name] = nextProps[name];
+      }
+    });
   //Add event Listeners
   Object.keys(nextProps)
     .filter(isEvent)

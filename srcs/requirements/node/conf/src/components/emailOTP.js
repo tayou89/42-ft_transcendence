@@ -35,10 +35,10 @@ function EmailOTP() {
 			</div>
 			<div className="container">
 			</div>
-			<div className="container">42Seoul에 연동된 이메일로 인증메세지를 보냈습니다.</div>
-			<div className="container">인증메세지를 입력하세요.</div>
+			<div className="container">42Seoul에 연동된 이메일로 인증코드를 보냈습니다.</div>
+			<div className="container">6자리 인증코드를 입력하세요.</div>
 			<form className="container my-1 py-1">
-				<input className="" type="text" placeholder="message you received" />
+				<input className="" type="text" placeholder="message you received" maxLength={6} />
 				<Btn size="sm" text="Submit" onClickFunc={onClickSubmit} />
 			</form>
 		</div>
