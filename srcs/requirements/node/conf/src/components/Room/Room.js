@@ -7,7 +7,7 @@ import QuitPopUp from "../../utility/QuitPopUp.js";
 import Fetch from "../../Fetch/Fetch.js";
 import { pongSocket } from "../../utility/socket.js";
 import { sendRoomJoinMessage, receivePlayerData } from "./handleSocket.js";
-import "../../../css/room/1vs1/room.css";
+import "../../css/room/1vs1/room.css";
 
 function Room1vs1({ title, id }) {
     const [ player1, setPlayer1 ] = useState({});
