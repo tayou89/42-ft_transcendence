@@ -27,7 +27,6 @@ def after_login(request):
 	user_instance = save_user_info(user)
 	make_otp_code(user_instance)
  
-	# response = redirect('http://localhost:8080/emailotp')
 	response = redirect('http://localhost:8080/emailotp')
 	response.set_cookie('pk', user_instance.pk, httponly=True)
 	return response
@@ -65,8 +64,9 @@ def save_user_info(data):
 		response = requests.get(img_url)
 		avatar = response.content
 		user.avatar.save(f"{name}.jpg", ContentFile(avatar))
-
-		user.save()
+		
+	user.online = True
+	user.save()
 
 	return user
 

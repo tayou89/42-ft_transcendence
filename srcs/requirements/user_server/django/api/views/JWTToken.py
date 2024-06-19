@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
 
 class MyRefreshToken(TokenRefreshView):
@@ -20,16 +20,24 @@ class MyRefreshToken(TokenRefreshView):
 		token = response.data["access"]
 		response.data = None
 		response.set_cookie('jwt', token, httponly=True)
+		response.status_code = 204
 		return response
 
 
 class log_out(APIView):
 	def post(self, request):
-		refresh_token = request.data['refresh_token']
+
+		jwt_token = AccessToken(request.COOKIES.get('jwt'))
+		user = User.objects.get(id=jwt_token.payload.get('user_id'))
+		user.online = False
+		user.save()
+
+		refresh_token = request.COOKIES.get('refresh')
 		if refresh_token:
 			refresh = RefreshToken(refresh_token)
 			refresh.blacklist()
-		response = Response(status=status.HTTP_204_NO_CONTENT)
+		response = Response(status=status.HTTP_200_OK)
 		response.delete_cookie('jwt')
 		response.delete_cookie('refresh')
+		return response
   

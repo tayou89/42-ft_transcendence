@@ -5,6 +5,7 @@ from ._serializer import UserSerializer, MatchSerializer
 from django.http import HttpResponse, FileResponse
 
 from rest_framework.decorators import action
+import json
 
 from rest_framework import viewsets
 from rest_framework import status
@@ -17,7 +18,7 @@ import os
 
 class UserVeiwSet(viewsets.ModelViewSet):
 
-	permission_classes = [IsAuthenticated]
+	# permission_classes = [IsAuthenticated]
 	
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
@@ -35,7 +36,7 @@ class UserVeiwSet(viewsets.ModelViewSet):
 	
 		return super().list(request, *args, **kwargs)
 
-
+	#api/user/me
 	@action(detail=False, methods=['get'])
 	def me(self, request):
 		header = request.META.get('HTTP_AUTHORIZATION')
@@ -47,13 +48,33 @@ class UserVeiwSet(viewsets.ModelViewSet):
 
 		return Response(UserSerializer(user, many=False).data)
 
-	# @action(detail=False, methods=['get'], url_path='(?P<user_name>[^/.]+)')
-	# def get_by_username(self, request, user_name):
-	# 	try:
-	# 		user = User.objects.get(name=user_name)
-	# 		return Response(UserSerializer(user, many=False).data)
-	# 	except User.DoesNotExist:
-	# 		return Response({'detail': 'User does not found'}, status=404)
+	# /api/users/me/friend
+	@action(detail=False, methods=['post'], url_path='me/friend')	
+	def add_friend(self, request):
+		header = request.META.get('HTTP_AUTHORIZATION')
+		friend_name = json.loads(request.body)['name']
+
+		if header and header.startswith('Bearer '):
+			jwt_token = AccessToken(header.split(' ')[1])
+		
+		user = User.objects.get(id=jwt_token.payload.get('user_id'))
+		
+		if user.name == friend_name:
+			return Response({"result": "cant be friend with me"})
+  
+		try:
+			friend = User.objects.get(name=friend_name)
+			friend_list = user.friends.filter(pk=friend.pk)
+			
+			if friend_list is None:
+				return Response({"result": "already friend"})
+	
+			user.friends.add(friend.pk)
+			user.save()
+		except:
+			return Response({"result": "no user"})
+	
+		return Response({"result": "Successfully Added!"})
 
 
 	# /users/{id}/matches/
