@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import "../../css/room/utility/count-down.css";
+import "../../css/room/count-down.css";
 
 function CountDown({ count }) {
     return (

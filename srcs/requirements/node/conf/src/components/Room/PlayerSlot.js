@@ -1,21 +1,32 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import ReadyButton from "./ReadyButton.js";
-import { pongSocket } from "../utility/socket.js";
-import "../../css/room/1vs1/player-slot.css";
+import { GAME_TYPE } from "../Game/constant.js";
+import { pongSocket } from "./socket.js";
+import "../../css/room/player-slot.css";
 
-function PlayerSlot({ player, set }) {
+function PlayerSlot({ player, set, index, type }) {
+    const elementIds = getElementsIds(type);
+
     if (!player.id)
-        return (<div className="col" id="player-slot"></div>);
+        return (<div className="col" id={ elementIds[0] }></div>);
     return (
-        <div className="col" id="player-slot">
-            <div id="room-slot-photo-box">
-                <img id="room-slot-photo" src={ player.photoURL } />
+        <div className="col" id={ elementIds[0] }>
+            <div id={ elementIds[1] } >
+                <img id={ elementIds[2] } src={ player.photoURL } />
             </div>
             <div id="name">{ player.name }</div>
             <div id="level">Level { Math.floor( player.exp / 1000) }</div>
-            <ReadyButton status={ player.ready } socket={ pongSocket } set={ set }/>
+            <ReadyButton status={ player.ready } socket={ pongSocket } set={ set } index={ index } />
         </div>
     );
+}
+
+function getElementsIds(type) {
+    const ids = [ "slot", "photo-box", "photo" ];
+    const suffix = (type === GAME_TYPE.PONG) ? "-pong" : "-mtt";
+    const elementIds = ids.map(id => id + suffix);
+    
+    return (elementIds);
 }
 
 export default PlayerSlot;

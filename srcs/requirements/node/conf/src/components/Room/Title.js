@@ -1,13 +1,23 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import "../../css/room/utility/title.css";
+import { GAME_TYPE } from "../Game/constant.js";
+import "../../css/room/title.css";
 
-function Title({ title } ) {
+function Title({ title, type } ) {
+    const gameType = getGameType(type);
+
     return (
         <div className="row" id="room-title-box">
             <div className="row" id="room-title">{ title }</div>
-            <div className="row" id="match-type">1 vs 1</div>
+            <div className="row" id="match-type">{ gameType }</div>
         </div>
     );
+}
+
+function getGameType(type) {
+    if (type === GAME_TYPE.PONG)
+        return ("1 vs 1");
+    else
+        return ("Tournament");
 }
 
 export default Title;

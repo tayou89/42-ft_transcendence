@@ -2,8 +2,9 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import "../../css/utility/quit-popup.css";
 
-function QuitPopUp({ setIsQuitClicked }) {
+function QuitPopUp({ socket, setIsQuitClicked }) {
     const handleClickYes = () => {
+        socket.emit("leave_room");
         navigate("/main");
     }
     const handleClickNo = () => {
@@ -19,5 +20,12 @@ function QuitPopUp({ setIsQuitClicked }) {
         </div>
     );
 };
+
+export function getQuitPopUp(socket, isQuitClicked, setIsQuitClicked) {
+    if (isQuitClicked)
+        return (<QuitPopUp socket={ socket } setIsQuitClicked={ setIsQuitClicked }/>);
+    else
+        return (null);
+}
 
 export default QuitPopUp;

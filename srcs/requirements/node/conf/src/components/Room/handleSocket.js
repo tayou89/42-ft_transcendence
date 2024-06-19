@@ -1,3 +1,5 @@
+import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { SOCKET } from "./socket.js";
 import Fetch from "../Fetch/Fetch.js";
 
 export function sendRoomJoinMessage(socket, id, title) {
@@ -28,7 +30,7 @@ export function receivePlayerData(socket, roomPlayers, playerSetter) {
 
 function setReady(prev, index) {
     const newArray = prev.map((player, i) => (
-        (i === index) ? { ...prev, ready: !player.ready } : player
+        (i === index) ? { ...player, ready: !player.ready } : player
     ));
 
     return (newArray);

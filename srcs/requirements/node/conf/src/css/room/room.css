@@ -4,7 +4,18 @@
     width: 100%;
 }
 
-#room-body {
+#player-pong {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+    margin-top: 60px;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+#player-mtt {
     display: flex;
     justify-content: center;
     align-items: center;

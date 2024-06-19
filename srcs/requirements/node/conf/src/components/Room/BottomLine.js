@@ -1,13 +1,20 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import QuitButton from "../utility/QuitButton.js";
-import "../../css/room/utility/bottom-line.css";
+import "../../css/room/bottom-line.css";
 
-function BottomLine({ socketType, setClickStatus }) {
+function BottomLine({ socket, setIsQuitClicked }) {
     return (
         <div className="row" id="room-bottom">
-            <QuitButton socketType={ socketType } setClickStatus={ setClickStatus } />
+            <QuitButton socket={ socket } setIsQuitClicked={ setIsQuitClicked } />
         </div>
     );
 }
+
+function QuitButton({ setIsQuitClicked, socket }) {
+    const handleClickEvent = () => { 
+        setIsQuitClicked((prev) => (!prev)); 
+    };
+
+    return ( <div id="quit-button" onClick={ handleClickEvent }>Quit</div> );
+};
 
 export default BottomLine;

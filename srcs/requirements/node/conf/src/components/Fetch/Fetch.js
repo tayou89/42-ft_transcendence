@@ -10,7 +10,7 @@ class Fetch {
                 if (index >= 0) 
                     setFunction((prev) => (setArray(prev, userData, index)));
                 else
-                    setFunction((prev) => (setObject(prev, data)));
+                    setFunction((prev) => (setObject(prev, userData)));
             };
 
             setData();

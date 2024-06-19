@@ -3,25 +3,35 @@ import NavigationBar from "../utility/NavigationBar.js";
 import Title from "./Title.js";
 import Player from "./Player.js";
 import BottomLine from "./BottomLine.js";
-import QuitPopUp from "../utility/QuitPopUp.js";
-import { pongSocket, mttSocket } from "../utility/socket.js";
+import { getQuitPopUp } from "./QuitPopUp.js";
+import { pongSocket, mttSocket } from "./socket.js";
 import { sendRoomJoinMessage } from "./handleSocket.js";
-import "../../css/room/1vs1/room.css";
+import { GAME_TYPE } from "../Game/constant.js";
+import "../../css/room/room.css";
 
-function Room({ title, type = "1vs1", id = 0 }) {
-    const socket = (type === "1vs1") ?  pongSocket : mttSocket;
+function Room({ title = "title", type = GAME_TYPE.PONG, id = 0 }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
+    const socket = getSocket(type); 
+    const quitPopUp = getQuitPopUp(socket, isQuitClicked, setIsQuitClicked);
 
     sendRoomJoinMessage(socket, id, title);
+    type = GAME_TYPE.MTT;
     return (
         <div className="container-fluid" id="room-page">
             <NavigationBar />
-            <Title title={ title } />
-            <Player socket={ socket } />
-            <BottomLine setIsQuitClicked={ setIsQuitClicked } />
-            { isQuitClicked ? <QuitPopUp setIsQuitClicked={ setIsQuitClicked }/> : null }
+            <Title title={ title } type={ type } />
+            <Player type={ type } socket={ socket } />
+            <BottomLine setIsQuitClicked={ setIsQuitClicked } socket={ socket } />
+            { quitPopUp }
         </div>
     );
+}
+
+function getSocket(type) {
+    if (type === GAME_TYPE.PONG)
+        return (pongSocket);
+    else
+        return (mttSocket);
 }
 
 export default Room;

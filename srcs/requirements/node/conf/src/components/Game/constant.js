@@ -47,3 +47,7 @@ export const KEY = {
     DOWN: ['s', 'ArrowDown'],
 }
 
+export const GAME_TYPE = {
+    PONG: "pong",
+    MTT: "mtt",
+};
