@@ -1,6 +1,5 @@
 import { useState, MyReact } from "../MyReact/MyReact.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
-import Btn from "./utility/Btn.js";
 
 function EmailOTP() {
 	const apiUrl = "http://localhost:8000/api/otp";
@@ -39,7 +38,7 @@ function EmailOTP() {
 			<div className="container">6자리 인증코드를 입력하세요.</div>
 			<form className="container my-1 py-1">
 				<input className="" type="text" placeholder="message you received" maxLength={6} />
-				<button className="btn btn-primary btn-sm" onClick={onClickSubmit}>asd</button>
+				<button className="btn btn-primary btn-sm" onClick={onClickSubmit}>Submit</button>
 			</form>
 		</div>
 	);

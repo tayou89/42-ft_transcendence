@@ -1,6 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-import Btn from "../utility/Btn.js";
 
 const sampleRooms = [
 	{
@@ -82,7 +81,7 @@ function CreateRoom({ myId }) {
 										</div>
 										<input id="create-room-input" className="me-1" type="text" placeholder="Room name" />
 									</form>
-									<Btn size="md" text="Submit" onClick={(event) => onClickSubmit(event, myId)} />
+									<button className="btn btn-primary btn-md" onClick={(event) => onClickSubmit(event, myId)}>Submit</button>
 								</div>
 							</div>
 						</div>

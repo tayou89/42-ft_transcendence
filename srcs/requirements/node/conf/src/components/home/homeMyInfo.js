@@ -2,8 +2,6 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
 function HomeMyInfo({ myData }) {
-	myData.wins = 10;
-	myData.losses = 20;
 	const expWidth = `width:${(myData.exp % 1000) / 10}%`;
 	const winRateWidth = myData.wins + myData.losses === 0 ?
 		"width:0%" : `width:${(myData.wins / (myData.wins + myData.losses)) * 100}%`;

@@ -1,6 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Navbar from "../Navbar.js";
-import Btn from "../utility/Btn.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 
@@ -69,7 +68,7 @@ function ChangeMyNicknameModal({ title, myId }) {
 						<div className="modal-body">
 							<form className="container my-1 py-1">
 								<input id="change-name-input" className="me-1" type="text" placeholder="Your new name" />
-								<Btn size="md" text="Submit" onClickFunc={(event) => onClickSubmit(event, myId)} />
+								<button className="btn btn-primary btn-md" onClick={(event) => onClickSubmit(event, myId)}>Submit</button>
 							</form>
 							<div id="change-name-status" className="container mt-2 text-success">
 							</div>

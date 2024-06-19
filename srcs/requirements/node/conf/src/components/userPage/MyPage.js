@@ -1,6 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Navbar from "../Navbar.js";
-import Btn from "../utility/Btn.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import ChangeMyNicknameModal from "./ChangeMyNicknameModal.js";

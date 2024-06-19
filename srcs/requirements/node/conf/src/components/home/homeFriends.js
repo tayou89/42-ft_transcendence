@@ -1,5 +1,4 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import Btn from "../utility/Btn.js";
 
 const defaultUserData = {
 	"id": 1,
@@ -20,7 +19,7 @@ function HomeFriends({ myData }) {
 					Friends
 				</div>
 				<div className="container col-6 text-end pe-4">
-					<AddNewFriendModal title="add Friend"/>
+					<AddNewFriendModal title="add Friend" />
 				</div>
 			</div>
 			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">
@@ -146,7 +145,7 @@ function AddNewFriendModal({ title }) {
 						<div className="modal-body">
 							<form className="container my-1 py-1">
 								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" />
-								<Btn size="md" text="Submit" onClickFunc={onClickSubmit} />
+								<button className="btn btn-primary btn-md" onClick={onClickSubmit}>Submit</button>
 							</form>
 							<div id="add-friend-status" className="container mt-2 text-success">
 							</div>
