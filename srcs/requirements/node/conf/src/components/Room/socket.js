@@ -18,6 +18,7 @@ export const SOCKET = {
         ROOM: "room",
         GAME: "game",
         READY: "ready",
+        RESULT: "result",
     },
     VALUE: {
         KEY: {

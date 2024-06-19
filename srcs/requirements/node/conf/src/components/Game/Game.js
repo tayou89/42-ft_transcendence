@@ -3,31 +3,41 @@ import NavigationBar from "../utility/NavigationBar.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "../Room/BottomLine.js";
-import { getQuitPopUp } from "../Room/QuitPopUp.js";
-import handleKey from "./handleKey.js";
-import handleGameSocket from "./handleSocket.js";
+import QuitPopUp from "../Room/QuitPopUp.js";
+import { sendKeyData, receiveGameData }from "./handleSocket.js";
+import { receivePlayerData } from "../Room/handleSocket.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
-function Game({ socket }) {
+function Game({ socket, position }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
-    const [score, setScore] = useState({ p1: 0, p2: 0});
-    const [ball, setBall] = useState({ x: INIT.BALL.X, y: INIT.BALL.Y }); 
-    const [paddle, setPaddle] = useState({ p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y });
-    const game = { ball, setBall, paddle, setPaddle, score, setScore };
-    const quitPopUp = getQuitPopUp(socket, isQuitClicked, setIsQuitClicked);
+    const [ game, setGame ] = useState(getInitialGameData());
+    const [ players, setPlayers ] = useState([{}, {}]);
+    const [ result, setResult ] = useState("");
 
-    handleKey(socket);
-    handleGameSocket(game, socket);
+    sendKeyData(socket);
+    receiveGameData(socket, game, setGame);
+    receivePlayerData(socket, players, setPlayers);
+    receiveGameResult(socket, setResult, position);
     return (
         <div className="container-fluid" id="game-page">
             <NavigationBar />
-            <ScoreBoard score={ score }/>
-            <GameBoard player={ player } ball={ ball } paddle={ paddle }/>
+            <ScoreBoard score={ game.score }/>
+            <GameBoard players={ players } ball={ game.ball } paddle={ game.paddle }/>
             <BottomLine />
-            { quitPopUp }
+            <QuitPopUp socket={ socket } isClicked={ isQuitClicked } set={ setIsQuitClicked } /> 
+            <ResultPopUp result={ result } />
         </div>
     );
+}
+
+function getInitialGameData() {
+    const initialGameData = {
+        ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
+        paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
+        score: { p1: 0, p2: 0},
+    }
+    return (initialGameData);
 }
 
 export default Game;

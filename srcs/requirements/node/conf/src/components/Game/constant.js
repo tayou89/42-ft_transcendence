@@ -51,3 +51,13 @@ export const GAME_TYPE = {
     PONG: "pong",
     MTT: "mtt",
 };
+
+export const GAME_POSITION = {
+    LEFT: "left",
+    RIGHT: "right",
+}
+
+export const GAME_RESULT = {
+    WIN: "win",
+    LOSE: "lose",
+}

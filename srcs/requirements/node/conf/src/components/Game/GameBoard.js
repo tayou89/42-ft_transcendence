@@ -4,12 +4,12 @@ import Ball from "./Ball.js";
 import PlayerSlot from "./PlayerSlot.js";
 import "../../css/game/game-board.css";
 
-function GameBoard({ player, ball, paddle }) {
+function GameBoard({ players, ball, paddle }) {
     return (
         <div className="row" id="game-board">
-            <PlayerSlot id="player1" player={ player.left }/>
+            <PlayerSlot id="player1" player={ players[0] }/>
             <Board ball={ ball } paddle={ paddle }/>
-            <PlayerSlot id="player2" player={ player.right }/>
+            <PlayerSlot id="player2" player={ players[1] }/>
         </div>
     );
 }

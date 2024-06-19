@@ -1,19 +1,19 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-import { GAME_TYPE } from "../Game/constant.js";
+import { GAME_TYPE, GAME_POSITION } from "../Game/constant.js";
 import { receivePlayerData } from "./handleSocket.js";
 import PlayerSlot from "./PlayerSlot.js";
 import CountDown  from "./CountDown.js";
 import Fetch  from "../Fetch/Fetch.js";
 import "../../css/room/room.css";
 
-export function Player({ type, socket }) {
+export function Player({ type, socket, id }) {
     const defaultPlayers = getDefaultPlayers(type); 
     const [ players, setPlayers ] = useState(defaultPlayers);
     const [ count, setCount ] = useState(5);
     const playerSlots = getPlayerSlots(players, setPlayers, type);
     const countDown = getCountDown(players, count);
-    const id = getElementId(type);
+    const elementId = getElementId(type);
 
     receivePlayerData(socket, players, setPlayers);
     Fetch.setUserData(setPlayers, 1, 0);
@@ -21,11 +21,11 @@ export function Player({ type, socket }) {
     Fetch.setUserData(setPlayers, 1, 2);
     Fetch.setUserData(setPlayers, 1, 3);
     if (count <= 0)
-        navigate("/game", { socket });
+        navigate("/game", { socket, position: getPlayerPosition(id, players) });
     if (isAllReady(players))
         startCountDown(count, setCount);
     return (
-        <div className="row" id={ id }>
+        <div className="row" id={ elementId }>
             { playerSlots }
             { countDown }
         </div>
@@ -75,6 +75,15 @@ function getCountDown(players, count) {
         return (<CountDown count={ count } />);
     else
         return (null); 
+}
+
+function getPlayerPosition(id, players) {
+    const myPlayerSlotNumber = (players.findIndex(player => player.id === id)) + 1;
+
+    if (myPlayerSlotNumber % 2 === 1)
+        return (GAME_POSITION.LEFT)
+    else
+        return (GAME_POSITION.RIGHT)
 }
 
 export default Player;

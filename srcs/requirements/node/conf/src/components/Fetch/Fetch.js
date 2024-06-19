@@ -12,7 +12,6 @@ class Fetch {
                 else
                     setFunction((prev) => (setObject(prev, userData)));
             };
-
             setData();
         }, []);
     }
