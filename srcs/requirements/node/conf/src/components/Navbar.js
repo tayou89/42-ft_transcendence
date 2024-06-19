@@ -4,7 +4,7 @@ import getCookieValue from "./utility/getCookieValue.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
 
 function onClickShowMyInfo() {
-	navigate("/profile");
+	navigate("/mypage");
 }
 
 function onClickLogout() {

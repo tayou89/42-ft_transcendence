@@ -13,7 +13,6 @@ const defaultUserData = {
 }
 
 function HomeFriends({ myData }) {
-	myData = defaultUserData;
 	return (
 		<div>
 			<div className="fs-4 row">
@@ -21,7 +20,7 @@ function HomeFriends({ myData }) {
 					Friends
 				</div>
 				<div className="container col-6 text-end pe-4">
-					<AddNewFriend />
+					<AddNewFriendModal title="add Friend"/>
 				</div>
 			</div>
 			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">
@@ -80,7 +79,7 @@ function HomeFriendsFriendInfo({ id }) {
 						</ul>
 					</div>
 				</div>
-				<div className="col-2 border">{userInfo.status === "login" ? "login" : "logout"}</div>
+				<div className="col-2 border">{userInfo.online === true ? "login" : "logout"}</div>
 			</div>
 		</div>
 	);
@@ -105,16 +104,19 @@ function modifyCommentMsg(msg, isSuccess) {
 function onClickSubmit(event) {
 	event.preventDefault();
 	const input = event.target.parentNode.querySelector("#add-friend-input");
-	fetch("http://localhost:8000/api/users/me/friend", {
+	fetch("http://localhost:8000/api/users/me/friend/", {
 		method: 'POST',
 		credentials: 'include',
 		body: JSON.stringify({
 			name: input.value
 		})
 	})
-		.then(response => response.json())
+		.then(response => {
+			console.log(response);
+			return response.json();
+		})
 		.then(data => {
-			if (data.status === "success") {
+			if (data.result === "Successfully Added!") {
 				modifyCommentMsg("Successfully Added!", true);
 			} else {
 				modifyCommentMsg(data.result, false);
@@ -126,13 +128,13 @@ function onClickSubmit(event) {
 		});
 }
 
-function AddNewFriend() {
+function AddNewFriendModal({ title }) {
 	return (
 		<div>
-			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-				add Friend
+			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#add-friend-modal">
+				{title}
 			</button>
-			<div className="modal text-center" id="myModal">
+			<div className="modal text-center" id="add-friend-modal">
 				<div className="modal-dialog">
 					<div className="modal-content">
 

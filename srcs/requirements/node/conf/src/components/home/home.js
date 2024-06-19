@@ -6,8 +6,6 @@ import HomeMyInfo from "./homeMyInfo.js";
 import HomeFriends from "./homeFriends.js";
 import HomeMatches from "./homeMatches.js";
 
-import Btn from "../utility/Btn.js";
-
 const defaultMyData = {
 	"id": 0,
 	"name": "default",
@@ -49,7 +47,7 @@ function Home() {
 			<div className="container text-light">
 				<div className="row mt-3">
 					<div className="col-md-5">
-						<HomeMyInfo myData={myData} />s
+						<HomeMyInfo myData={myData} />
 						<HomeFriends myData={myData} />
 					</div>
 					<div className="col-md-7">

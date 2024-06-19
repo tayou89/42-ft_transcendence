@@ -18,7 +18,7 @@ function UserPage() {
 			})
 			.then(data => {
 				if (data.detail) {
-					tokenRefreshAndGoTo("/profile");
+					tokenRefreshAndGoTo("/userpage");
 				} else {
 					setName(() => data.name);
 					setProfileImg(() => data.avatar);
@@ -26,7 +26,7 @@ function UserPage() {
 			})
 			.catch(error => {
 				console.log(error);
-				navigate("/login");
+				navigate("/");
 			});
 	}, []);
 	return (
