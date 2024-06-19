@@ -30,6 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 	friends = models.ManyToManyField('self', symmetrical=False, blank=True, related_name="friend_set", related_query_name="friend")
 
 	exp = models.PositiveBigIntegerField(default=0)
+	online = models.BooleanField(default=False)
 
 	password = None
 	last_login = None
