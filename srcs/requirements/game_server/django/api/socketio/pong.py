@@ -32,7 +32,7 @@ class Pong(socketio.AsyncNamespace):
 		if room_db.in_game:
 			return
   
-		self.rooms[room_name][me] = None
+		self.rooms[room_name][me] = {}
 		await self.save_session(sid, None)
 		
 		for field in field_list:
@@ -67,7 +67,7 @@ class Pong(socketio.AsyncNamespace):
 		if cur_room is None:
 			self.rooms[room_name] = {
 				"p1": {"pid": pid, "ready": False},
-				"p2": None,
+				"p2": {},
 			}
 			await self.save_session(sid, {'me': 'p1', 'room': room_name})
 		else:
@@ -102,7 +102,7 @@ class Pong(socketio.AsyncNamespace):
   
 		room.cur_users -= 1
 		await self.leave_room(sid, room_name)
-		self.rooms[room_name][me] = None
+		self.rooms[room_name][me] = {}
 		await self.save_session(sid, None)
   
 		if room.cur_users == 0:
