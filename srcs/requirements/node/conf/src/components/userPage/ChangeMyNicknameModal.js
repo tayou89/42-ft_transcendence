@@ -1,34 +1,47 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 
+function isNonAlphanumeric(input) {
+	const alphanumericRegex = /^[a-zA-Z0-9]*$/;
+	return !alphanumericRegex.test(input.value);
+}
+
 function onClickSubmit(event, myId) {
 	event.preventDefault();
 	const input = event.target.parentNode.querySelector("#change-name-input");
-	fetch(`http://localhost:8000/api/users/${myId}/`, {
-		method: 'PATCH',
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			name: input.value
+	if (input.value.length < 2) {
+		modifyCommentMsg("name too short!", false);
+	} else if (input.value.length > 16) {
+		modifyCommentMsg("name too long!", false);
+	} else if (isNonAlphanumeric(input)) {
+		modifyCommentMsg("Only alphabets and numbers are available", false);
+	} else {
+		fetch(`http://localhost:8000/api/users/${myId}/`, {
+			method: 'PATCH',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				display_name: input.value
+			})
 		})
-	})
-		.then(response => {
-			console.log(response);
-			return response.json();
-		})
-		.then(data => {
-			console.log(data);
-			if (data.result === "Successfully Changed!") {
-				modifyCommentMsg("Successfully Changed!", true);
-			} else {
-				modifyCommentMsg(data.result, false);
-			}
-		})
-		.catch(error => {
-			modifyCommentMsg("Network Error!", false);
-			console.log(error);
-		});
+			.then(response => {
+				console.log(response);
+				return response.json();
+			})
+			.then(data => {
+				console.log(data);
+				if (data.result === "Successfully Changed!") {
+					modifyCommentMsg("Successfully Changed!", true);
+				} else {
+					modifyCommentMsg(data.result, false);
+				}
+			})
+			.catch(error => {
+				modifyCommentMsg("Network Error!", false);
+				console.log(error);
+			});
+	}
 }
 
 function modifyCommentMsg(msg, isSuccess) {
@@ -56,7 +69,7 @@ function ChangeMyNicknameModal({ title, myId }) {
 					<div className="modal-content">
 
 						<div className="modal-header text-dark">
-							<h4 className="modal-title">Change Your name!</h4>
+							<h4 className="modal-title">Change Your nickname!</h4>
 							<button type="button" className="btn-close" data-bs-dismiss="modal"></button>
 						</div>
 
