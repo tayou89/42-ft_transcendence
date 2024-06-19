@@ -6,10 +6,15 @@ import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 
 function onClickSubmit(event, myId) {
 	event.preventDefault();
+	const myModal = document.getElementById('change-name-modal')
+	console.log(myModal);
 	const input = event.target.parentNode.querySelector("#change-name-input");
 	fetch(`http://localhost:8000/api/users/${myId}/`, {
 		method: 'PATCH',
 		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json'
+		},
 		body: JSON.stringify({
 			name: input.value
 		})
@@ -46,7 +51,7 @@ function modifyCommentMsg(msg, isSuccess) {
 	}
 }
 
-function ChangeMyNameModal({ title, myId }) {
+function ChangeMyNicknameModal({ title, myId }) {
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#change-name-modal">
@@ -77,4 +82,4 @@ function ChangeMyNameModal({ title, myId }) {
 	);
 }
 
-export default ChangeMyNameModal;
+export default ChangeMyNicknameModal;

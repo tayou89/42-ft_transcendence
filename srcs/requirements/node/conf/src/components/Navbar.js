@@ -13,7 +13,9 @@ function onClickLogout() {
 		method: 'POST',
 		credentials: 'include'
 	})
-		.then(console.log)
+		.then(() => {
+			navigate("/");
+		})
 		.catch(console.log);
 }
 

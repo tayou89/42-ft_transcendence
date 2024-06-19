@@ -4,28 +4,27 @@ import Btn from "../utility/Btn.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 
-function onClickSubmit(event, myId) {
+function onClickDeleteAccount(event, myId) {
 	event.preventDefault();
 	const input = event.target.parentNode.querySelector("#delete-account-input");
 	if (input.value === "delete") {
 		fetch(`http://localhost:8000/api/users/${myId}/`, {
-			method: 'PATCH',
-			credentials: 'include',
-			body: JSON.stringify({
-				name: input.value
-			})
+			method: 'DELETE',
+			credentials: 'include'
 		})
-			.then(response => {
-				console.log(response);
-				return response.json();
-			})
-			.then(data => {
-				console.log(data);
-				if (data.result === "Successfully Changed!") {
-					modifyCommentMsg("Successfully Changed!", true);
-				} else {
-					modifyCommentMsg(data.result, false);
-				}
+			.then(() => {
+				const logoutApiUrl = "http://localhost:8000/api/logout";
+				fetch(logoutApiUrl, {
+					method: 'POST',
+					credentials: 'include'
+				})
+					.then(() => {
+						navigate("/");
+					})
+					.catch(error => {
+						console.log(error);
+						navigate("/");
+					});
 			})
 			.catch(error => {
 				modifyCommentMsg("Network Error!", false);
@@ -71,7 +70,9 @@ function DeleteMyAccountModal({ title, myId }) {
 							</div>
 							<form className="container my-1 py-1">
 								<input id="delete-account-input" className="me-1" type="text" />
-								<Btn size="md" text="delete Account" onClickFunc={(event) => onClickSubmit(event, myId)} color1="danger" color2="secondary" />
+								<button type="button" className="btn btn-danger btn-md" data-bs-dismiss="modal" onClick={(event) => onClickDeleteAccount(event, myId)}>
+									delete Account
+								</button>
 							</form>
 							<div id="delete-account-status" className="container mt-2 text-success">
 							</div>
