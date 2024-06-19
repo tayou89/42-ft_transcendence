@@ -1,3 +1,5 @@
+import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+
 function onClickSubmit(event, myId) {
 	event.preventDefault();
 	const input = event.target.parentNode.querySelector("#change-name-input");
