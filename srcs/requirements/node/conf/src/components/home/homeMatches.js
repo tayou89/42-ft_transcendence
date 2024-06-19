@@ -40,10 +40,57 @@ const sampleRooms = [
 	}
 ]
 
+//???!!! room 보여주는 로직 만들어야함.
+function HomeMatches({ myId }) {
+	const [rooms, setRooms] = useState([]);
+	const roomsInfoApiUrl = "http://localhost:8000/api/rooms";
+	useEffect(() => {
+		fetch(roomsInfoApiUrl, {
+			method: 'GET',
+			credentials: 'include'
+		})
+			.then(response => {
+				console.log(response);
+				setRooms(() => sampleRooms);
+			})
+			.catch(console.log);
+	}, []);
+	return (
+		<div>
+			<div className="fs-4 row mb-1">
+				<div className="container col-6">
+					Matches
+				</div>
+				<div className="container col-6 text-end pe-4">
+					<CreateRoomModal myId={myId} />
+				</div>
+			</div>
+			<div className="container pt-2 pb-2 border-top border-bottom">
+				<div>
+					{rooms.map((room) => {
+						if (room.cur_users !== room.max_users && room.in_game === false) {
+							return (<HomeMatchInfo room={room} active={true} />)
+						} else {
+							return (<HomeMatchInfo room={room} active={false} />)
+						}
+					})}
+				</div>
+			</div>
+		</div>
+	);
+}
+
 function onClickSubmit(event, myId) {
 	event.preventDefault();
-	const title = event.target.parentNode.querySelector("#create-room-input").value;
+	let title = event.target.parentNode.querySelector("#create-room-input").value;
 	const selectedRadio = event.target.parentNode.querySelector("input[name='optradio']:checked").value;
+	if (title === "") {
+		if (selectedRadio === "1vs1") {
+			title = "Let's play 1:1 with me";
+		} else {
+			title = "Let's play a tournament";
+		}
+	}
 	if (selectedRadio === "1vs1") {
 		navigate("/room/1vs1", { title, myId });
 	} else {
@@ -51,13 +98,13 @@ function onClickSubmit(event, myId) {
 	}
 }
 
-function CreateRoom({ myId }) {
+function CreateRoomModal({ myId }) {
 	return (
 		<div>
-			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createRoomModal">
+			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#create-room-modal">
 				Create Room
 			</button>
-			<div className="modal" id="createRoomModal">
+			<div className="modal" id="create-room-modal">
 				<div className="modal-dialog">
 					<div className="modal-content">
 
@@ -91,51 +138,6 @@ function CreateRoom({ myId }) {
 			</div>
 		</div>
 	);
-}
-
-function HomeMatches({ myId }) {
-	const [rooms, setRooms] = useState([]);
-	const roomsInfoApiUrl = "http://localhost:8000/api/rooms";
-	useEffect(() => {
-		fetch(roomsInfoApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => {
-				setRooms(() => sampleRooms);
-			})
-		// .then(data => {
-		// 	setRooms(() => data);
-		// })
-		// .catch(console.log());
-	}, []);
-	return (
-		<div>
-			<div className="fs-4 row">
-				<div className="container col-6">
-					Matches
-				</div>
-				<div className="container col-6 text-end pe-4">
-					<CreateRoom myId />
-				</div>
-			</div>
-			<div className="container pt-2 pb-2 border-top border-bottom">
-				<div>
-					{rooms.map((room) => {
-						if (room.cur_users !== room.max_users && room.in_game === false) {
-							return (<HomeMatchInfo room={room} active={true} />)
-						} else {
-							return (<HomeMatchInfo room={room} active={false} />)
-						}
-					})}
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function onClickCreateRoom(event) {
-	event.preventDefault();
 }
 
 function enterCreatedRoom() {

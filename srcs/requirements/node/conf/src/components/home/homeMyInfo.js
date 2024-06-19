@@ -7,7 +7,7 @@ function HomeMyInfo({ myData }) {
 		"width:0%" : `width:${(myData.wins / (myData.wins + myData.losses)) * 100}%`;
 	return (
 		<div>
-			<div className="fs-4">
+			<div className="fs-4 mb-1">
 				My Info
 			</div>
 			<div className="container mb-3 pt-2 pb-2 border-top border-bottom text-center">

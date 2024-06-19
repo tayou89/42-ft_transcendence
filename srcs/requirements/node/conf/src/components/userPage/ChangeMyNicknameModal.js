@@ -1,12 +1,5 @@
-import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import Navbar from "../Navbar.js";
-import { navigate } from "../../MyReact/MyReactRouter.js";
-import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
-
 function onClickSubmit(event, myId) {
 	event.preventDefault();
-	const myModal = document.getElementById('change-name-modal')
-	console.log(myModal);
 	const input = event.target.parentNode.querySelector("#change-name-input");
 	fetch(`http://localhost:8000/api/users/${myId}/`, {
 		method: 'PATCH',
