@@ -1,7 +1,7 @@
-import { useEffect, useState, MyReact } from "../../../MyReact/MyReact.js";
-import ReadyButton from "../utility/ReadyButton.js";
-import { pongSocket } from "../../utility/socket.js";
-import "../../../css/room/1vs1/player-slot.css";
+import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import ReadyButton from "./ReadyButton.js";
+import { pongSocket } from "../utility/socket.js";
+import "../../css/room/1vs1/player-slot.css";
 
 function PlayerSlot({ player, set }) {
     if (!player.id)

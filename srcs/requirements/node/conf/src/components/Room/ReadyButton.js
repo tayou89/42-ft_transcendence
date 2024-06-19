@@ -1,6 +1,6 @@
-import { useEffect, useState, MyReact } from "../../../MyReact/MyReact.js";
-import { SOCKET } from "../../utility/socket.js";
-import "../../../css/room/utility/ready-button.css";
+import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { SOCKET } from "../utility/socket.js";
+import "../../css/room/utility/ready-button.css";
 
 function ReadyButton({ status, socket, set }) {
     const readyStatus = (status === true) ? "ready" : "not-ready";

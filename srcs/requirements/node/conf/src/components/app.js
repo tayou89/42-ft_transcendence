@@ -6,7 +6,7 @@ import Login from "./login.js";
 import Interchange from "./interchange.js";
 import EmailOTP from "./emailOTP.js";
 import Game from "./Game/Game.js";
-import Room1vs1 from "./Room/1vs1/Room1vs1.js";
+import Room from "./Room/Room.js";
 
 function App() {
 	return (
@@ -17,7 +17,7 @@ function App() {
 			<Route path="/profile" component={UserPage} />
 			<Route path="/login" component={Login} />
 			<Route path="/game" component={Game} />
-			<Route path="/home" component={Room1vs1} />
+			<Route path="/home" component={Room} />
 		</div>
 	);
 }

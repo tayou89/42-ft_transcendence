@@ -1,21 +1,35 @@
-import { pongSocket, SOCKET } from "../../utility/socket.js";
-import Fetch from "../../Fetch/Fetch.js";
+import Fetch from "../Fetch/Fetch.js";
 
-export function receivePlayerData(room) {
-    pongSocket.on(SOCKET.EVENT.ROOM, (data) => receiveRoomEvent(data, room));
+export function sendRoomJoinMessage(socket, id, title) {
+    socket.emit("room", { pid: id, room_name: title });
 }
 
-function receiveRoomEvent({ p1, p2 }, room) {
-    if (p1.pid !== room.player1.id)
-        Fetch.setUserData(room.setPlayer1, p1.pid);
-    if (p2.pid !== room.player2.id)
-        Fetch.setUserData(room.setPlayer2, p2.pid);
-    if (p1.ready !== room.player1.ready)
-        setPlayer1((prev) => ({ ...prev, ready: p1.ready }));
-    if (p2.ready !== room.player2.ready)
-        setPlayer2((prev) => ({ ...prev, ready: p2.ready }));
+export function receivePlayerData(socket, roomPlayers, playerSetter) {
+    const receiveRoomEvent = (player) => {
+        const players = Object.values(player);
+
+        players.forEach((player, index) => {
+            if (player?.id !== roomPlayers[index]?.id)
+                Fetch.setUserData(playerSetter, player.id, index);
+            if ((player.id && roomPlayers[index].id) && 
+                (player.ready !== roomPlayers[index]?.ready))
+                playerSetter((prev) => setReady(prev, index));
+        });
+    };
+
+    useEffect(() => {
+        socket.on(SOCKET.EVENT.ROOM, receiveRoomEvent);
+
+        return (() => {
+            socket.off(SOCKET.EVENT.ROOM, receiveRoomEvent);
+        });
+    }, []);
 }
 
-export function sendRoomJoinMessage(id, title) {
-    pongSocket.emit("room", { pid: id, room_name: title });
+function setReady(prev, index) {
+    const newArray = prev.map((player, i) => (
+        (i === index) ? { ...prev, ready: !player.ready } : player
+    ));
+
+    return (newArray);
 }

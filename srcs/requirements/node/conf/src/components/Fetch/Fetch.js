@@ -2,13 +2,17 @@ import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import { DEFAULT_URL} from "./constant.js";
 
 class Fetch {
-    static setUserData(setFunction, userId = "me") {
+    static setUserData(setFunction, userId = 0, index = -1) {
         useEffect(() => {
             const setData = async() => { 
-                const userData = await this.userData(userId);
+                const userData = await Fetch.userData(userId);
 
-                setFunction((prev) => ({...prev, ...userData}));
+                if (index >= 0) 
+                    setFunction((prev) => (setArray(prev, userData, index)));
+                else
+                    setFunction((prev) => (setObject(prev, data)));
             };
+
             setData();
         }, []);
     }
@@ -48,6 +52,23 @@ class Fetch {
             console.error("Error", error);
         }
     }
+}
+
+function setArray(prev, data, index) {
+    const newArray = [...prev];
+    
+    if (!data)
+        newArray[index] = {};
+    else
+        newArray[index] = data;
+    return (newArray);
+}
+
+function setObject (prev, data) {
+    if (!data)
+        return ({});
+    else
+        return ({...prev, ...data});
 }
 
 export default Fetch;
