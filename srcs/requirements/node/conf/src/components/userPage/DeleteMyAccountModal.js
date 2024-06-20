@@ -7,23 +7,16 @@ function onClickDeleteAccount(event, myId) {
 	event.preventDefault();
 	const input = event.target.parentNode.querySelector("#delete-account-input");
 	if (input.value === "delete") {
-		fetch(`http://localhost:8000/api/users/${myId}/`, {
-			method: 'DELETE',
+		fetch(`http://localhost:8000/api/withdraw`, {
+			method: 'POST',
 			credentials: 'include'
 		})
-			.then(() => {
-				const logoutApiUrl = "http://localhost:8000/api/logout";
-				fetch(logoutApiUrl, {
-					method: 'POST',
-					credentials: 'include'
-				})
-					.then(() => {
-						navigate("/");
-					})
-					.catch(error => {
-						console.log(error);
-						navigate("/");
-					});
+			.then(response => {
+				if (response.status === 200) {
+					navigate("/");
+				} else {
+					modifyCommentMsg("delete failed!", false);
+				}
 			})
 			.catch(error => {
 				modifyCommentMsg("Network Error!", false);
