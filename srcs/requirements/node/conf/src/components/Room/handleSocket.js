@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { SOCKET } from "./socket.js";
-import Fetch from "../Fetch/Fetch.js";
+import Fetch from "./Fetch.js";
 
 export function sendRoomJoinMessage(socket, id, title) {
     socket.emit("room", { pid: id, room_name: title });

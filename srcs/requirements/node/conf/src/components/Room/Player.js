@@ -4,7 +4,7 @@ import { GAME_TYPE, GAME_POSITION } from "../Game/constant.js";
 import { receivePlayerData } from "./handleSocket.js";
 import PlayerSlot from "./PlayerSlot.js";
 import CountDown  from "./CountDown.js";
-import Fetch  from "../Fetch/Fetch.js";
+import Fetch  from "./Fetch.js";
 import "../../css/room/room.css";
 
 export function Player({ type, socket, id }) {
