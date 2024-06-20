@@ -8,7 +8,11 @@ from user.models import User
 
 class withdraw(APIView):
 	def post(self, request):
-		jwt_token = AccessToken(request.COOKIES.get('jwt'))
+		jwt_token = request.COOKIES.get('jwt')
+		if jwt_token is None:
+			return Response(status=status.HTTP_401_UNAUTHORIZED)
+		jwt_token = AccessToken(jwt_token)
+		
 		user = User.objects.get(id=jwt_token.payload.get('user_id'))
 		user.delete()
   

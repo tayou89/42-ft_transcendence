@@ -25,7 +25,7 @@ class UserVeiwSet(viewsets.ModelViewSet):
 	
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
-	http_method_names = ['get', 'post', 'patch'] 
+	http_method_names = ['get', 'post', 'patch', 'delete']
 
 	def list(self, request, *args, **kwargs):
 
