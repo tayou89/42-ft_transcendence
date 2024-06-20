@@ -16,6 +16,8 @@ export const SOCKET = {
     EVENT: {
         KEY: "key",
         ROOM: "room",
+        JOIN_ROOM: "join_room",
+        LEAVE_ROOM: "leave_room",
         GAME: "game",
         READY: "ready",
         RESULT: "result",

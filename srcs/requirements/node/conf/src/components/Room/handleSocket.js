@@ -3,7 +3,7 @@ import { SOCKET } from "./socket.js";
 import Fetch from "./Fetch.js";
 
 export function sendRoomJoinMessage(socket, id, title) {
-    socket.emit(SOCKET.EVENT.ROOM, { pid: id, room_name: title });
+    socket.emit(SOCKET.EVENT.JOIN_ROOM, { pid: id, room_name: title });
 }
 
 export function receivePlayerData(socket, roomPlayers, playerSetter) {
@@ -11,9 +11,9 @@ export function receivePlayerData(socket, roomPlayers, playerSetter) {
         const players = Object.values(player);
 
         players.forEach((player, index) => {
-            if (player?.id !== roomPlayers[index]?.id)
-                Fetch.setUserData(playerSetter, player.id, index);
-            if ((player.id && roomPlayers[index].id) && 
+            if (player?.pid !== roomPlayers[index]?.id)
+                Fetch.setUserData(playerSetter, player.pid, index);
+            if ((player.pid && roomPlayers[index].id) && 
                 (player.ready !== roomPlayers[index]?.ready))
                 playerSetter((prev) => setReady(prev, index));
         });
