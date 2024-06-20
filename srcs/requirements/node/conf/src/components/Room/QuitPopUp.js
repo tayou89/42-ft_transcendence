@@ -1,12 +1,13 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
+import { SOCKET } from "./socket.js";
 import "../../css/room/quit-popup.css";
 
 function QuitPopUp({ socket, isClicked, set }) {
     if (!isClicked)
         return (null);
     const handleClickYes = () => {
-        socket.emit("leave_room");
+        socket.emit(SOCKET.EVENT.LEAVE_ROOM);
         navigate("/main");
     }
     const handleClickNo = () => {
