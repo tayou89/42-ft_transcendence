@@ -31,13 +31,17 @@ function HomeFriends({ myData }) {
 	);
 }
 
-function unFriend(event) {
-	// console.log(event);
-	console.log(`u clicked unfriend`);
-	const unFriendApiUrl = "http://localhost:8000/";
+function unFriend(id) {
+	const unFriendApiUrl = "http://localhost:8000/me/friend";
 	fetch(unFriendApiUrl, {
 		method: 'DELETE',
-		credentials: 'include'
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
+		},
+		body: JSON.stringify({
+			id: id
+		})
 	})
 }
 
@@ -74,7 +78,7 @@ function HomeFriendsFriendInfo({ id }) {
 						</div>
 						<ul className="dropdown-menu" >
 							<li className="dropdown-item">Show Info</li>
-							<li className="dropdown-item text-danger" onClick={unFriend}>Unfriended</li>
+							<li className="dropdown-item text-danger" onClick={() => unFriend(id)}>Unfriended</li>
 						</ul>
 					</div>
 				</div>
@@ -106,6 +110,9 @@ function onClickSubmit(event) {
 	fetch("http://localhost:8000/api/users/me/friend/", {
 		method: 'POST',
 		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
+		},
 		body: JSON.stringify({
 			name: input.value
 		})
