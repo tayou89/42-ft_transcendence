@@ -10,7 +10,7 @@ function HomeMyInfo({ myData }) {
 			<div className="fs-4 mb-1">
 				My Info
 			</div>
-			<div className="container mb-3 pt-2 pb-2 border-top border-bottom text-center">
+			<div className="container mb-3 pt-2 pb-2 border-top border-bottom text-center rounded bg-secondary bg-opacity-25">
 				<div className="row mt-1 mb-1">
 					<div className="col-2">Level</div>
 					<div className="col-1">:</div>

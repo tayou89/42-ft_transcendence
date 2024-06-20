@@ -5,6 +5,7 @@ import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import ChangeMyNicknameModal from "./ChangeMyNicknameModal.js";
 import DeleteMyAccountModal from "./DeleteMyAccountModal.js";
 import MatchRecords from "./MatchRecords.js";
+import WinRateDonut from "./WinRateDonut.js";
 
 const defaultMyData = {
 	"id": 0,
@@ -47,11 +48,11 @@ function MyPage() {
 			<div className="container text-light">
 				<StatChart myData={myData} />
 				<div className="row">
-					<div className="col-md-6 mt-3">
-						<DonutChart />
+					<div className="col-md-5 mt-3">
+						<WinRateDonut myData={myData} />
 					</div>
-					<div className="col-md-6 mt-3">
-						<MatchRecords />
+					<div className="col-md-7 mt-3">
+						<MatchRecords myId={myData.id} />
 					</div>
 				</div>
 			</div>
@@ -78,7 +79,7 @@ function StatChart({ myData }) {
 				</div>
 			</div>
 			<div className="container">
-				<div className="row border-top border-bottom">
+				<div className="row border-top border-bottom rounded bg-secondary bg-opacity-25">
 					<div className="col-md-5">
 						<div className="container m-1 text-center">
 							<img className="rounded-circle"
@@ -113,48 +114,6 @@ function StatChart({ myData }) {
 								<div className="col-4">Lose</div>
 								<div className="col-2">:</div>
 								<div className="col-6">{loss}</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function DonutChart() {
-	return (
-		<div>
-			<div className="container fs-4">
-				Win Rate
-			</div>
-			<div className="container border-top border-bottom">
-				<div className="container">
-					<div className="row my-3">
-						<div className="col-6">
-							<div className="container text-center">
-								<img className="rounded-circle" width="100" height="100"
-									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-							</div>
-						</div>
-						<div className="col-6">
-							<div className="container text-center">
-								<img className="rounded-circle" width="100" height="100"
-									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-							</div>
-						</div>
-					</div>
-					<div className="row my-3">
-						<div className="col-6">
-							<div className="container text-center">
-								<img className="rounded-circle" width="100" height="100"
-									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-							</div>
-						</div>
-						<div className="col-6">
-							<div className="container text-center">
-								<img className="rounded-circle" width="100" height="100"
-									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
 							</div>
 						</div>
 					</div>

@@ -10,7 +10,7 @@ const sampleMatchRecords = [
 		"p2": 2
 	},
 	{
-		"id": 1,
+		"id": 2,
 		"p1_score": 8,
 		"p2_score": 10,
 		"date": "2024-05-02T12:24:37.756097Z",
@@ -22,7 +22,8 @@ const sampleMatchRecords = [
 function MatchRecords({ myId }) {
 	const [userMatchRecords, setUserMatchRecords] = useState([]);
 	const userMatchRecordsApiUrl = `http://localhost:8000/api/users/${myId}/matches`;
-	useEffect(() => {
+
+	const fetchMatchRecords = () => {
 		fetch(userMatchRecordsApiUrl, {
 			method: 'GET',
 			credentials: 'include'
@@ -32,14 +33,22 @@ function MatchRecords({ myId }) {
 			.then(data => {
 				setUserMatchRecords(() => sampleMatchRecords);
 			})
-			.catch(console.log);
-	}, [])
+			.catch(error => {
+				console.log(error);
+				setUserMatchRecords([]);
+			});
+	}
+
+	useEffect(() => {
+		fetchMatchRecords();
+	}, [myId])
+	
 	return (
 		<div>
 			<div className="container fs-4">
 				Match Records
 			</div>
-			<div className="pt-2 pb-2 border-top border-bottom">
+			<div className="pt-2 pb-2 border-top border-bottom rounded">
 				{userMatchRecords.map((match) =>
 					<MatchRecord match={match} myId={myId} />
 				)}
@@ -49,7 +58,6 @@ function MatchRecords({ myId }) {
 }
 
 function MatchRecord({ match, myId }) {
-	//내가 p1인지 p2인지 알아내.
 	const isP1Win = match.p1_score > match.p2_score;
 	const amiP1 = match.p1 === myId;
 	const amiWin = (amiP1 ? isP1Win : !isP1Win);
@@ -60,6 +68,7 @@ function MatchRecord({ match, myId }) {
 	const [p1NickName, setP1NickName] = useState("Player 1");
 	const [p2NickName, setP2NickName] = useState("Player 2");
 
+
 	useEffect(() => {
 		fetch(p1DataApiUrl, {
 			method: 'GET',
@@ -68,7 +77,8 @@ function MatchRecord({ match, myId }) {
 			.then(response => response.json())
 			.catch(console.log)
 			.then(data => {
-				setP1NickName(() => data.name);
+				setP1NickName(() => data.name ? data.name : "unknown");
+				console.log
 			})
 			.catch(console.log);
 
@@ -84,14 +94,14 @@ function MatchRecord({ match, myId }) {
 			.catch(console.log);
 	}, [])
 	return (
-		<div className="my-1 py-1 text-light text-center container bg-dark">
+		<div className={"my-1 py-1 text-light text-center container bg-dark border-start rounded" + (amiWin ? " border-success" : " border-danger")}>
 			<div className="row">
 				<div className="col-2">
 					<div className={"my-3" + winTextColor}>
 						<b>{amiWin ? "Win" : "Lose"}</b>
 					</div>
 				</div>
-				<div className="col-10">
+				<div className="col-10 mt-1">
 					<div className="row">
 						<div className="col-4 text-end">{p1NickName}</div>
 						<div className="col-4">{match.p1_score} vs {match.p2_score}</div>

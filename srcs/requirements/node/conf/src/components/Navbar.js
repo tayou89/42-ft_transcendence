@@ -20,7 +20,7 @@ function onClickLogout() {
 
 function Navbar({ name, profileImg }) {
 	return (
-		<div className="container-fluide border-bottom" style="user-select: none;">
+		<div className="container-fluid bg-dark bg-opacity-75" style="user-select: none;">
 			<div className="container">
 				<nav className="navbar navbar-expand-sm navbar-dark">
 					<div className="container-fluid">

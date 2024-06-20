@@ -65,7 +65,7 @@ function HomeMatches({ myId }) {
 					<CreateRoomModal myId={myId} />
 				</div>
 			</div>
-			<div className="container pt-2 pb-2 border-top border-bottom">
+			<div className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25">
 				<div>
 					{rooms.map((room) => {
 						if (room.cur_users !== room.max_users && room.in_game === false) {
