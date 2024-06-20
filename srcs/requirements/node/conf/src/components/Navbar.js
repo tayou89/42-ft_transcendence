@@ -1,6 +1,5 @@
 import MyReact from "../MyReact/MyReact.js";
 import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
-import getCookieValue from "./utility/getCookieValue.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
 
 function onClickShowMyInfo() {
