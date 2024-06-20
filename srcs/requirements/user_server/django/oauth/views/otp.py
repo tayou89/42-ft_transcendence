@@ -1,6 +1,7 @@
 
 from rest_framework.views import APIView
-from ..models import User, OTPModel
+from user.models import User
+from ..models import OTPModel
 from django.utils import timezone
 from datetime import timedelta
 import json

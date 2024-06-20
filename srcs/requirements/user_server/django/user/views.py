@@ -1,8 +1,11 @@
 
-from ..models import User, MatchHistory
-from ._serializer import UserSerializer, MatchSerializer
+from .models import User
+from .serializer import UserSerializer
+from match.serializer import MatchSerializer
+from match.models import MatchHistory
+from django.db.models import Q
 
-from django.http import HttpResponse, FileResponse
+from django.http import FileResponse
 
 from rest_framework.decorators import action
 import json
@@ -18,10 +21,11 @@ import os
 
 class UserVeiwSet(viewsets.ModelViewSet):
 
-	# permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated]
 	
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
+	http_method_names = ['get', 'post', 'patch'] 
 
 	def list(self, request, *args, **kwargs):
 
@@ -36,8 +40,9 @@ class UserVeiwSet(viewsets.ModelViewSet):
 	
 		return super().list(request, *args, **kwargs)
 
+
 	#api/user/me
-	@action(detail=False, methods=['get'])
+	@action(detail=False, methods=['get'], url_path='me')
 	def me(self, request):
 		header = request.META.get('HTTP_AUTHORIZATION')
 
@@ -47,6 +52,7 @@ class UserVeiwSet(viewsets.ModelViewSet):
 		user = User.objects.get(id=jwt_token.payload.get('user_id'))
 
 		return Response(UserSerializer(user, many=False).data)
+
 
 	# /api/users/me/friend
 	@action(detail=False, methods=['post'], url_path='me/friend')	
@@ -66,7 +72,7 @@ class UserVeiwSet(viewsets.ModelViewSet):
 			friend = User.objects.get(name=friend_name)
 			friend_list = user.friends.filter(pk=friend.pk)
 			
-			if friend_list is None:
+			if len(friend_list) != 0:
 				return Response({"result": "already friend"})
 	
 			user.friends.add(friend.pk)
@@ -79,14 +85,15 @@ class UserVeiwSet(viewsets.ModelViewSet):
 
 	# /users/{id}/matches/
 	@action(detail=True, methods=['get'])
-	def matches(self, request):
+	def matches(self, request, pk=True):
 		user = self.get_object()
 
-		matches = MatchHistory.objects.filter(p1=user) | MatchHistory.objects.filter(p2=user)
+		matches = MatchHistory.objects.filter(Q(p1=user) | Q(p2=user))
 		serializer = MatchSerializer(matches, many=True)
 
 		return Response(serializer.data)
 	
+
 
 	@action(detail=True, methods=['get'], url_path='avatar')
 	def avatar(self, request, pk=True):

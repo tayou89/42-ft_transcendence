@@ -1,6 +1,6 @@
 
-from ..models import MatchHistory
-from ._serializer import MatchSerializer
+from .models import MatchHistory
+from .serializer import MatchSerializer
 
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated

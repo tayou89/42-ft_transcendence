@@ -8,7 +8,7 @@ from django.core.files.base import ContentFile
 from django.shortcuts import redirect
 
 from ..models import User, OTPModel
-from ._serializer import UserSerializer
+from user.serializer import UserSerializer
 
 from django.core.mail import send_mail
 
