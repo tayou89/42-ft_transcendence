@@ -72,7 +72,7 @@ class UserVeiwSet(viewsets.ModelViewSet):
 			friend = User.objects.get(name=friend_name)
 			friend_list = user.friends.filter(pk=friend.pk)
 			
-			if friend_list is None:
+			if len(friend_list) != 0:
 				return Response({"result": "already friend"})
 	
 			user.friends.add(friend.pk)
