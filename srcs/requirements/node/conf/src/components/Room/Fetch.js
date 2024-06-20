@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import { DEFAULT_URL} from "./constant.js";
+import { DEFAULT_URL} from "../Game/constant.js";
 
 class Fetch {
     static setUserData(setFunction, userId = 0, index = -1) {

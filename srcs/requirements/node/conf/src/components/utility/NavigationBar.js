@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import Fetch from "../Fetch/Fetch.js";
+import Fetch from "../Room/Fetch.js";
 import "../../css/utility/navigation-bar.css"
 
 function NavigationBar() {

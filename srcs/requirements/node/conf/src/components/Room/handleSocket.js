@@ -3,7 +3,7 @@ import { SOCKET } from "./socket.js";
 import Fetch from "./Fetch.js";
 
 export function sendRoomJoinMessage(socket, id, title) {
-    socket.emit("room", { pid: id, room_name: title });
+    socket.emit(SOCKET.EVENT.ROOM, { pid: id, room_name: title });
 }
 
 export function receivePlayerData(socket, roomPlayers, playerSetter) {

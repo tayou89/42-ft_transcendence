@@ -8,8 +8,8 @@ import ResultPopUp from "./ResultPopUp.js";
 import { sendKeyData, receiveGameData, receiveGameResult }from "./handleSocket.js";
 import { receivePlayerData } from "../Room/handleSocket.js";
 import { INIT } from "./constant.js";
-import "../../css/game/game-page.css";
 import { pongSocket, mttSocket } from "../Room/socket.js";
+import "../../css/game/game-page.css";
 
 function Game({ socket = pongSocket, position = "left" }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);

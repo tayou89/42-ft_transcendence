@@ -16,10 +16,6 @@ export function Player({ type, socket, id }) {
     const elementId = getElementId(type);
 
     receivePlayerData(socket, players, setPlayers);
-    Fetch.setUserData(setPlayers, 1, 0);
-    Fetch.setUserData(setPlayers, 1, 1);
-    Fetch.setUserData(setPlayers, 1, 2);
-    Fetch.setUserData(setPlayers, 1, 3);
     if (count <= 0)
         navigate("/game");
         // navigate("/game", { socket, position: getPlayerPosition(id, players) });
