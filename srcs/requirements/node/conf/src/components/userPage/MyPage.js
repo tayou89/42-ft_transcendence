@@ -4,6 +4,7 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import ChangeMyNicknameModal from "./ChangeMyNicknameModal.js";
 import DeleteMyAccountModal from "./DeleteMyAccountModal.js";
+import MatchRecords from "./MatchRecords.js";
 
 const defaultMyData = {
 	"id": 0,
@@ -46,49 +47,11 @@ function MyPage() {
 			<div className="container text-light">
 				<StatChart myData={myData} />
 				<div className="row">
-					<div className="col-md-6">
-						<div className="container mt-3 border-top border-bottom">
-							<div className="container">
-								<div className="row my-3">
-									<div className="col-6">
-										<div className="container text-center">
-											<img className="rounded-circle" width="100" height="100"
-												src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-										</div>
-									</div>
-									<div className="col-6">
-										<div className="container text-center">
-											<img className="rounded-circle" width="100" height="100"
-												src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-										</div>
-									</div>
-								</div>
-								<div className="row my-3">
-									<div className="col-6">
-										<div className="container text-center">
-											<img className="rounded-circle" width="100" height="100"
-												src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-										</div>
-									</div>
-									<div className="col-6">
-										<div className="container text-center">
-											<img className="rounded-circle" width="100" height="100"
-												src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+					<div className="col-md-6 mt-3">
+						<DonutChart />
 					</div>
-					<div className="col-md-6">
-						<div className="container mt-3 pt-2 pb-2 border-top border-bottom">
-							<div className="my-1 pt-1 pb-1">Match Record</div>
-							<div className="my-1 pt-1 pb-1">Match Record</div>
-							<div className="my-1 pt-1 pb-1">Match Record</div>
-							<div className="my-1 pt-1 pb-1">Match Record</div>
-							<div className="my-1 pt-1 pb-1">Match Record</div>
-							<div className="my-1 pt-1 pb-1">Match Record</div>
-						</div>
+					<div className="col-md-6 mt-3">
+						<MatchRecords />
 					</div>
 				</div>
 			</div>
@@ -150,6 +113,48 @@ function StatChart({ myData }) {
 								<div className="col-4">Lose</div>
 								<div className="col-2">:</div>
 								<div className="col-6">{loss}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function DonutChart() {
+	return (
+		<div>
+			<div className="container fs-4">
+				Win Rate
+			</div>
+			<div className="container border-top border-bottom">
+				<div className="container">
+					<div className="row my-3">
+						<div className="col-6">
+							<div className="container text-center">
+								<img className="rounded-circle" width="100" height="100"
+									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+							</div>
+						</div>
+						<div className="col-6">
+							<div className="container text-center">
+								<img className="rounded-circle" width="100" height="100"
+									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+							</div>
+						</div>
+					</div>
+					<div className="row my-3">
+						<div className="col-6">
+							<div className="container text-center">
+								<img className="rounded-circle" width="100" height="100"
+									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
+							</div>
+						</div>
+						<div className="col-6">
+							<div className="container text-center">
+								<img className="rounded-circle" width="100" height="100"
+									src="https://www.studiopeople.kr/common/img/default_profile.png"></img>
 							</div>
 						</div>
 					</div>

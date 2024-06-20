@@ -65,7 +65,7 @@ function DeleteMyAccountModal({ title, myId }) {
 
 						<div className="modal-body">
 							<div className="container text-dark">
-								Enter '<b className="text-danger"><i>delete</i></b>' to really delete the account.
+								Enter '<b className="text-danger"><i>delete</i></b>' to delete the account.
 							</div>
 							<form className="container my-1 py-1">
 								<input id="delete-account-input" className="me-1" type="text" />
@@ -76,7 +76,6 @@ function DeleteMyAccountModal({ title, myId }) {
 							<div id="delete-account-status" className="container mt-2 text-success">
 							</div>
 						</div>
-
 					</div>
 				</div>
 			</div>
