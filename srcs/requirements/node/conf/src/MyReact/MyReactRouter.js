@@ -8,10 +8,7 @@ export function Route({path, component: Component}) {
         const onLocationChange = (event) => {
             setCurPath(_ => window.location.pathname);
             if (event.state) {
-                console.log("event.state1:", event.state);
                 setProps((prev) => {
-                    console.log("prev:", prev);
-                    console.log("event.state2:", event.state);
                     return ({...prev, ...event.state});
                 });
             }
@@ -27,7 +24,6 @@ export function Route({path, component: Component}) {
 export function Link({to, children, props, ...others}) {
     const preventReload = (event) => {
         const state = props ? props : {};
-        console.log("Link state:", state);
         event.preventDefault();
         window.history.pushState(state, "", to);
         const navigationEvent = new PopStateEvent("navigate", { state:  state });
@@ -41,10 +37,11 @@ export function Link({to, children, props, ...others}) {
 }
 
 export function navigate(to, props) {
-    const state = props ? props : {};
-    console.log("Navigate state:", state);
-    window.history.pushState(state, "", to);
-    const navigationEvent = new PopStateEvent("navigate", { state: state });
+    // const state = props ? props : {};
+    // window.history.pushState(state, "", to);
+    window.history.pushState({}, "", to);
+    // const navigationEvent = new PopStateEvent("navigate", { state: state });
+    const navigationEvent = new PopStateEvent("navigate");
     window.dispatchEvent(navigationEvent);
 }
 

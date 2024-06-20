@@ -4,12 +4,14 @@ import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "../Room/BottomLine.js";
 import QuitPopUp from "../Room/QuitPopUp.js";
-import { sendKeyData, receiveGameData }from "./handleSocket.js";
+import ResultPopUp from "./ResultPopUp.js";
+import { sendKeyData, receiveGameData, receiveGameResult }from "./handleSocket.js";
 import { receivePlayerData } from "../Room/handleSocket.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
+import { pongSocket, mttSocket } from "../Room/socket.js";
 
-function Game({ socket, position }) {
+function Game({ socket = pongSocket, position = "left" }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const [ game, setGame ] = useState(getInitialGameData());
     const [ players, setPlayers ] = useState([{}, {}]);
@@ -24,7 +26,7 @@ function Game({ socket, position }) {
             <NavigationBar />
             <ScoreBoard score={ game.score }/>
             <GameBoard players={ players } ball={ game.ball } paddle={ game.paddle }/>
-            <BottomLine />
+            <BottomLine socket={ socket } setIsQuitClicked={ setIsQuitClicked }/>
             <QuitPopUp socket={ socket } isClicked={ isQuitClicked } set={ setIsQuitClicked } /> 
             <ResultPopUp result={ result } />
         </div>

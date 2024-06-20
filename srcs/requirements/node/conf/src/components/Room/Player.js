@@ -21,7 +21,8 @@ export function Player({ type, socket, id }) {
     Fetch.setUserData(setPlayers, 1, 2);
     Fetch.setUserData(setPlayers, 1, 3);
     if (count <= 0)
-        navigate("/game", { socket, position: getPlayerPosition(id, players) });
+        navigate("/game");
+        // navigate("/game", { socket, position: getPlayerPosition(id, players) });
     if (isAllReady(players))
         startCountDown(count, setCount);
     return (
