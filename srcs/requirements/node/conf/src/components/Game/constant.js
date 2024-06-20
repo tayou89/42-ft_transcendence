@@ -1,0 +1,68 @@
+export const BOARD = {
+    WIDTH: 1300,
+    HEIGHT: 800,
+};
+
+export const PADDLE = {
+    WIDTH: 12,
+    HEIGHT: 60,
+    OFFSET_X: 50,
+    BORDER_RADIUS: 3,
+    COLOR: "white",
+	MIN_Y: 0,
+	MAX_Y: BOARD.HEIGHT - 60,
+    DIRECTION: {
+        UP: -1,
+        DOWN: 1,
+        NONE: 0,
+    },
+    TRANSITION: "top 0.05s linear",
+};
+
+export const BALL = {
+    RADIUS: 15,
+    WIDTH: 30,
+    HEIGHT: 30,
+    COLOR: "white",
+    TRANSITION: "top 0.1s linear, left 0.1s linear",
+};
+
+export const INIT = {
+    BALL: {
+        X: (BOARD.WIDTH / 2) - BALL.RADIUS,
+        Y: (BOARD.HEIGHT / 2) - BALL.RADIUS,
+    },
+    PADDLE1: {
+        X: PADDLE.OFFSET_X - (PADDLE.WIDTH / 2),
+        Y:  (BOARD.HEIGHT / 2) - (60 / 2),
+    },
+    PADDLE2: {
+        X: BOARD.WIDTH - (PADDLE.OFFSET_X + (PADDLE.WIDTH / 2)),
+        Y:  (BOARD.HEIGHT / 2) - (60 / 2),
+    }
+};
+
+export const KEY = {
+    UP: ['w', 'ArrowUp'],
+    DOWN: ['s', 'ArrowDown'],
+}
+
+export const GAME_TYPE = {
+    PONG: "pong",
+    MTT: "mtt",
+};
+
+export const GAME_POSITION = {
+    LEFT: "left",
+    RIGHT: "right",
+}
+
+export const GAME_RESULT = {
+    WIN: "win",
+    LOSE: "lose",
+}
+
+export const PROTOCOL = "http";
+export const HOST = "localhost";
+export const PORT = "8000";
+export const DEFAULT_URL = `${PROTOCOL}://${HOST}:${PORT}`; 
