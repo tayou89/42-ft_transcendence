@@ -60,6 +60,7 @@ def save_user_info(data):
 
 	if is_created:
 		user.email = email
+		user.display_name = name
 
 		response = requests.get(img_url)
 		avatar = response.content
