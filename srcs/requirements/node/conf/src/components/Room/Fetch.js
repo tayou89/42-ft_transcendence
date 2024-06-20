@@ -2,18 +2,13 @@ import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import { DEFAULT_URL} from "../Game/constant.js";
 
 class Fetch {
-    static setUserData(setFunction, userId = 0, index = -1) {
-        useEffect(() => {
-            const setData = async() => { 
-                const userData = await Fetch.userData(userId);
+    static async setUserData(setFunction, userId = 0, index = -1) {
+        const userData = await Fetch.userData(userId);
 
-                if (index >= 0) 
-                    setFunction((prev) => (setArray(prev, userData, index)));
-                else
-                    setFunction((prev) => (setObject(prev, userData)));
-            };
-            setData();
-        }, []);
+        if (index >= 0) 
+            setFunction((prev) => (setArray(prev, userData, index)));
+        else
+            setFunction((prev) => (setObject(prev, userData)));
     }
     static async userData(id) {
         if (!id)
