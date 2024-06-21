@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { SOCKET } from "./socket.js";
+import { SOCKET } from "./Socket.js";
 import "../../css/room/ready-button.css";
 
 function ReadyButton({ status, socket, set, index }) {

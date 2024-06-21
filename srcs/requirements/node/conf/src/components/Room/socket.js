@@ -1,36 +1,43 @@
 import {io} from "socket.io-client";
+import { GAME_TYPE, SOCKET, URL } from "../Game/constant.js";
+import EventHandler from "./EventHandler.js";
 
-export const pongSocket = io("http://localhost:8001/api/pong", {
-    reconnection: false,
-    autoConnect: false,
-    transports: ['websocket'],
-});
+class Socket {
+    constructor (gameType) {
+        const socketOption = this.#getSocketOption(false, false, ['websocket']);
 
-export const mttSocket = io("http://localhost:8001/api/mtt", {
-    reconnection: false,
-    autoConnect: false,
-    transports: ['websocket'],
-});
+        this.#setSocket(gmaeType, socketOption);
+        this.#eventHandler = new EventHandler;
+    }
 
-export const SOCKET = {
-    EVENT: {
-        KEY: "key",
-        ROOM: "room",
-        JOIN_ROOM: "join_room",
-        LEAVE_ROOM: "leave_room",
-        GAME: "game",
-        READY: "ready",
-        RESULT: "result",
-    },
-    VALUE: {
-        KEY: {
-            UP: -1,
-            DOWN: 1,
-            NONE: 0,
-        },
-    },
-    TYPE: {
-        PONG: "pong",
-        MTT: "mtt",
-    },
+    sendRoomJoinMessage(id, title) {
+        this.#socket.emit(SOCKET.EVENT.JOIN_ROOM, { pid: id, room: title });
+    }
+
+    turnOnRoomChannel(currentPlayers, setPlayers) {
+        this.#eventHandler.setRoomEvent(currentPlayers, setPlayers);
+
+        socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
+    }
+
+    turnOffRoomChannel() {
+        socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
+    }
+
+    #getSocketOption(reconnection, autoConnect, transports) {
+        const socketOption = { reconnection, autoConnect, transports };
+
+        return (socketOption);
+    }
+
+    #setSocket(gameType, socketOption) {
+        if (gameType === GAME_TYPE.PONG)
+            this.#socket = io(URL.SOCKET.PONG, socketOption);
+        else
+            this.#socket = io(URL.SOCKET.MTT, socketOption);
+    }
+    #socket;
+    #eventHandler;
 }
+
+export default Socket;

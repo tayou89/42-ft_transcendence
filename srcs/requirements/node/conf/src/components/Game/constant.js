@@ -1,3 +1,5 @@
+import Socket from "../Room/Socket.js";
+
 export const BOARD = {
     WIDTH: 1300,
     HEIGHT: 800,
@@ -62,7 +64,45 @@ export const GAME_RESULT = {
     LOSE: "lose",
 }
 
-export const PROTOCOL = "http";
-export const HOST = "localhost";
-export const PORT = "8000";
-export const DEFAULT_URL = `${PROTOCOL}://${HOST}:${PORT}`; 
+export const SOCKET = {
+    EVENT: {
+        KEY: "key",
+        ROOM: "room",
+        JOIN_ROOM: "join_room",
+        LEAVE_ROOM: "leave_room",
+        GAME: "game",
+        READY: "ready",
+        RESULT: "result",
+    },
+    VALUE: {
+        KEY: {
+            UP: -1,
+            DOWN: 1,
+            NONE: 0,
+        },
+    },
+    INSTANCE: {
+        PONG: new Socket(GAME_TYPE.PONG),
+        MTT: new Socket(GAME_TYPE.MTT),
+    },
+}
+
+const DEFAULT_URL = "http://localhost";
+const PORT = {
+    BACK_API: 8000,
+    SOCKET: 8001,
+}
+const PATH = {
+    SOCKET: {
+        PONG: "/api/pong",
+        MTT: "/api/mtt",
+    },
+}
+
+export const URL = {
+    BACK_API: `${DEFAULT_URL}:${PORT.BACK_API}`,
+    SOCKET: {
+        PONG: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.PONG}`,
+        MTT: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.MTT}`,
+    }
+}

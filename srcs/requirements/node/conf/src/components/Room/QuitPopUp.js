@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-import { SOCKET } from "./socket.js";
+import { SOCKET } from "./Socket.js";
 import "../../css/room/quit-popup.css";
 
 function QuitPopUp({ socket, isClicked, set }) {

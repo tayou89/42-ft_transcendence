@@ -4,17 +4,13 @@ import Title from "./Title.js";
 import Player from "./Player.js";
 import BottomLine from "./BottomLine.js";
 import QuitPopUp from "./QuitPopUp.js";
-import { pongSocket, mttSocket } from "./socket.js";
-import { sendRoomJoinMessage } from "./handleSocket.js";
-import { GAME_TYPE } from "../Game/constant.js";
+import { GAME_TYPE, SOCKET } from "../Game/constant.js";
 import "../../css/room/room.css";
 
 function Room({ title = "title", type = GAME_TYPE.PONG, id = 0 }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
-    const socket = getSocket(type); 
+    const socket = getSocket(type);
 
-    sendRoomJoinMessage(socket, id, title);
-    type = GAME_TYPE.MTT;
     return (
         <div className="container-fluid" id="room-page">
             <NavigationBar />
@@ -26,11 +22,11 @@ function Room({ title = "title", type = GAME_TYPE.PONG, id = 0 }) {
     );
 }
 
-function getSocket(type) {
-    if (type === GAME_TYPE.PONG)
-        return (pongSocket);
+function getSocket(gameType) {
+    if (gameType === GAME_TYPE.PONG)
+        return (SOCKET.INSTANCE.PONG);
     else
-        return (mttSocket);
+        return (SOCKET.INSTANCE.MTT);
 }
 
 export default Room;

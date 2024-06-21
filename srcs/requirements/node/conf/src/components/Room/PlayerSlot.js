@@ -1,7 +1,7 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import ReadyButton from "./ReadyButton.js";
 import { GAME_TYPE } from "../Game/constant.js";
-import { pongSocket } from "./socket.js";
+import { pongSocket } from "./Socket.js";
 import "../../css/room/player-slot.css";
 
 function PlayerSlot({ player, set, index, type }) {
