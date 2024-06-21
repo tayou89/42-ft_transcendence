@@ -176,39 +176,42 @@ let hookIndex = null;
 let effectIndex = null;
 
 function updateFunctionComponent(fiber) {
+  const oldHooks = fiber.alternate && fiber.alternate.hooks;
+
   wipFiber = fiber;
   hookIndex = 0;
   effectIndex = 0;
-  wipFiber.hooks = [];
+  wipFiber.hooks = oldHooks ? oldHooks : [];
   wipFiber.effects = [];
   const children = [fiber.type(fiber.props)];
   reconcileChildren(fiber, children);
 }
 
 export function useState(initial) {
-  const oldHook =
-    wipFiber.alternate &&
-    wipFiber.alternate.hooks &&
-    wipFiber.alternate.hooks[hookIndex];
-  const hook = {
-    state: oldHook ? oldHook.state : initial,
+  const oldHook = wipFiber.hooks[hookIndex];
+  const NewHook = {
+    state: initial,
     queue: [],
   };
-  const actions = oldHook ? oldHook.queue : [];
+  const hook = oldHook ? oldHook : NewHook;
+  const actions = hook.queue;
   actions.forEach(action => {
     hook.state = action(hook.state);
   });
+  actions.length = 0;
   const setState = action => {
     hook.queue.push(action);
-    wipRoot = {
-      dom: currentRoot.dom,
-      props: currentRoot.props,
-      alternate: currentRoot,
-    }
-    nextUnitOfWork = wipRoot;
-    deletions = [];
+      wipRoot = {
+        dom: currentRoot.dom,
+        props: currentRoot.props,
+        alternate: currentRoot,
+      }
+      nextUnitOfWork = wipRoot;
+      deletions = [];
+  };
+  if (!oldHook) {
+    wipFiber.hooks.push(hook);
   }
-  wipFiber.hooks.push(hook);
   ++hookIndex;
   return [hook.state, setState];
 }
