@@ -1,25 +1,32 @@
 import { useEffect, useState, MyReact } from "./MyReact.js";
 
-export function Route({path, component}) {
+export function Route({path, component: Component}) {
     const [curPath, setCurPath] = useState(window.location.pathname);
+    const [props, setProps] = useState({});
 
     useEffect(() => {
-        const onLocationChange = () => {
+        const onLocationChange = (event) => {
             setCurPath(_ => window.location.pathname);
+            if (event.state) {
+                setProps((prev) => {
+                    return ({...prev, ...event.state});
+                });
+            }
         }
         window.addEventListener("navigate", onLocationChange);
         return () => {
             window.removeEventListener("navigate", onLocationChange);
         };
-    }, [setCurPath]);
-    return curPath === path ? component() : null;
+    }, [setCurPath, setProps]);
+    return curPath === path ? <div><Component {...props} /></div> : null;
 }
 
-export function Link({to, children, ...others}) {
+export function Link({to, children, props, ...others}) {
     const preventReload = (event) => {
+        const state = props ? props : {};
         event.preventDefault();
-        window.history.pushState({}, "", to);
-        const navigationEvent = new PopStateEvent("navigate");
+        window.history.pushState(state, "", to);
+        const navigationEvent = new PopStateEvent("navigate", { state:  state });
         window.dispatchEvent(navigationEvent);
     };
     return (
@@ -29,8 +36,11 @@ export function Link({to, children, ...others}) {
     )
 }
 
-export function navigate(to) {
+export function navigate(to, props) {
+    // const state = props ? props : {};
+    // window.history.pushState(state, "", to);
     window.history.pushState({}, "", to);
+    // const navigationEvent = new PopStateEvent("navigate", { state: state });
     const navigationEvent = new PopStateEvent("navigate");
     window.dispatchEvent(navigationEvent);
 }

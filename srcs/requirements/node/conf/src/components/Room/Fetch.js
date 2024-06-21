@@ -29,7 +29,7 @@ class Fetch {
             if (!response.ok)
                 throw new Error(`response isn't ok for url ${url}`);
             // data.photoURL = await this.#photoURL(`/api/users/${data.id}/avatar`);
-            data.photoURL = "https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg"
+            data.photoURL = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fm.health.chosun.com%2Fsvc%2Fnews_view.html%3Fcontid%3D2023071701758&psig=AOvVaw1pSpRlHndYU03ECJlCuCyF&ust=1718971063768000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCPDPgq-Q6oYDFQAAAAAdAAAAABAE";
             return (data);
         }
         catch (error) {

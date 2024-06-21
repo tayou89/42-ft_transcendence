@@ -27,10 +27,5 @@ class RoomViewset(viewsets.ViewSet):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def index(request):
-	return render(request, "index.html")
-
-def room(request, room_name):
-	return render(request, "room.html", {"room_name": room_name})
 
 # Create your views here.

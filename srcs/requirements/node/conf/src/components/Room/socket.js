@@ -1,6 +1,8 @@
 import {io} from "socket.io-client";
 
 export const pongSocket = io("http://localhost:8001/api/pong", {
+    // reconnection: false,
+    // autoConnect: false,
     transports: ['websocket'],
 });
 
@@ -15,7 +17,7 @@ export const SOCKET = {
         KEY: "key",
         ROOM: "room",
         JOIN_ROOM: "join_room",
-        L_ROOM: "leave_room",
+        LEAVE_ROOM: "leave_room",
         GAME: "game",
         READY: "ready",
         RESULT: "result",

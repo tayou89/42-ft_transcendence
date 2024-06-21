@@ -48,12 +48,26 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(prevProps)
     .filter(isProperty)
     .filter(isGone(prevProps, nextProps))
-    .forEach(name => dom[name] = "");
+    .forEach(name => {
+      if (name.startsWith("data-")) {
+        dom.removeAttribute(name);
+      }
+      else {
+        dom[name] = "";
+      }
+    });
   //Set new or changed properties
   Object.keys(nextProps)
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
-    .forEach(name => dom[name] = nextProps[name]);
+    .forEach(name => {
+      if (name.startsWith("data-")) {
+        dom.setAttribute(name, nextProps[name]);
+      }
+      else {
+        dom[name] = nextProps[name];
+      }
+    });
   //Add event Listeners
   Object.keys(nextProps)
     .filter(isEvent)
@@ -85,6 +99,8 @@ function commitWork(fiber) {
   }
   else if (fiber.effectTag === "DELETION") {
     commitDeletion(fiber, domParent);
+    commitWork(fiber.sibling);
+    return;
   }
   else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate.props, fiber.props);

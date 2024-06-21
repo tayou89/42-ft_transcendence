@@ -28,8 +28,10 @@ class Pong(socketio.AsyncNamespace):
 		me = info.get('me')
 		room_name = info.get('room')
 		room_db = await sync_to_async(Room.objects.get)(name=room_name)
-
+  
 		if room_db.in_game:
+			self.rooms[room_name].pop(me)
+			await self.save_session(sid, None)
 			return
   
 		self.rooms[room_name][me] = {}
@@ -54,6 +56,9 @@ class Pong(socketio.AsyncNamespace):
 		room_name = message['room']
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
+
+		if room.cur_users == 2:
+			return
 		
 		for field in field_list:
 			if getattr(room, field, None) is None:
@@ -65,17 +70,13 @@ class Pong(socketio.AsyncNamespace):
   
 		cur_room = self.rooms.get(room_name)
 		if cur_room is None:
-			self.rooms[room_name] = {
-				"p1": {"pid": pid, "ready": False},
-				"p2": {},
-			}
-			await self.save_session(sid, {'me': 'p1', 'room': room_name})
-		else:
-			for key, value in cur_room.items():
-				if value is None:
-					self.rooms[room_name][key] = {"pid": pid, "ready": False} 
-					break
-			await self.save_session(sid, {'me': key, 'room': room_name})
+			self.rooms[room_name] = {"p1": {}, "p2": {}}
+   
+		for key, value in cur_room.items():
+			if value.get('pid') is None:
+				self.rooms[room_name][key] = {"pid": pid, "ready": False} 
+				await self.save_session(sid, {'me': key, 'room': room_name})
+				break
   
 		await sync_to_async(room.save)()
    
@@ -141,7 +142,7 @@ class Pong(socketio.AsyncNamespace):
 		await sio.sleep(5)
 		
 		while game.status != 'end':
-            
+			
 			if len(self.rooms[room_name]) != 2:
 				if 'p1' in self.rooms[room_name]:
 					game.unearned_win('p1')
@@ -168,12 +169,12 @@ class Pong(socketio.AsyncNamespace):
 		await self.save_result(self.rooms[room_name], game)
    
 	async def save_result(self, room, game: GameState):
-    
+	
 		body = {
-        	"p1": room['p1']['pid'],
-        	"p2": room['p2']['pid'],
+			"p1": room['p1']['pid'],
+			"p2": room['p2']['pid'],
 			"p1_score": game.score[0],
-        	"p2_score": game.score[1],
+			"p2_score": game.score[1],
 		}
   
 		async with httpx.AsyncClient() as client:
@@ -185,7 +186,7 @@ class Pong(socketio.AsyncNamespace):
 		info = await self.get_session(sid)
 		room_name = info.get('room')
   
-		game = self.games[room_name]
+		game: GameState = self.games[room_name]
 		pid = game[info['me']]['pid']
 		game.set_player_dy(pid, message)
 

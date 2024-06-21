@@ -13,7 +13,9 @@ function Room({ title = "title", type = GAME_TYPE.PONG, id = 1 }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const socket = getSocket(type); 
 
-    sendRoomJoinMessage(socket, id, title);
+    useEffect(() => {
+		sendRoomJoinMessage(socket, id, title);
+	},[]);
     // type = GAME_TYPE.MTT;
     return (
         <div className="container-fluid" id="room-page">

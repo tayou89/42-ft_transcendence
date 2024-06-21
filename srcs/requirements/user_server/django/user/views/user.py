@@ -1,6 +1,6 @@
 
-from .models import User
-from .serializer import UserSerializer
+from ..models import User
+from ..serializer import UserSerializer
 from match.serializer import MatchSerializer
 from match.models import MatchHistory
 from django.db.models import Q
@@ -21,11 +21,11 @@ import os
 
 class UserVeiwSet(viewsets.ModelViewSet):
 
-	permission_classes = [IsAuthenticated]
+	# permission_classes = [IsAuthenticated]
 	
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
-	http_method_names = ['get', 'post', 'patch'] 
+	http_method_names = ['get', 'post', 'patch', 'delete']
 
 	def list(self, request, *args, **kwargs):
 
@@ -41,46 +41,46 @@ class UserVeiwSet(viewsets.ModelViewSet):
 		return super().list(request, *args, **kwargs)
 
 
-	#api/user/me
-	@action(detail=False, methods=['get'], url_path='me')
-	def me(self, request):
-		header = request.META.get('HTTP_AUTHORIZATION')
+	# #api/user/me
+	# @action(detail=False, methods=['get'], url_path='me')
+	# def me(self, request):
+	# 	header = request.META.get('HTTP_AUTHORIZATION')
 
-		if header and header.startswith('Bearer '):
-			jwt_token = AccessToken(header.split(' ')[1])
+	# 	if header and header.startswith('Bearer '):
+	# 		jwt_token = AccessToken(header.split(' ')[1])
 		
-		user = User.objects.get(id=jwt_token.payload.get('user_id'))
+	# 	user = User.objects.get(id=jwt_token.payload.get('user_id'))
 
-		return Response(UserSerializer(user, many=False).data)
+	# 	return Response(UserSerializer(user, many=False).data)
 
 
-	# /api/users/me/friend
-	@action(detail=False, methods=['post'], url_path='me/friend')	
-	def add_friend(self, request):
-		header = request.META.get('HTTP_AUTHORIZATION')
-		friend_name = json.loads(request.body)['name']
+	# # /api/users/me/friend
+	# @action(detail=False, methods=['post'], url_path='me/friend')	
+	# def add_friend(self, request):
+	# 	header = request.META.get('HTTP_AUTHORIZATION')
+	# 	friend_name = json.loads(request.body)['name']
 
-		if header and header.startswith('Bearer '):
-			jwt_token = AccessToken(header.split(' ')[1])
+	# 	if header and header.startswith('Bearer '):
+	# 		jwt_token = AccessToken(header.split(' ')[1])
 		
-		user = User.objects.get(id=jwt_token.payload.get('user_id'))
+	# 	user = User.objects.get(id=jwt_token.payload.get('user_id'))
 		
-		if user.name == friend_name:
-			return Response({"result": "cant be friend with me"})
+	# 	if user.name == friend_name:
+	# 		return Response({"result": "cant be friend with me"})
   
-		try:
-			friend = User.objects.get(name=friend_name)
-			friend_list = user.friends.filter(pk=friend.pk)
+	# 	try:
+	# 		friend = User.objects.get(name=friend_name)
+	# 		friend_list = user.friends.filter(pk=friend.pk)
 			
-			if len(friend_list) != 0:
-				return Response({"result": "already friend"})
+	# 		if len(friend_list) != 0:
+	# 			return Response({"result": "already friend"})
 	
-			user.friends.add(friend.pk)
-			user.save()
-		except:
-			return Response({"result": "no user"})
+	# 		user.friends.add(friend.pk)
+	# 		user.save()
+	# 	except:
+	# 		return Response({"result": "no user"})
 	
-		return Response({"result": "Successfully Added!"})
+	# 	return Response({"result": "Successfully Added!"})
 
 
 	# /users/{id}/matches/
@@ -93,7 +93,6 @@ class UserVeiwSet(viewsets.ModelViewSet):
 
 		return Response(serializer.data)
 	
-
 
 	@action(detail=True, methods=['get'], url_path='avatar')
 	def avatar(self, request, pk=True):

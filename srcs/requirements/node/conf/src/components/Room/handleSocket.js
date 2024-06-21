@@ -9,11 +9,10 @@ export function sendRoomJoinMessage(socket, id, title) {
 export function receivePlayerData(socket, roomPlayers, playerSetter) {
     const receiveRoomEvent = (player) => {
         const players = Object.values(player);
-
+		console.log(players);
         players.forEach((player, index) => {
-			console.log(player, index);
             if (player?.pid !== roomPlayers[index]?.id)
-				Fetch.setUserData(playerSetter, player.pid, index);
+                Fetch.setUserData(playerSetter, player.pid, index);
             if ((player.pid && roomPlayers[index].id) && 
                 (player.ready !== roomPlayers[index]?.ready))
                 playerSetter((prev) => setReady(prev, index));
