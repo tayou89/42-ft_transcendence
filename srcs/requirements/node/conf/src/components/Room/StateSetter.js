@@ -18,7 +18,7 @@ class StateSetter {
         const currentBall = Object.values(currentGameData.ball);
         const currentPaddle = Object.values(currentGameData.paddle);
         const currentScore = Object.values(currentGameData.score);
-        const newBall = newGameData.ball;
+        const [ newBall  newGameData.ball;
 
         if (game.ball.x !== ball[0] || game.ball.y !== ball[1])
             setGame((prev) => ({ ...prev, ball: { x: ball[0], y: ball[1] }}));
