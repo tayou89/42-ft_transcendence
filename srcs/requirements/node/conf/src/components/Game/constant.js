@@ -47,6 +47,11 @@ export const INIT = {
 export const KEY = {
     UP: ['w', 'ArrowUp'],
     DOWN: ['s', 'ArrowDown'],
+    VALUE: {
+        UP: -1,
+        DOWN: 1,
+        NONE: 0,
+    }
 }
 
 export const GAME_TYPE = {

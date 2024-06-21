@@ -3,28 +3,6 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import { KEY, GAME_POSITION } from "./constant.js";
 import { SOCKET } from "../Room/socket.js";
 
-export function sendKeyData(socket) {
-    const handleKeyDown = (event) => {
-        if (KEY.UP.includes(event.key))
-            socket.emit(SOCKET.EVENT.KEY, -1);
-        else if (KEY.DOWN.includes(event.key))
-            socket.emit(SOCKET.EVENT.KEY, 1);
-    };
-    const handleKeyUp = (event) => {
-        if (KEY.UP.includes(event.key) || KEY.DOWN.includes(event.key))
-            socket.emit(SOCKET.EVENT.KEY, 1);
-    }; 
-
-    useEffect(() => {
-        document.addEventListener("keydown", handleKeyDown);
-        document.addEventListener("keyup", handleKeyUp);
-        return (() => {
-            document.removeEventListener("keydown", handleKeyDown);
-            document.removeEventListener("keyup", handleKeyUp);
-        });
-    }, []);
-}
-
 export function receiveGameData(socket, game, setGame) {
     const handleGameEvent = ({ ball, paddle, score }) => {
         if (game.score.p1 !== score[0] || game.score.p2 !== score[1])

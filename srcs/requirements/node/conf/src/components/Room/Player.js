@@ -1,7 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import { GAME_TYPE, GAME_POSITION } from "../Game/constant.js";
-import { receivePlayerData } from "./EventHandler.js";
 import PlayerSlot from "./PlayerSlot.js";
 import CountDown  from "./CountDown.js";
 import Fetch  from "./Fetch.js";
@@ -11,12 +10,17 @@ export function Player({ type, socket, id }) {
     const [ players, setPlayers ] = useState(getDefaultPlayers(type));
     const [ count, setCount ] = useState(5);
 
-    receivePlayerData(socket, players, setPlayers);
     if (count <= 0)
         navigate("/game");
-        // navigate("/game", { socket, position: getPlayerPosition(id, players) });
-    if (isAllReady(players))
-        startCountDown(count, setCount);
+    useEffect(() => {
+        socket.turnOnRoomChannel(players, setPlayers);
+        return (() => socket.turnOffRoomChannel());
+    }, []);
+    useEffect(() => {
+        if (isAllReady)
+            countDown(count, setCount);
+        return (() => stopCount);
+    }, [count]);
     return (
         <div className="row" id={ getElementId(type) }>
             { getPlayerSlots(players, setPlayers, type) }
@@ -61,17 +65,6 @@ function countDown(count, setCount) {
 
 function stopCount(countDown) {
     clearInterval(countDown);
-}
-
-function startCountDown(count, setCount) {
-    useEffect(() => {
-        const countDown = setInterval(() => { 
-            if (count > 0)
-                setCount(count => count -1) 
-        }, 1000);
-
-        return (() => clearInterval(countDown));
-    }, [count]);
 }
 
 function getCountDown(players, count) {

@@ -11,12 +11,15 @@ function Room({ title = "title", type = GAME_TYPE.PONG, id = 0 }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const socket = getSocket(type);
 
+    useEffect(() => {
+        socket.sendRoomJoinMessage(id, title);
+    }, []);
     return (
         <div className="container-fluid" id="room-page">
             <NavigationBar />
             <Title title={ title } type={ type } />
             <Player type={ type } socket={ socket } id={ id } />
-            <BottomLine setIsQuitClicked={ setIsQuitClicked } socket={ socket } />
+            <BottomLine setIsQuitClicked={ setIsQuitClicked } />
             <QuitPopUp socket={ socket } isClicked={ isQuitClicked } set={ setIsQuitClicked } /> 
         </div>
     );
