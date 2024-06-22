@@ -101,7 +101,7 @@ function modifyCommentMsg(msg, isSuccess) {
 function onClickSubmit(event) {
 	event.preventDefault();
 	const input = event.target.parentNode.querySelector("#add-friend-input");
-	fetch("http://localhost:8000/api/me/friend/", {
+	fetch("http://localhost:8000/api/me/friend", {
 		method: 'POST',
 		credentials: 'include',
 		headers: {
