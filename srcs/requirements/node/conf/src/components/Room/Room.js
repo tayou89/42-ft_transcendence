@@ -4,7 +4,7 @@ import Title from "./Title.js";
 import Player from "./Player.js";
 import BottomLine from "./BottomLine.js";
 import QuitPopUp from "./QuitPopUp.js";
-import { pongSocket, mttSocket } from "./Socket.js";
+import { pongSocket, mttSocket } from "./socket.js";
 import { GAME_TYPE, SOCKET } from "../Game/constant.js";
 import "../../css/room/room.css";
 
