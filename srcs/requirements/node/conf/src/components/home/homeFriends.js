@@ -1,4 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { navigate } from "../../MyReact/MyReactRouter.js";
 
 const defaultUserData = {
 	"id": 1,
@@ -24,15 +25,15 @@ function HomeFriends({ myData }) {
 			</div>
 			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25">
 				{myData.friends.map(id => (
-					<HomeFriendsFriendInfo id={id} />
+					<HomeFriendsFriendInfo friendId={id} />
 				))}
 			</div>
 		</div>
 	);
 }
 
-function unFriend(id) {
-	const unFriendApiUrl = `http://localhost:8000/api/me/friend/${id}`;
+function onClickUnFriend(friendId) {
+	const unFriendApiUrl = `http://localhost:8000/api/me/friend/${friendId}`;
 	fetch(unFriendApiUrl, {
 		method: 'DELETE',
 		credentials: 'include'
@@ -40,9 +41,14 @@ function unFriend(id) {
 }
 
 //!!!??? 로그아웃/로그인 이쁘게 바꿔야함.
-function HomeFriendsFriendInfo({ id }) {
+
+function onClickShowFriendsInfo({ friendId }) {
+	navigate("/userpage", friendId);
+}
+
+function HomeFriendsFriendInfo({ friendId }) {
 	const [userInfo, setUserInfo] = useState(defaultUserData);
-	const userInfoApiUrl = `http://localhost:8000/api/users/${id}`;
+	const userInfoApiUrl = `http://localhost:8000/api/users/${friendId}`;
 	useEffect(() => {
 		fetch(userInfoApiUrl, {
 			method: 'GET',
@@ -71,8 +77,8 @@ function HomeFriendsFriendInfo({ id }) {
 							{userInfo.name}
 						</div>
 						<ul className="dropdown-menu" >
-							<li className="dropdown-item">Show Info</li>
-							<li className="dropdown-item text-danger" onClick={() => unFriend(id)}>Unfriended</li>
+							<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
+							<li className="dropdown-item text-danger" onClick={() => onClickUnFriend(friendId)}>Unfriended</li>
 						</ul>
 					</div>
 				</div>
