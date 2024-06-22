@@ -32,16 +32,10 @@ function HomeFriends({ myData }) {
 }
 
 function unFriend(id) {
-	const unFriendApiUrl = "http://localhost:8000/me/friend";
+	const unFriendApiUrl = `http://localhost:8000/me/friend/${id}`;
 	fetch(unFriendApiUrl, {
 		method: 'DELETE',
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
-		},
-		body: JSON.stringify({
-			id: id
-		})
+		credentials: 'include'
 	})
 }
 
