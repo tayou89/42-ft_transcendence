@@ -82,6 +82,8 @@ services:
     depends_on:
       gamedb:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     build:
       context: ${PROJECT_DIR}/requirements/game_server
       dockerfile: dockerfile
@@ -137,6 +139,12 @@ services:
     container_name: redis
     networks:
       - my_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   nginx:
     depends_on:

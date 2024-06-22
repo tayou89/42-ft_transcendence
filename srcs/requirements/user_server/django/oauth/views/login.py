@@ -8,7 +8,7 @@ from django.core.files.base import ContentFile
 from django.shortcuts import redirect
 
 from ..models import User, OTPModel
-from ._serializer import UserSerializer
+from user.serializer import UserSerializer
 
 from django.core.mail import send_mail
 
@@ -60,6 +60,7 @@ def save_user_info(data):
 
 	if is_created:
 		user.email = email
+		user.display_name = name
 
 		response = requests.get(img_url)
 		avatar = response.content

@@ -12,6 +12,11 @@ export function Route({path, component: Component}) {
                     return ({...prev, ...event.state});
                 });
             }
+            if (event.state) {
+                setProps((prev) => {
+                    return ({...prev, ...event.state});
+                });
+            }
         }
         window.addEventListener("navigate", onLocationChange);
         return () => {

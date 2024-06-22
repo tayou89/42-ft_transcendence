@@ -63,14 +63,15 @@ INSTALLED_APPS = [
 
 	'rest_framework',
 	'rest_framework_simplejwt.token_blacklist',
-	'api',
+	'user',
+	'oauth',
+	'match',
 
     'corsheaders', #CORS
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'user_manage.middleware.JWTAuthCookieMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -161,7 +162,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'user.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
