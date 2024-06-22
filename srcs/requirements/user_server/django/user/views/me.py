@@ -12,7 +12,7 @@ from ..models import User
 from ..serializer import UserSerializer
 
 @api_view(['GET'])
-@authentication_classes(CustomJWTAuthentication)
+@authentication_classes([CustomJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def me(request):
 	jwt_token = AccessToken(request.COOKIES.get('jwt'))
