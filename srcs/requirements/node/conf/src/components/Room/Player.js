@@ -3,7 +3,6 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import { GAME_TYPE, GAME_POSITION } from "../Game/constant.js";
 import PlayerSlot from "./PlayerSlot.js";
 import CountDown  from "./CountDown.js";
-import Fetch  from "./Fetch.js";
 import "../../css/room/room.css";
 
 export function Player({ type, socket, id }) {
@@ -11,7 +10,7 @@ export function Player({ type, socket, id }) {
     const [ count, setCount ] = useState(5);
 
     if (count <= 0)
-        navigate("/game");
+        navigate("/game", { socket, playerPosition: getPlayerPosition(id, players) });
     useEffect(() => {
         socket.turnOnRoomChannel(players, setPlayers);
         return (() => socket.turnOffRoomChannel());
