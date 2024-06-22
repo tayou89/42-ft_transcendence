@@ -99,6 +99,8 @@ function commitWork(fiber) {
   }
   else if (fiber.effectTag === "DELETION") {
     commitDeletion(fiber, domParent);
+    commitWork(fiber.sibling);
+    return;
   }
   else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate.props, fiber.props);
@@ -139,15 +141,15 @@ function workLoop(deadline) {
   
   while (nextUnitOfWork && !shouldYield) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
-    shouldYield = deadline.timeRemaining() < 1;
+    shouldYield = deadline.timeRemaining() < 1 && !deadline.didTimeout;
   }
   if (!nextUnitOfWork && wipRoot) {
     commitRoot();
   }
-  requestIdleCallback(workLoop);
+  requestIdleCallback(workLoop, {timeout: 2000});
 }
 //requestIdleCallback()는 콜스택이 비어있을 경우(idle 상태) 콜백실행
-requestIdleCallback(workLoop);
+requestIdleCallback(workLoop, {timeout: 2000});
 
 function performUnitOfWork(fiber) {
   const isFunctionComponent = fiber.type instanceof Function;
@@ -200,9 +202,9 @@ export function useState(initial) {
   const setState = action => {
     hook.queue.push(action);
       wipRoot = {
-        dom: currentRoot.dom,
-        props: currentRoot.props,
-        alternate: currentRoot,
+      dom: currentRoot ? currentRoot.dom : wipRoot.dom,
+      props: currentRoot ? currentRoot.props: wipRoot.dom,
+      alternate: currentRoot ? currentRoot: wipRoot,
       }
       nextUnitOfWork = wipRoot;
       deletions = [];
