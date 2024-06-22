@@ -69,9 +69,9 @@ function HomeMatches({ myId }) {
 				<div>
 					{rooms.map((room) => {
 						if (room.cur_users !== room.max_users && room.in_game === false) {
-							return (<HomeMatchInfo room={room} active={true} />)
+							return (<HomeMatchInfo room={room} myId={myId} active={true} />)
 						} else {
-							return (<HomeMatchInfo room={room} active={false} />)
+							return (<HomeMatchInfo room={room} myId={myId} active={false} />)
 						}
 					})}
 				</div>
@@ -80,22 +80,18 @@ function HomeMatches({ myId }) {
 	);
 }
 
-function onClickSubmit(event, myId) {
+function onCreateNewRoomSubmit(event, myId) {
 	event.preventDefault();
 	let title = event.target.parentNode.querySelector("#create-room-input").value;
-	const selectedRadio = event.target.parentNode.querySelector("input[name='optradio']:checked").value;
+	const roomType = event.target.parentNode.querySelector("input[name='optradio']:checked").value;
 	if (title === "") {
-		if (selectedRadio === "1vs1") {
+		if (roomType === "pong") {
 			title = "Let's play 1:1 with me";
 		} else {
 			title = "Let's play a tournament";
 		}
 	}
-	if (selectedRadio === "1vs1") {
-		navigate("/room/1vs1", { title, myId });
-	} else {
-		navigate("/room/tournament", { title, myId });
-	}
+	navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
 }
 
 function CreateRoomModal({ myId }) {
@@ -119,16 +115,16 @@ function CreateRoomModal({ myId }) {
 								<div className="col-10">
 									<form className="text-start">
 										<div className="form-check">
-											<input type="radio" className="form-check-input" id="radio1" name="optradio" value="1vs1" checked />
+											<input type="radio" className="form-check-input" id="radio1" name="optradio" value="pong" checked />
 											<label className="form-check-label text-dark" for="radio1">1 vs 1</label>
 										</div>
 										<div className="form-check">
-											<input type="radio" className="form-check-input" id="radio2" name="optradio" value="tournament" />
+											<input type="radio" className="form-check-input" id="radio2" name="optradio" value="mtt" />
 											<label className="form-check-label text-dark" for="radio2">Tournerment(4P)</label>
 										</div>
 										<input id="create-room-input" className="me-1" type="text" placeholder="Room name" />
 									</form>
-									<button className="btn btn-primary btn-md" onClick={(event) => onClickSubmit(event, myId)}>Submit</button>
+									<button className="btn btn-primary btn-md" data-bs-dismiss="modal" onClick={(event) => onCreateNewRoomSubmit(event, myId)}>Submit</button>
 								</div>
 							</div>
 						</div>
@@ -140,18 +136,19 @@ function CreateRoomModal({ myId }) {
 	);
 }
 
-function enterCreatedRoom() {
-	console.log("enter CreateRoom");
+function onClickEnterCreatedRoom(title, myId, type) {
+	console.log(title, myId, type);
+	navigate(`/room?title=${title}&myId=${myId}&${type}`);
 }
 
-function HomeMatchInfo({ room, active }) {
+function HomeMatchInfo({ room, myId, active }) {
 	const opt1 = "container rounded text-center my-2 py-3 text-light border bg-primary";
 	const opt2 = "container rounded text-center my-2 py-3 text-light border bg-secondary";
 	const [mouseEntered, setMouseEntered] = useState(false);
 	function MouseEnter() {
 		setMouseEntered(() => true);
 	}
-	function MouseLeave(event) {
+	function MouseLeave() {
 		setMouseEntered(() => false);
 	}
 	if (!mouseEntered || active === false) {
@@ -173,7 +170,7 @@ function HomeMatchInfo({ room, active }) {
 			<div className="my-2 py-4 fs-4 text-center bg-primary rounded border"
 				style="height: 82px; user-select: none; cursor: pointer;"
 				onMouseEnter={MouseEnter} onMouseLeave={MouseLeave}
-				onClick={enterCreatedRoom}
+				onClick={() => onClickEnterCreatedRoom(room.name, myId, (room.mtt ? "mtt" : "pong"))}
 			>
 				<div>
 					Enter Room
