@@ -133,6 +133,8 @@ class Pong(socketio.AsyncNamespace):
 
 	async def play_pong(self, room_name):
 		game = self.games[room_name] = GameState()
+		game.p1_pid = self.rooms[room_name]['p1']['pid']
+		game.p2_pid = self.rooms[room_name]['p2']['pid']
   
 		room_db = await sync_to_async(Room.objects.get)(name=room_name)
 		room_db.in_game = True
@@ -186,7 +188,7 @@ class Pong(socketio.AsyncNamespace):
 		room_name = info.get('room')
   
 		game: GameState = self.games[room_name]
-		pid = game[info['me']]['pid']
+		pid = self.rooms[room_name][info['me']]['pid']
 		game.set_player_dy(pid, message)
 
 

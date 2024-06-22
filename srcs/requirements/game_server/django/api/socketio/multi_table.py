@@ -10,7 +10,7 @@ from ..models import Room
 from asgiref.sync import sync_to_async
 
 
-class MTTPong(socketio.AsyncNamespace):
+class MttPong(socketio.AsyncNamespace):
 	
 	rooms = {}
 	locker = {}
@@ -24,16 +24,18 @@ class MTTPong(socketio.AsyncNamespace):
 		pass
 	
 	async def on_disconnect(self, sid):
-		field_list = ['p1', 'p2']
+		field_list = ['p1', 'p2', 'p3', 'p4']
 		info = await self.get_session(sid)
 		me = info.get('me')
 		room_name = info.get('room')
 		room_db = await sync_to_async(Room.objects.get)(name=room_name)
-
+  
 		if room_db.in_game:
+			self.rooms[room_name].pop(me)
+			await self.save_session(sid, None)
 			return
   
-		self.rooms[room_name][me] = None
+		self.rooms[room_name][me] = {}
 		await self.save_session(sid, None)
 		
 		for field in field_list:
@@ -48,13 +50,15 @@ class MTTPong(socketio.AsyncNamespace):
 			await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
 
 
-	
 	async def on_join_room(self, sid, message):
 		field_list = ['p1', 'p2', 'p3', 'p4']
 		pid = message['pid']
 		room_name = message['room']
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
+
+		if room.cur_users == 2:
+			return
 		
 		for field in field_list:
 			if getattr(room, field, None) is None:
@@ -66,17 +70,14 @@ class MTTPong(socketio.AsyncNamespace):
   
 		cur_room = self.rooms.get(room_name)
 		if cur_room is None:
-			self.rooms[room_name] = {
-				"p1": {"pid": pid, "ready": False},
-				"p2": None,
-			}
-			await self.save_session(sid, {'me': 'p1', 'room': room_name})
-		else:
-			for key, value in cur_room.items():
-				if value is None:
-					self.rooms[room_name][key] = {"pid": pid, "ready": False} 
-					break
-			await self.save_session(sid, {'me': key, 'room': room_name})
+			for key in field_list:
+				self.rooms[room_name][key] = {}
+   
+		for key, value in cur_room.items():
+			if value.get('pid') is None:
+				self.rooms[room_name][key] = {"pid": pid, "ready": False} 
+				await self.save_session(sid, {'me': key, 'room': room_name})
+				break
   
 		await sync_to_async(room.save)()
    
@@ -89,7 +90,7 @@ class MTTPong(socketio.AsyncNamespace):
   
   
 	async def on_leave_room(self, sid, message):
-		field_list = ['p1', 'p2', 'p3', 'p4']
+		field_list = ['p1', 'p2']
 		info = await self.get_session(sid)
 		me = info.get('me')
 		room_name = info.get('room')
@@ -103,7 +104,7 @@ class MTTPong(socketio.AsyncNamespace):
   
 		room.cur_users -= 1
 		await self.leave_room(sid, room_name)
-		self.rooms[room_name][me] = None
+		self.rooms[room_name][me] = {}
 		await self.save_session(sid, None)
   
 		if room.cur_users == 0:
@@ -119,7 +120,6 @@ class MTTPong(socketio.AsyncNamespace):
 			)
   
 	async def on_ready(self, sid, message):
-		field_list = ['p1', 'p2', 'p3', 'p4']
 		flag = message
 		info = await self.get_session(sid)
 		me = info.get('me')
@@ -135,6 +135,8 @@ class MTTPong(socketio.AsyncNamespace):
 
 	async def play_pong(self, room_name):
 		game = self.games[room_name] = GameState()
+		game.p1_pid = self.rooms[room_name]['p1']['pid']
+		game.p2_pid = self.rooms[room_name]['p2']['pid']
   
 		room_db = await sync_to_async(Room.objects.get)(name=room_name)
 		room_db.in_game = True
@@ -143,7 +145,7 @@ class MTTPong(socketio.AsyncNamespace):
 		await sio.sleep(5)
 		
 		while game.status != 'end':
-            
+			
 			if len(self.rooms[room_name]) != 2:
 				if 'p1' in self.rooms[room_name]:
 					game.unearned_win('p1')
@@ -170,12 +172,12 @@ class MTTPong(socketio.AsyncNamespace):
 		await self.save_result(self.rooms[room_name], game)
    
 	async def save_result(self, room, game: GameState):
-    
+	
 		body = {
-        	"p1": room['p1']['pid'],
-        	"p2": room['p2']['pid'],
+			"p1": room['p1']['pid'],
+			"p2": room['p2']['pid'],
 			"p1_score": game.score[0],
-        	"p2_score": game.score[1],
+			"p2_score": game.score[1],
 		}
   
 		async with httpx.AsyncClient() as client:
@@ -187,9 +189,9 @@ class MTTPong(socketio.AsyncNamespace):
 		info = await self.get_session(sid)
 		room_name = info.get('room')
   
-		game = self.games[room_name]
-		pid = game[info['me']]['pid']
+		game: GameState = self.games[room_name]
+		pid = self.rooms[room_name][info['me']]['pid']
 		game.set_player_dy(pid, message)
 
 
-sio.register_namespace(MTTPong('/api/mtt'))
+sio.register_namespace(MttPong('/api/mtt'))

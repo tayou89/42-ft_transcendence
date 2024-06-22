@@ -8,8 +8,9 @@ import { pongSocket, mttSocket } from "./Socket.js";
 import { GAME_TYPE } from "../Game/constant.js";
 import "../../css/room/room.css";
 
-function Room({ title, type, id }) {
+function Room() {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
+    const [ title, type, id ] = getRoomData();
     const socket = getSocket(type);
 
     useEffect(() => {
@@ -24,6 +25,9 @@ function Room({ title, type, id }) {
             <QuitPopUp socket={ socket } isClicked={ isQuitClicked } set={ setIsQuitClicked } /> 
         </div>
     );
+}
+
+function getRoomData() {
 }
 
 function getSocket(gameType) {

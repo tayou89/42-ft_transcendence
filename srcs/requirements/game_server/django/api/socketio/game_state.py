@@ -44,8 +44,8 @@ class GameState:
 		self.ball_dir = [1, 0]
 		self.ball_speed = 5
 
-		self.p1_pid: int
-		self.p2_pid: int
+		self.p1_pid = 0
+		self.p2_pid = 0
 
 		self.p1_dir = 0
 		self.p2_dir = 0
