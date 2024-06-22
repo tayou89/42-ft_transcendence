@@ -6,8 +6,6 @@ import HomeMyInfo from "./homeMyInfo.js";
 import HomeFriends from "./homeFriends.js";
 import HomeMatches from "./homeMatches.js";
 
-import Btn from "../utility/Btn.js";
-
 const defaultMyData = {
 	"id": 0,
 	"name": "default",
@@ -21,7 +19,7 @@ const defaultMyData = {
 
 function Home() {
 	const [myData, setMyData] = MyReact.useState(defaultMyData);
-	const myDataApiUrl = "http://localhost:8000/api/users/me";
+	const myDataApiUrl = "http://localhost:8000/api/me";
 
 	MyReact.useEffect(() => {
 		fetch(myDataApiUrl, {
@@ -32,6 +30,7 @@ function Home() {
 				return response.json();
 			})
 			.then(data => {
+				console.log("in home", data);
 				if (data.detail) {
 					tokenRefreshAndGoTo("/home");
 				} else {
@@ -39,13 +38,13 @@ function Home() {
 				}
 			})
 			.catch(error => {
-				console.log(error);
+				console.log("in Home function", error);
 				navigate("/");
 			});
 	}, []);
 	return (
 		<div>
-			<Navbar name={myData.name} profileImg={myData.avatar} />
+			<Navbar position="/home" />
 			<div className="container text-light">
 				<div className="row mt-3">
 					<div className="col-md-5">
@@ -53,7 +52,7 @@ function Home() {
 						<HomeFriends myData={myData} />
 					</div>
 					<div className="col-md-7">
-						<HomeMatches />
+						<HomeMatches myId={myData.id} />
 					</div>
 				</div>
 			</div>

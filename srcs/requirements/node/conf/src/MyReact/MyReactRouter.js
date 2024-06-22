@@ -12,11 +12,6 @@ export function Route({path, component: Component}) {
                     return ({...prev, ...event.state});
                 });
             }
-            if (event.state) {
-                setProps((prev) => {
-                    return ({...prev, ...event.state});
-                });
-            }
         }
         window.addEventListener("navigate", onLocationChange);
         return () => {
@@ -44,7 +39,9 @@ export function Link({to, children, props, ...others}) {
 export function navigate(to, props) {
     const state = props ? props : {};
     window.history.pushState(state, "", to);
+    // window.history.pushState({}, "", to);
     const navigationEvent = new PopStateEvent("navigate", { state: state });
+    // const navigationEvent = new PopStateEvent("navigate");
     window.dispatchEvent(navigationEvent);
 }
 

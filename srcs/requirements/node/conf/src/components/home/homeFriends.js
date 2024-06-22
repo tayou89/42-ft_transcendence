@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import Btn from "../utility/Btn.js";
+import { navigate } from "../../MyReact/MyReactRouter.js";
 
 const defaultUserData = {
 	"id": 1,
@@ -13,7 +13,6 @@ const defaultUserData = {
 }
 
 function HomeFriends({ myData }) {
-	myData = defaultUserData;
 	return (
 		<div>
 			<div className="fs-4 row">
@@ -21,22 +20,36 @@ function HomeFriends({ myData }) {
 					Friends
 				</div>
 				<div className="container col-6 text-end pe-4">
-					<AddNewFriend />
+					<AddNewFriendModal title="add Friend" />
 				</div>
 			</div>
-			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom">
+			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25">
 				{myData.friends.map(id => (
-					<HomeFriendsFriendInfo key={id} id={id} />
+					<HomeFriendsFriendInfo friendId={id} />
 				))}
 			</div>
 		</div>
 	);
 }
 
+function onClickUnFriend(friendId) {
+	const unFriendApiUrl = `http://localhost:8000/api/me/friend/${friendId}`;
+	fetch(unFriendApiUrl, {
+		method: 'DELETE',
+		credentials: 'include'
+	})
+}
 
-function HomeFriendsFriendInfo({ id }) {
+//!!!??? 로그아웃/로그인 이쁘게 바꿔야함.
+
+function onClickShowFriendsInfo(friendId) {
+	console.log(friendId);
+	navigate(`/userpage?userId=${friendId}`);
+}
+
+function HomeFriendsFriendInfo({ friendId }) {
 	const [userInfo, setUserInfo] = useState(defaultUserData);
-	const userInfoApiUrl = `http://localhost:8000/api/users/${id}`;
+	const userInfoApiUrl = `http://localhost:8000/api/users/${friendId}`;
 	useEffect(() => {
 		fetch(userInfoApiUrl, {
 			method: 'GET',
@@ -51,12 +64,6 @@ function HomeFriendsFriendInfo({ id }) {
 				console.log(error);
 			});
 	}, [])
-
-	function unFriend(event) {
-		// console.log(event);
-		console.log(`u clicked unfriend`);
-		const unFriendApiUrl = "http://localhost:8000/";
-	}
 	return (
 		<div className="container mt-1">
 			<div className="row border text-light">
@@ -71,12 +78,12 @@ function HomeFriendsFriendInfo({ id }) {
 							{userInfo.name}
 						</div>
 						<ul className="dropdown-menu" >
-							<li className="dropdown-item">Show Info</li>
-							<li className="dropdown-item text-danger" onClick={unFriend}>Unfriended</li>
+							<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
+							<li className="dropdown-item text-danger" onClick={() => onClickUnFriend(friendId)}>Unfriended</li>
 						</ul>
 					</div>
 				</div>
-				<div className="col-2 border">{userInfo.status === "login" ? "login" : "logout"}</div>
+				<div className="col-2 border">{userInfo.online === true ? "login" : "logout"}</div>
 			</div>
 		</div>
 	);
@@ -96,33 +103,45 @@ function modifyCommentMsg(msg, isSuccess) {
 	}
 }
 
-function AddNewFriend() {
-	function onClickSubmit(event) {
-		event.preventDefault();
-		const input = event.target.parentNode.querySelector("input");
-		fetch(`http://localhost:8000/api/users?name=${input.value}`, {
-			method: 'GET',
-			credentials: 'include'
+//!!!??? 성공했을 때 친구 목록이 바로 업데이트되게끔 바꿔야함.
+//!!!??? 성공/실패 메세지 뜨고 잠시뒤에 or 창 닫으면 사라지게 하고싶음. settimeout 쓰면 1초에 한번씩 눌렀을 때 처음 누른 settimeout 때문에 3번째에 나온 메세지가 1초만에 사라짐.
+function onClickSubmit(event) {
+	event.preventDefault();
+	const input = event.target.parentNode.querySelector("#add-friend-input");
+	fetch("http://localhost:8000/api/me/friend", {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
+		},
+		body: JSON.stringify({
+			name: input.value
 		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.status === "success") {
-					modifyCommentMsg("Successfully Added!", true);
-				} else {
-					modifyCommentMsg(data.result, false);
-				}
-				setTimeout(() => {
-					modifyCommentMsg("", true);
-				}, 3000);
-			})
-			.catch(console.log);
-	}
+	})
+		.then(response => {
+			console.log(response);
+			return response.json();
+		})
+		.then(data => {
+			if (data.result === "Successfully Added!") {
+				modifyCommentMsg("Successfully Added!", true);
+			} else {
+				modifyCommentMsg(data.result, false);
+			}
+		})
+		.catch(error => {
+			modifyCommentMsg("Network Error!", false);
+			console.log("in HomeFriend file onClickSubmit function", error);
+		});
+}
+
+function AddNewFriendModal({ title }) {
 	return (
 		<div>
-			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-				add Friend
+			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#add-friend-modal">
+				{title}
 			</button>
-			<div className="modal text-center" id="myModal">
+			<div className="modal text-center" id="add-friend-modal">
 				<div className="modal-dialog">
 					<div className="modal-content">
 
@@ -133,8 +152,8 @@ function AddNewFriend() {
 
 						<div className="modal-body">
 							<form className="container my-1 py-1">
-								<input className="me-1" type="text" placeholder="Friend name" />
-								<Btn size="md" text="Submit" onClickFunc={onClickSubmit} />
+								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" />
+								<button className="btn btn-primary btn-md" onClick={onClickSubmit}>Submit</button>
 							</form>
 							<div id="add-friend-status" className="container mt-2 text-success">
 							</div>

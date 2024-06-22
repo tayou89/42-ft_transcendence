@@ -17,8 +17,7 @@ function tokenRefreshAndGoTo(successGoTo) {
 			}
 		})
 		.catch(error => {
-			console.log(error);
-			console.log(successGoTo, "에서 access token 재발급 에러");
+			console.log(successGoTo, "에서 access token 재발급 에러", error);
 			navigate("/login");//에러 시 로그인 페이지로.
 		});
 }

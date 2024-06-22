@@ -2,17 +2,15 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
 function HomeMyInfo({ myData }) {
-	myData.wins = 10;
-	myData.losses = 20;
 	const expWidth = `width:${(myData.exp % 1000) / 10}%`;
 	const winRateWidth = myData.wins + myData.losses === 0 ?
 		"width:0%" : `width:${(myData.wins / (myData.wins + myData.losses)) * 100}%`;
 	return (
 		<div>
-			<div className="fs-4">
+			<div className="fs-4 mb-1">
 				My Info
 			</div>
-			<div className="container mb-3 pt-2 pb-2 border-top border-bottom text-center">
+			<div className="container mb-3 pt-2 pb-2 border-top border-bottom text-center rounded bg-secondary bg-opacity-25">
 				<div className="row mt-1 mb-1">
 					<div className="col-2">Level</div>
 					<div className="col-1">:</div>

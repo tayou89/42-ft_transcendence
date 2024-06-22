@@ -2,7 +2,7 @@ import { navigate } from "../../MyReact/MyReactRouter";
 import tokenRefreshAndGoTo from "./tokenRefreshAndGoTo";
 
 function isLogin() {
-	const myInfoApiUrl = "http://localhost:8000/api/users/me";
+	const myInfoApiUrl = "http://localhost:8000/api/me";
 	fetch(myInfoApiUrl, {//api 요청
 		method: 'GET',
 		credentials: 'include'
@@ -20,7 +20,7 @@ function isLogin() {
 			tokenRefreshAndGoTo(successGoTo);
 		})
 		.catch(error => {//요청 실패 시
-			console.log(error);
+			console.log("in isLogin function", error);
 			navigate("/login");
 		})
 }

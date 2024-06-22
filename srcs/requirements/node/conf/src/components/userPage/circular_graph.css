@@ -1,0 +1,37 @@
+.circular-graph,
+.circular-graph * {
+	box-sizing: border-box;
+}
+
+.circular-graph {
+	flex-shrink: 0;
+	width: 180px;
+	height: 180px;
+	position: relative;
+	overflow: hidden;
+}
+
+.rate {
+	border-radius: 50%;
+	border-style: solid;
+	border-color: #ffffff;
+	border-width: 20px;
+	width: 140px;
+	height: 140px;
+	position: absolute;
+	left: calc(50% - 70px);
+	top: calc(50% - 70.25px);
+	box-shadow: inset 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.ratetext {
+	color: #00b000;
+	text-align: left;
+	font-family: "NeoDunggeunmoPro-Regular", sans-serif;
+	font-size: 25px;
+	line-height: 24px;
+	font-weight: 400;
+	position: absolute;
+	left: calc(50% - 23px);
+	top: calc(50% - 12px);
+}
