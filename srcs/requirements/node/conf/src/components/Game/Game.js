@@ -12,7 +12,7 @@ import "../../css/game/game-page.css";
 
 const eventHandler = new EventHandler();
 
-function Game({ socket = pongSocket, playerPosition = "left"}) {
+function Game({ socket, playerPosition }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const [ game, setGame ] = useState(getInitialGameData());
     const [ players, setPlayers ] = useState([{}, {}]);

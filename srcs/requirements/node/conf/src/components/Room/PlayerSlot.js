@@ -3,7 +3,7 @@ import ReadyButton from "./ReadyButton.js";
 import { GAME_TYPE } from "../Game/constant.js";
 import "../../css/room/player-slot.css";
 
-function PlayerSlot({ socket, player, type }) {
+function PlayerSlot({ socket, player, type, isMySlot }) {
     const elementIds = getElementsIds(type);
 
     if (!player.id)
@@ -15,7 +15,7 @@ function PlayerSlot({ socket, player, type }) {
             </div>
             <div id="name">{ player.name }</div>
             <div id="level">Level { Math.floor( player.exp / 1000) }</div>
-            <ReadyButton status={ player.ready } socket={ socket } />
+            <ReadyButton status={ player.ready } socket={ socket } isMySlot={ isMySlot } />
         </div>
     );
 }
