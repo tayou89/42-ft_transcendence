@@ -28,6 +28,13 @@ function Room() {
 }
 
 function getRoomData() {
+    const queryString = window.location.search;
+    const URLData = new URLSearchParams(queryString);
+    const title = URLData.get('title');
+    const type = URLData.get('type');
+    const id = URLData.get('myId');
+
+    return ([title, type, id]);
 }
 
 function getSocket(gameType) {

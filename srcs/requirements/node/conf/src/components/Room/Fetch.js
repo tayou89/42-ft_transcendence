@@ -1,5 +1,6 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
 import { URL_PATH } from "../Game/constant.js";
+import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo.js";
 
 class Fetch {
     static async setUserData(setFunction, userId = 0, index = -1) {
@@ -14,7 +15,8 @@ class Fetch {
         if (!id)
             throw Error(`Fetch.userData: id doesn't exist: ${id}`);
         try {
-            const url = `${URL_PATH.BACK_API}/api/users/${id}`;
+            const path = id === "me" ? `/api/${id}` : `/api/users/${id}`;
+            const url = `${URL_PATH.BACK_API}${path}`;
             const details = { method: 'GET', credentials: 'include' };
             const response = await fetch(url, details);
             const data = await response.json();
