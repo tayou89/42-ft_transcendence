@@ -44,7 +44,7 @@ function Home() {
 	}, []);
 	return (
 		<div>
-			<Navbar name={myData.name} profileImg={myData.avatar} />
+			<Navbar position="/home" />
 			<div className="container text-light">
 				<div className="row mt-3">
 					<div className="col-md-5">
