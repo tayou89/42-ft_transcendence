@@ -15,7 +15,7 @@ const defaultMyData = {
 }
 
 function onClickShowMyInfo() {
-	navigate("/mypage");
+	navigate("/userpage", );
 }
 
 function onClickLogout() {

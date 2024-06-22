@@ -18,7 +18,7 @@ const defaultMyData = {
 	"friends": []
 }
 
-function MyPage() {
+function UserPage() {
 	const [myData, setMyData] = MyReact.useState(defaultMyData);
 	const myDataApiUrl = "http://localhost:8000/api/me";
 
@@ -42,6 +42,7 @@ function MyPage() {
 				navigate("/");
 			});
 	}, []);
+
 	return (
 		<div>
 			<Navbar name={myData.name} profileImg={myData.avatar} />
@@ -75,6 +76,9 @@ function StatChart({ myData }) {
 					</div>
 					<div className="p-1 mt-1">
 						<DeleteMyAccountModal title="delete Account" myId={myData.id} />
+					</div>
+					<div className="p-1 mt-1">
+
 					</div>
 				</div>
 			</div>
@@ -123,4 +127,4 @@ function StatChart({ myData }) {
 	);
 }
 
-export default MyPage;
+export default UserPage;

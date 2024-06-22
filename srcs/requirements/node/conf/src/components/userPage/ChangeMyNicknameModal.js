@@ -26,15 +26,10 @@ function onClickSubmit(event, myId) {
 			})
 		})
 			.then(response => {
-				console.log(response);
-				return response.json();
-			})
-			.then(data => {
-				console.log(data);
-				if (data.result === "Successfully Changed!") {
-					modifyCommentMsg("Successfully Changed!", true);
+				if (response.status === 200) {
+					modifyCommentMsg("successfully changed!", true);
 				} else {
-					modifyCommentMsg(data.result, false);
+					modifyCommentMsg("failed!", false);
 				}
 			})
 			.catch(error => {
@@ -75,7 +70,7 @@ function ChangeMyNicknameModal({ title, myId }) {
 
 						<div className="modal-body">
 							<form className="container my-1 py-1">
-								<input id="change-name-input" className="me-1" type="text" placeholder="Your new name" />
+								<input id="change-name-input" className="me-1" type="text" placeholder="Your new nickname" />
 								<button className="btn btn-primary btn-md" onClick={(event) => onClickSubmit(event, myId)}>Submit</button>
 							</form>
 							<div id="change-name-status" className="container mt-2 text-success">
