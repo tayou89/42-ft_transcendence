@@ -32,7 +32,7 @@ function HomeFriends({ myData }) {
 }
 
 function unFriend(id) {
-	const unFriendApiUrl = `http://localhost:8000/me/friend/${id}`;
+	const unFriendApiUrl = `http://localhost:8000/api/me/friend/${id}`;
 	fetch(unFriendApiUrl, {
 		method: 'DELETE',
 		credentials: 'include'
