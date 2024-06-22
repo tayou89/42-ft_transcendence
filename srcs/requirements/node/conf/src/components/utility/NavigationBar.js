@@ -6,7 +6,7 @@ function NavigationBar() {
     const [myData, setMyData] = useState(null);
     let   data = "";
 
-    Fetch.setUserData(setMyData, "me");
+    useEffect(() => { Fetch.setUserData(setMyData, "me"); }, []);
     data = JSON.stringify(myData);
     return (
         <div className="row" id="navigation-bar">
