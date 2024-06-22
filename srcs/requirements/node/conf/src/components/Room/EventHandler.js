@@ -17,6 +17,15 @@ class EventHandler {
             this.#stateSetter.setGameData(newGameData, currentGameData, setGameData);
         };
     }
+    setResultEvent(playerPosition, setGameResult) {
+        this.#resultEvent = (newGameResult) => {
+            const clickEvent = () => navigate("/main");
+
+            this.#stateSetter.setGameResult(newGameResult, playerPosition, setGameResult);
+            document.addEventListener("click", clickEvent);
+            return (() => document.removeEventListener("click", clickEvent));
+        };
+    }
     addKeyEvent(socket) {
         this.#setKeyDownEvent(socket);
         this.#setkeyUpEvent(socket);
@@ -50,8 +59,15 @@ class EventHandler {
     get keyUpEvent() {
         return (this.#keyUpEvent);
     }
+    get gameEvent() {
+        return (this.#gameEvent);
+    }
+    get resultEvent() {
+        return (this.#resultEvent);
+    }
     #roomEvent;
     #gameEvent;
+    #resultEvent;
     #keyDownEvent;
     #keyUpEvent;
     #stateSetter;

@@ -20,13 +20,24 @@ class Socket {
     }
     turnOnRoomChannel(currentPlayers, setPlayers) {
         this.#eventHandler.setRoomEvent(currentPlayers, setPlayers);
-
-        socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
+        this.#socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
     turnOffRoomChannel() {
-        socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
+        this.#socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
     turnOnGameChannel(currentGameData, setGameData) {
+        this.#eventHandler.setGameEvent(currentGameData, setGameData);
+        this.#socket.on(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
+    }
+    turnOffGameChannel() {
+        this.#socket.off(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
+    }
+    turnOnResultChannel(playerPosition, setGameResult) {
+        this.#eventHandler.setResultEvent(playerPosition, setGameResult);
+        this.#socket.on(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
+    }
+    turnOffResultChannel() {
+        this.#socket.off(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
     }
     #getSocketOption(reconnection, autoConnect, transports) {
         const socketOption = { reconnection, autoConnect, transports };
