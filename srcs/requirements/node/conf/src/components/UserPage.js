@@ -6,7 +6,7 @@ import tokenRefreshAndGoTo from "./utility/tokenRefreshAndGoTo";
 function UserPage() {
 	const [name, setName] = MyReact.useState("default");
 	const [profileImg, setProfileImg] = MyReact.useState("https://www.studiopeople.kr/common/img/default_profile.png");
-	const url = "http://localhost:8000/api/users/me";
+	const url = "http://localhost:8000/api/me";
 	MyReact.useEffect(() => {
 		fetch(url, {
 			method: 'GET',
