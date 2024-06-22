@@ -10,6 +10,7 @@ from user_manage.authentication import CustomJWTAuthentication
 
 from ..models import User
 from ..serializer import UserSerializer
+import json
 
 @api_view(['GET'])
 @authentication_classes([CustomJWTAuthentication])
@@ -28,7 +29,7 @@ class friendView(APIView):
 		return user
 
 	def post(self, request):
-		friend_name = request.POST.get('name')
+		friend_name = json.loads(request.body)['name']
 		user = self.get_instance(request)
   
 		if user.name == friend_name:
