@@ -1,17 +1,18 @@
-import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import "../../css/room/quit-popup.css";
 
 function QuitPopUp({ socket, isClicked, set }) {
-    if (!isClicked)
-        return (null);
     const handleClickYes = () => {
-        socket.emit("leave_room");
+        socket.sendRoomLeaveMessage();
         navigate("/main");
     }
     const handleClickNo = () => {
         set((prev) => (!prev));
     }
+
+    if (!isClicked)
+        return (null);
     return (
         <div className="container-fluid" id="quit-popup">
             <div className="row" id="quit-query">Do you really want to quit?</div>

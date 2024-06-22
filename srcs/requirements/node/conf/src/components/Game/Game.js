@@ -5,22 +5,31 @@ import GameBoard from "./GameBoard.js";
 import BottomLine from "../Room/BottomLine.js";
 import QuitPopUp from "../Room/QuitPopUp.js";
 import ResultPopUp from "./ResultPopUp.js";
-import { sendKeyData, receiveGameData, receiveGameResult }from "./handleSocket.js";
-import { receivePlayerData } from "../Room/handleSocket.js";
+import EventHandler from "../Room/EventHandler.js";
+import { pongSocket, mttSocket } from "../Room/Socket.js";
 import { INIT } from "./constant.js";
-import { pongSocket, mttSocket } from "../Room/socket.js";
 import "../../css/game/game-page.css";
 
-function Game({ socket = pongSocket, position = "left" }) {
+const eventHandler = new EventHandler();
+
+function Game({ socket = pongSocket, playerPosition = "left"}) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const [ game, setGame ] = useState(getInitialGameData());
     const [ players, setPlayers ] = useState([{}, {}]);
     const [ result, setResult ] = useState("");
 
-    sendKeyData(socket);
-    receiveGameData(socket, game, setGame);
-    receivePlayerData(socket, players, setPlayers);
-    receiveGameResult(socket, setResult, position);
+    useEffect(() => {
+        eventHandler.addKeyEvent(socket);
+        socket.turnOnRoomChannel(players, setPlayers);
+        socket.turnOnGameChannel(game, setGame);
+        socket.turnOnResultChannel(playerPosition, setResult);
+        return (() => {
+            eventHandler.removeKeyEvent();
+            socket.turnOffRoomChannel();
+            socket.turnOffGameChannel();
+            socket.turnOffResultChannel();
+        });
+    }, []);
     return (
         <div className="container-fluid" id="game-page">
             <NavigationBar />

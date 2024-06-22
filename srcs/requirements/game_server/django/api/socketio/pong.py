@@ -49,7 +49,6 @@ class Pong(socketio.AsyncNamespace):
 			await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
 
 
-	
 	async def on_join_room(self, sid, message):
 		field_list = ['p1', 'p2']
 		pid = message['pid']

@@ -10,11 +10,12 @@ from ..models import Room
 from asgiref.sync import sync_to_async
 
 
-class Pong(socketio.AsyncNamespace):
+class MTTPong(socketio.AsyncNamespace):
 	
 	rooms = {}
 	locker = {}
 	games = {}
+	sub_games = {}
 	
 	def __init__(self, namespace=None):
 		super().__init__(namespace)
@@ -191,4 +192,4 @@ class Pong(socketio.AsyncNamespace):
 		game.set_player_dy(pid, message)
 
 
-sio.register_namespace(Pong('/api/pong'))
+sio.register_namespace(MTTPong('/api/mtt'))
