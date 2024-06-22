@@ -1,7 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { StateSetter } from "./StateSetter.js";
+import StateSetter from "./StateSetter.js";
 import { KEY } from "../Game/constant.js";
-import Fetch from "./Fetch.js";
 
 class EventHandler {
     constructor (){

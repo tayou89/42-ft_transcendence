@@ -2,12 +2,9 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { SOCKET } from "./Socket.js";
 import "../../css/room/ready-button.css";
 
-function ReadyButton({ status, socket, set, index }) {
+function ReadyButton({ status, socket }) {
     const id = getElementsId(status);;
-    const handleClickEvent = () => { socket.emit(SOCKET.EVENT.READY, !status); };
-    // const handleClickEvent = () => {
-    //     set((prev) => setReady(prev, index));
-    // };
+    const handleClickEvent = () => { socket.sendReadyStatus(!status); };
 
     return (
         <div className="ready-button" id={ id } onClick={ handleClickEvent }>Ready</div>

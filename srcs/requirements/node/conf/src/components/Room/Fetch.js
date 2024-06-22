@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import { DEFAULT_URL} from "../Game/constant.js";
+import { URL_APTH } from "../Game/constant.js";
 
 class Fetch {
     static async setUserData(setFunction, userId = 0, index = -1) {
@@ -14,7 +14,7 @@ class Fetch {
         if (!id)
             throw Error(`Fetch.userData: id doesn't exist: ${id}`);
         try {
-            const url = `${DEFAULT_URL}/api/users/${id}`;
+            const url = `${URL_PATH.BACK_API}/api/users/${id}`;
             const details = { method: 'GET', credentials: 'include' };
             const response = await fetch(url, details);
             const data = await response.json();
@@ -32,7 +32,7 @@ class Fetch {
     }
     static async #photoURL(path) {
         try {
-            const url = DEFAULT_URL + path;
+            const url = URL_APTH.BACK_API + path;
             const details = { method: 'GET', credentials: 'include' };
             const response = await fetch(url, details);
             const blob = await response.blob();

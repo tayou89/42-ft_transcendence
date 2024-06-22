@@ -4,6 +4,7 @@ import Title from "./Title.js";
 import Player from "./Player.js";
 import BottomLine from "./BottomLine.js";
 import QuitPopUp from "./QuitPopUp.js";
+import { pongSocket, mttSocket } from "./Socket.js";
 import { GAME_TYPE, SOCKET } from "../Game/constant.js";
 import "../../css/room/room.css";
 
@@ -27,9 +28,9 @@ function Room({ title = "title", type = GAME_TYPE.PONG, id = 0 }) {
 
 function getSocket(gameType) {
     if (gameType === GAME_TYPE.PONG)
-        return (SOCKET.INSTANCE.PONG);
+        return (pongSocket);
     else
-        return (SOCKET.INSTANCE.MTT);
+        return (mttSocket);
 }
 
 export default Room;

@@ -23,7 +23,7 @@ export function Player({ type, socket, id }) {
     }, [count]);
     return (
         <div className="row" id={ getElementId(type) }>
-            { getPlayerSlots(players, setPlayers, type) }
+            { getPlayerSlots(players, type, socket) }
             { getCountDown(players, count) }
         </div>
     );
@@ -49,10 +49,10 @@ function getElementId(type) {
         return ("player-mtt");
 }
 
-function getPlayerSlots(players, setPlayers, type) {
+function getPlayerSlots(players, type, socket) {
     return ( 
-        players.map((p, i) => (
-            <PlayerSlot player={ p } set={ setPlayers } index={ i } type={ type } />))
+        players.map((p) => (
+            <PlayerSlot player={ p } type={ type } socket={ socket } />))
     );
 }
 

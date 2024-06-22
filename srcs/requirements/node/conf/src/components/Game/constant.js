@@ -1,5 +1,3 @@
-import Socket from "../Room/Socket.js";
-
 export const BOARD = {
     WIDTH: 1300,
     HEIGHT: 800,
@@ -69,6 +67,27 @@ export const GAME_RESULT = {
     LOSE: "lose",
 }
 
+const DEFAULT_URL = "http://localhost";
+
+const PORT = {
+    BACK_API: 8000,
+    SOCKET: 8001,
+}
+const PATH = {
+    SOCKET: {
+        PONG: "/api/pong",
+        MTT: "/api/mtt",
+    },
+}
+
+export const URL_PATH = {
+    BACK_API: `${DEFAULT_URL}:${PORT.BACK_API}`,
+    SOCKET: {
+        PONG: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.PONG}`,
+        MTT: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.MTT}`,
+    }
+}
+
 export const SOCKET = {
     EVENT: {
         KEY: "key",
@@ -86,28 +105,4 @@ export const SOCKET = {
             NONE: 0,
         },
     },
-    INSTANCE: {
-        PONG: new Socket(GAME_TYPE.PONG),
-        MTT: new Socket(GAME_TYPE.MTT),
-    },
-}
-
-const DEFAULT_URL = "http://localhost";
-const PORT = {
-    BACK_API: 8000,
-    SOCKET: 8001,
-}
-const PATH = {
-    SOCKET: {
-        PONG: "/api/pong",
-        MTT: "/api/mtt",
-    },
-}
-
-export const URL = {
-    BACK_API: `${DEFAULT_URL}:${PORT.BACK_API}`,
-    SOCKET: {
-        PONG: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.PONG}`,
-        MTT: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.MTT}`,
-    }
 }

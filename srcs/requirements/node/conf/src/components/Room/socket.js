@@ -18,6 +18,9 @@ class Socket {
     sendKeyValue(value) {
         this.#socket.emit(SOCKET.EVENT.KEY, value);
     }
+    sendReadyStatus(readyStatus) {
+        this.#socket.emit(SOCKET.EVENT.READY, readyStatus);
+    }
     turnOnRoomChannel(currentPlayers, setPlayers) {
         this.#eventHandler.setRoomEvent(currentPlayers, setPlayers);
         this.#socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
@@ -53,5 +56,8 @@ class Socket {
     #socket;
     #eventHandler;
 }
+
+export const pongSocket = new Socket(GAME_TYPE.PONG);
+export const mttSocket = new Socket(GAME_TYPE.MTT);
 
 export default Socket;
