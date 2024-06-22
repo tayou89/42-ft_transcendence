@@ -6,22 +6,22 @@ from match.models import MatchHistory
 from django.db.models import Q
 
 from django.http import FileResponse
-
 from rest_framework.decorators import action
-import json
 
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.exceptions import NotFound
+
+from user_manage.authentication import CustomJWTAuthentication
 
 import os
 
 class UserVeiwSet(viewsets.ModelViewSet):
 
-	# permission_classes = [IsAuthenticated]
+	authentication_classes = [CustomJWTAuthentication]
+	permission_classes = [IsAuthenticated]
 	
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
@@ -39,48 +39,6 @@ class UserVeiwSet(viewsets.ModelViewSet):
 				raise NotFound(detail='user not found')
 	
 		return super().list(request, *args, **kwargs)
-
-
-	# #api/user/me
-	# @action(detail=False, methods=['get'], url_path='me')
-	# def me(self, request):
-	# 	header = request.META.get('HTTP_AUTHORIZATION')
-
-	# 	if header and header.startswith('Bearer '):
-	# 		jwt_token = AccessToken(header.split(' ')[1])
-		
-	# 	user = User.objects.get(id=jwt_token.payload.get('user_id'))
-
-	# 	return Response(UserSerializer(user, many=False).data)
-
-
-	# # /api/users/me/friend
-	# @action(detail=False, methods=['post'], url_path='me/friend')	
-	# def add_friend(self, request):
-	# 	header = request.META.get('HTTP_AUTHORIZATION')
-	# 	friend_name = json.loads(request.body)['name']
-
-	# 	if header and header.startswith('Bearer '):
-	# 		jwt_token = AccessToken(header.split(' ')[1])
-		
-	# 	user = User.objects.get(id=jwt_token.payload.get('user_id'))
-		
-	# 	if user.name == friend_name:
-	# 		return Response({"result": "cant be friend with me"})
-  
-	# 	try:
-	# 		friend = User.objects.get(name=friend_name)
-	# 		friend_list = user.friends.filter(pk=friend.pk)
-			
-	# 		if len(friend_list) != 0:
-	# 			return Response({"result": "already friend"})
-	
-	# 		user.friends.add(friend.pk)
-	# 		user.save()
-	# 	except:
-	# 		return Response({"result": "no user"})
-	
-	# 	return Response({"result": "Successfully Added!"})
 
 
 	# /users/{id}/matches/

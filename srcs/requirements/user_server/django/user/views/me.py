@@ -41,7 +41,7 @@ class friendView(APIView):
 			if len(friend_list) != 0:
 				return Response({"result": "already friend"})
 	
-			user.friends.add(friend)
+			user.friends.add(friend.pk)
 			user.save()
 		except:
 			return Response({"result": "no user"})
