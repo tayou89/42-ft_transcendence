@@ -14,8 +14,8 @@ const defaultMyData = {
 	"friends": []
 }
 
-function onClickShowMyInfo() {
-	navigate("/userpage");
+function onClickShowMyInfo(userId) {
+	navigate(`/userpage?userId=${userId}`);
 }
 
 function onClickLogout() {

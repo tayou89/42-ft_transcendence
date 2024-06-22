@@ -42,8 +42,9 @@ function onClickUnFriend(friendId) {
 
 //!!!??? 로그아웃/로그인 이쁘게 바꿔야함.
 
-function onClickShowFriendsInfo({ friendId }) {
-	navigate("/userpage", friendId);
+function onClickShowFriendsInfo(friendId) {
+	console.log(friendId);
+	navigate(`/userpage?userId=${friendId}`);
 }
 
 function HomeFriendsFriendInfo({ friendId }) {

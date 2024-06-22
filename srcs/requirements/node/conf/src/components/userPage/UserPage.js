@@ -19,9 +19,11 @@ const defaultData = {
 	"friends": []
 }
 
-function UserPage({ userId }) {
+function UserPage() {
+	const queryParams = new URLSearchParams(location.search);
+	const userId = queryParams.get('userId');
 	const [myData, setMyData] = MyReact.useState(defaultData);
-	const myDataApiUrl = "http://localhost:8000/api/users/me";
+	const myDataApiUrl = "http://localhost:8000/api/me";
 
 	const [userData, setUserData] = MyReact.useState(defaultData);
 	const userDataApiUrl = `http://localhost:8000/api/users/${userId}`;
@@ -36,7 +38,7 @@ function UserPage({ userId }) {
 			})
 			.then(data => {
 				if (data.detail) {
-					tokenRefreshAndGoTo("/userpage");
+					tokenRefreshAndGoTo(`/userpage?${userId}`);
 				} else {
 					setMyData(() => data);
 				}
@@ -54,10 +56,10 @@ function UserPage({ userId }) {
 				return response.json();
 			})
 			.then(data => {
+				console.log(data);
 				if (data.detail) {
-					tokenRefreshAndGoTo("/userpage");
+					tokenRefreshAndGoTo(`/userpage?${userId}`);
 				} else {
-					console.log(data);
 					setUserData(() => data);
 				}
 			})
@@ -77,7 +79,7 @@ function UserPage({ userId }) {
 						<WinRateDonut userData={userData} />
 					</div>
 					<div className="col-md-7 mt-3">
-						<MatchRecords userData={userData} />
+						<MatchRecords userId={userId} />
 					</div>
 				</div>
 			</div>

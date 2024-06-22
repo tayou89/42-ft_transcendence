@@ -59,7 +59,7 @@ function MatchRecords({ userId }) {
 
 function MatchRecord({ match, userId }) {
 	const isP1Win = match.p1_score > match.p2_score;
-	const isUserP1 = match.p1 === userId;
+	const isUserP1 = match.p1 == userId;
 	const isUserWin = (isUserP1 ? isP1Win : !isP1Win);
 	const winTextColor = (isUserWin ? " text-success " : " text-danger ");
 
@@ -75,10 +75,10 @@ function MatchRecord({ match, userId }) {
 		})
 			.then(response => response.json())
 			.catch(console.log)
-			.then(data => {
-				setP1NickName(() => data.name ? data.name : "unknown");
-				console.log
-			})
+			.then(data => setP1NickName(() => {
+				console.log(data.name);
+				return data.name ? data.name : "unknown";
+			}))
 			.catch(console.log);
 
 		fetch(p2DataApiUrl, {
@@ -87,9 +87,10 @@ function MatchRecord({ match, userId }) {
 		})
 			.then(response => response.json())
 			.catch(console.log)
-			.then(data => {
-				setP2NickName(() => data.name ? data.name : "unknown");
-			})
+			.then(data => setP2NickName(() => {
+				console.log(data.name);
+				return data.name ? data.name : "unknown";
+			}))
 			.catch(console.log);
 	}, [])
 	return (
