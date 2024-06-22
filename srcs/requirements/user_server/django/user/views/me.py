@@ -4,13 +4,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import  AccessToken
 
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
+from user_manage.authentication import CustomJWTAuthentication
 
 from ..models import User
 from ..serializer import UserSerializer
 
 @api_view(['GET'])
+@authentication_classes(CustomJWTAuthentication)
 @permission_classes([IsAuthenticated])
 def me(request):
 	jwt_token = AccessToken(request.COOKIES.get('jwt'))
@@ -19,8 +21,6 @@ def me(request):
 
 
 class friendView(APIView):
-	
-	# permission_classes = [IsAuthenticated]
  
 	def get_instance(self, request):
 		jwt_token = AccessToken(request.COOKIES.get('jwt'))
