@@ -10,6 +10,7 @@ import WinRateDonut from "./WinRateDonut.js";
 const defaultData = {
 	"id": 0,
 	"name": "default",
+	"display_name": "display_default",
 	"email": "default@student.42seoul.kr",
 	"avatar": "https://www.studiopeople.kr/common/img/default_profile.png",
 	"exp": 1234,
@@ -37,7 +38,7 @@ function UserPage({ id }) {
 				if (data.detail) {
 					tokenRefreshAndGoTo("/userpage");
 				} else {
-					setUserData(() => data);
+					setMyData(() => data);
 				}
 			})
 			.catch(error => {
@@ -56,7 +57,8 @@ function UserPage({ id }) {
 				if (data.detail) {
 					tokenRefreshAndGoTo("/userpage");
 				} else {
-					setMyData(() => data);
+					console.log(data);
+					setUserData(() => data);
 				}
 			})
 			.catch(error => {
@@ -69,13 +71,13 @@ function UserPage({ id }) {
 		<div>
 			<Navbar position="/userpage" />
 			<div className="container text-light">
-				<StatChart myData={myData} />
+				<StatChart myId={myData.id} userData={userData} />
 				<div className="row">
 					<div className="col-md-5 mt-3">
-						<WinRateDonut myData={myData} />
+						<WinRateDonut userData={userData} />
 					</div>
 					<div className="col-md-7 mt-3">
-						<MatchRecords myId={myData.id} />
+						<MatchRecords userData={userData} />
 					</div>
 				</div>
 			</div>
@@ -83,24 +85,24 @@ function UserPage({ id }) {
 	);
 }
 
-function StatChart({ myData }) {
-	const level = Math.floor(myData.exp / 1000);
-	const nextexp = Math.floor((myData.exp + 1000) / 1000) * 1000;
-	const win = myData.wins;
-	const loss = myData.losses;
+function StatChart({ myId, userData }) {
+	const level = Math.floor(userData.exp / 1000);
+	const nextexp = Math.floor((userData.exp + 1000) / 1000) * 1000;
+	const win = userData.wins;
+	const loss = userData.losses;
 	return (
 		<div>
 			<div className="container">
 				<div className="d-inline-flex">
-					<div className="p-1 fs-3">{myData.name} Info</div>
+					<div className="p-1 fs-3">{userData.name} Info</div>
 					<div className="p-1 mt-1">
-						<ChangeMyNicknameModal title="Change nickname" myId={myData.id} />
+						{myId === userData.id ? <ChangeMyNicknameModal title="Change nickname" myId={myId} /> : null}
 					</div>
 					<div className="p-1 mt-1">
-						<DeleteMyAccountModal title="delete Account" myId={myData.id} />
+						{myId === userData.id ? <DeleteMyAccountModal title="delete Account" myId={myId} /> : null}
 					</div>
-					<div className="p-1 mt-1">
-
+					<div className="p-1 mt-3">
+						nickname: {userData.display_name}
 					</div>
 				</div>
 			</div>
@@ -110,8 +112,8 @@ function StatChart({ myData }) {
 						<div className="container m-1 text-center">
 							<img className="rounded-circle"
 								width="120" height="120"
-								src={myData.avatar}></img>
-							<div className="container mt-1 text-center">{myData.name}</div>
+								src={userData.avatar}></img>
+							<div className="container mt-1 text-center">{userData.name}</div>
 						</div>
 					</div>
 					<div className="col-md-7">
@@ -124,7 +126,7 @@ function StatChart({ myData }) {
 							<div className="row mt-1 mb-1">
 								<div className="col-4">Exp</div>
 								<div className="col-2">:</div>
-								<div className="col-6">{myData.exp}/{nextexp}</div>
+								<div className="col-6">{userData.exp}/{nextexp}</div>
 							</div>
 							<div className="row mt-1 mb-1">
 								<div className="col-4">Total</div>

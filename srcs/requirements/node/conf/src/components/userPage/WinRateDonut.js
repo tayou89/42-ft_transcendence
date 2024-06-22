@@ -1,7 +1,7 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import "./circular_graph.css"
 
-function WinRateDonut({ myData }) {
+function WinRateDonut({ userData }) {
 	return (
 		<div>
 			<div className="container fs-4">

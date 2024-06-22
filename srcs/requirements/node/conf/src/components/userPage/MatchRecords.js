@@ -19,9 +19,9 @@ const sampleMatchRecords = [
 	}
 ];
 
-function MatchRecords({ myId }) {
+function MatchRecords({ userId }) {
 	const [userMatchRecords, setUserMatchRecords] = useState([]);
-	const userMatchRecordsApiUrl = `http://localhost:8000/api/users/${myId}/matches`;
+	const userMatchRecordsApiUrl = `http://localhost:8000/api/users/${userId}/matches`;
 
 	const fetchMatchRecords = () => {
 		fetch(userMatchRecordsApiUrl, {
@@ -41,8 +41,8 @@ function MatchRecords({ myId }) {
 
 	useEffect(() => {
 		fetchMatchRecords();
-	}, [myId])
-	
+	}, [])
+
 	return (
 		<div>
 			<div className="container fs-4">
@@ -50,24 +50,23 @@ function MatchRecords({ myId }) {
 			</div>
 			<div className="pt-2 pb-2 border-top border-bottom rounded">
 				{userMatchRecords.map((match) =>
-					<MatchRecord match={match} myId={myId} />
+					<MatchRecord match={match} userId={userId} />
 				)}
 			</div>
 		</div>
 	);
 }
 
-function MatchRecord({ match, myId }) {
+function MatchRecord({ match, userId }) {
 	const isP1Win = match.p1_score > match.p2_score;
-	const amiP1 = match.p1 === myId;
-	const amiWin = (amiP1 ? isP1Win : !isP1Win);
-	const winTextColor = (amiWin ? " text-success " : " text-danger ");
+	const isUserP1 = match.p1 === userId;
+	const isUserWin = (isUserP1 ? isP1Win : !isP1Win);
+	const winTextColor = (isUserWin ? " text-success " : " text-danger ");
 
 	const p1DataApiUrl = `http://localhost:8000/api/users/${match.p1}`;
 	const p2DataApiUrl = `http://localhost:8000/api/users/${match.p2}`;
 	const [p1NickName, setP1NickName] = useState("Player 1");
 	const [p2NickName, setP2NickName] = useState("Player 2");
-
 
 	useEffect(() => {
 		fetch(p1DataApiUrl, {
@@ -94,11 +93,11 @@ function MatchRecord({ match, myId }) {
 			.catch(console.log);
 	}, [])
 	return (
-		<div className={"my-1 py-1 text-light text-center container bg-dark border-start rounded" + (amiWin ? " border-success" : " border-danger")}>
+		<div className={"my-1 py-1 text-light text-center container bg-dark border-start rounded" + (isUserWin ? " border-success" : " border-danger")}>
 			<div className="row">
 				<div className="col-2">
 					<div className={"my-3" + winTextColor}>
-						<b>{amiWin ? "Win" : "Lose"}</b>
+						<b>{isUserWin ? "Win" : "Lose"}</b>
 					</div>
 				</div>
 				<div className="col-10 mt-1">

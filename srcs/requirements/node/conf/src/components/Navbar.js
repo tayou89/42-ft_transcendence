@@ -15,7 +15,7 @@ const defaultMyData = {
 }
 
 function onClickShowMyInfo() {
-	navigate("/userpage",);
+	navigate("/userpage");
 }
 
 function onClickLogout() {
@@ -72,7 +72,7 @@ function Navbar({ position }) {
 									{myData.name}
 								</div>
 								<ul className="dropdown-menu" style="cursor: pointer;">
-									<li className="dropdown-item" onClick={onClickShowMyInfo}>Show Info</li>
+									<li className="dropdown-item" onClick={() => onClickShowMyInfo(myData.id)}>Show Info</li>
 									<li className="dropdown-item text-danger" onClick={onClickLogout}>Logout</li>
 								</ul>
 							</div>
