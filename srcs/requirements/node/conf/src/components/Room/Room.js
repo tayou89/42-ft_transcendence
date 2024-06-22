@@ -17,7 +17,7 @@ function Room({ title = "title", type = GAME_TYPE.PONG, id = 1 }) {
     }, []);
     return (
         <div className="container-fluid" id="room-page">
-            <NavigationBar />
+            {/* <NavigationBar /> */}
             <Title title={ title } type={ type } />
             <Player type={ type } socket={ socket } id={ id } />
             <BottomLine setIsQuitClicked={ setIsQuitClicked } />

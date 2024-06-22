@@ -1,4 +1,5 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
+import  tokenRefreshAndGoTo  from "../utility/tokenRefreshAndGoTo.js";
 import { URL_PATH } from "../Game/constant.js";
 
 class Fetch {
@@ -23,7 +24,8 @@ class Fetch {
 				tokenRefreshAndGoTo("/home");
             if (!response.ok)
                 throw new Error(`response isn't ok for url ${url}`);
-            data.photoURL = await this.#photoURL(`/api/users/${data.id}/avatar`);
+            // data.photoURL = await this.#photoURL(`/api/users/${data.id}/avatar`);
+            data.photoURL = "https://i.namu.wiki/i/pbiRSb1PcKUVrKoGIxrVY_sEWHxNH6jbRxYsZ4wCCv-FUe36aQF27YAokQnxERM_0keumIzF2DBOlY0Lh0qVvD4jzxoDnOQpO5g5RIo35LuhWSDIOxhTdU_IO2K7HGI9VfBUTjiICsX08gIoqprNtw.webp"
             return (data);
         }
         catch (error) {

@@ -32,7 +32,7 @@ function Game({ socket = pongSocket, playerPosition = "left"}) {
     }, []);
     return (
         <div className="container-fluid" id="game-page">
-            <NavigationBar />
+            {/* <NavigationBar /> */}
             <ScoreBoard score={ game.score }/>
             <GameBoard players={ players } ball={ game.ball } paddle={ game.paddle }/>
             <BottomLine socket={ socket } setIsQuitClicked={ setIsQuitClicked }/>

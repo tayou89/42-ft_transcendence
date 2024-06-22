@@ -1,5 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { GAME_POSITION } from "../Game/constant.js";
+import Fetch from "./Fetch.js";
 
 class StateSetter {
     async setPlayers(newPlayers, currentPlayers, playerSetter) {
@@ -11,10 +12,13 @@ class StateSetter {
                 promises.push(Fetch.setUserData(playerSetter, newPlayer.pid, index));
         });
         await Promise.all(promises);
+		console.log(newPlayers, currentPlayers);
         players.forEach((newPlayer, index) => {
-            if ((newPlayer.pid && currentPlayers[index].id) && 
-                (newPlayer.ready !== currentPlayers[index]?.ready))
-                playerSetter((prev) => this.#getNewPlayers(prev, index));
+            if (newPlayer.pid && 
+                (newPlayer.ready !== currentPlayers[index]?.ready)){
+					console.log("im in");
+					playerSetter((prev) => this.#getNewPlayers(prev, index, newPlayer.ready));
+				}
         });
     }
     setGameData(newGameData, currentGameData, setGameData) {
@@ -34,10 +38,10 @@ class StateSetter {
         else
             setGameResult((_) => newGameResult.p2);
     }
-    #getNewPlayers(prev, index) {
+    #getNewPlayers(prev, index, readyStatus) {
        const newArray = prev.map((player, i) => {
            if (i === index)
-               return ({ ...player, ready: !player.ready });
+               return ({ ...player, ready: readyStatus });
            else
                return (player);
        });

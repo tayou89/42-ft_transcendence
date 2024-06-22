@@ -9,6 +9,7 @@ import "../../css/room/room.css";
 export function Player({ type, socket, id }) {
     const [ players, setPlayers ] = useState(getDefaultPlayers(type));
     const [ count, setCount ] = useState(5);
+	console.log(players);
 
     if (count <= 0)
         navigate("/game");
@@ -17,7 +18,7 @@ export function Player({ type, socket, id }) {
         return (() => socket.turnOffRoomChannel());
     }, []);
     useEffect(() => {
-        if (isAllReady(players))
+        if (isAllReady(players) && count > 0)
             countDown(count, setCount);
         return (() => stopCount);
     }, [count]);
@@ -57,8 +58,7 @@ function getPlayerSlots(players, type, socket) {
 }
 
 function countDown(count, setCount) {
-    setInterval(() => {
-        if (count > 0)
+    setTimeout(() => {
             setCount(count => count -1) 
     }, 1000);
 }
