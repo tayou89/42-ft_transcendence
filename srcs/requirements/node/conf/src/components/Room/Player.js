@@ -8,21 +8,22 @@ import "../../css/room/room.css";
 export function Player({ type, socket, id }) {
     const [ players, setPlayers ] = useState(getDefaultPlayers(type));
     const [ count, setCount ] = useState(5);
+    const playerPosition = getPlayerPosition(id, players);
 
     if (count <= 0)
-        navigate("/game", { socket, playerPosition: getPlayerPosition(id, players) });
+        navigate("/game", { socket, playerPosition });
     useEffect(() => {
         socket.turnOnRoomChannel(players, setPlayers);
         return (() => socket.turnOffRoomChannel());
     }, []);
     useEffect(() => {
-        if (isAllReady(players))
-            countDown(count, setCount);
+        if (isAllReady(players) && count > 0)
+            countDown(setCount);
         return (() => stopCount);
-    }, [count]);
+    }, [players, count]);
     return (
         <div className="row" id={ getElementId(type) }>
-            { getPlayerSlots(players, type, socket) }
+            { getPlayerSlots(players, type, socket, id) }
             { getCountDown(players, count) }
         </div>
     );
@@ -48,22 +49,30 @@ function getElementId(type) {
         return ("player-mtt");
 }
 
-function getPlayerSlots(players, type, socket) {
-    return ( 
-        players.map((p) => (
-            <PlayerSlot player={ p } type={ type } socket={ socket } />))
-    );
+function getPlayerSlots(players, type, socket, myId) {
+    const playerSlot = players.map((p) => {
+        const isMySlot = isMyId(myId, p.id); 
+
+        return (<PlayerSlot player={ p } type={ type } socket={ socket } isMySlot={ isMySlot} />);
+    });
+    return ( playerSlot );
 }
 
-function countDown(count, setCount) {
-    setInterval(() => {
-        if (count > 0)
-            setCount(count => count -1) 
+function isMyId(myId, id) {
+    if (myId === id)
+        return (true);
+    else    
+        return (false);
+}
+
+function countDown(setCount) {
+    setTimeout(() => {
+            setCount(count => count - 1) 
     }, 1000);
 }
 
 function stopCount(countDown) {
-    clearInterval(countDown);
+    clearTimeout(countDown);
 }
 
 function getCountDown(players, count) {
@@ -81,5 +90,6 @@ function getPlayerPosition(id, players) {
     else
         return (GAME_POSITION.RIGHT)
 }
+
 
 export default Player;

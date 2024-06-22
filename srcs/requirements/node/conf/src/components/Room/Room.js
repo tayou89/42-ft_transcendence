@@ -33,4 +33,4 @@ function getSocket(gameType) {
         return (mttSocket);
 }
 
-export default Room;
+export default Room

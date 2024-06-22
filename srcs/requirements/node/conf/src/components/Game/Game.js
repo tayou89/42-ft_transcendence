@@ -6,6 +6,7 @@ import BottomLine from "../Room/BottomLine.js";
 import QuitPopUp from "../Room/QuitPopUp.js";
 import ResultPopUp from "./ResultPopUp.js";
 import EventHandler from "../Room/EventHandler.js";
+import { pongSocket, mttSocket } from "../Room/Socket.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
