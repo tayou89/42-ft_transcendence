@@ -20,7 +20,7 @@ function isLogin() {
 			tokenRefreshAndGoTo(successGoTo);
 		})
 		.catch(error => {//요청 실패 시
-			console.log(error);
+			console.log("in isLogin function", error);
 			navigate("/login");
 		})
 }

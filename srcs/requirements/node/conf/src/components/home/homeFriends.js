@@ -130,7 +130,7 @@ function onClickSubmit(event) {
 		})
 		.catch(error => {
 			modifyCommentMsg("Network Error!", false);
-			console.log(error);
+			console.log("in HomeFriend file onClickSubmit function", error);
 		});
 }
 

@@ -24,7 +24,7 @@ function UserPage() {
 				}
 			})
 			.catch(error => {
-				console.log(error);
+				console.log("in UserPage function", error);
 				navigate("/");
 			});
 	}, []);

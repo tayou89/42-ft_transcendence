@@ -34,7 +34,7 @@ function MatchRecords({ myId }) {
 				setUserMatchRecords(() => sampleMatchRecords);
 			})
 			.catch(error => {
-				console.log(error);
+				console.log("in MatchRecords function", error);
 				setUserMatchRecords([]);
 			});
 	}

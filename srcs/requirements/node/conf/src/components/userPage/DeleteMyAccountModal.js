@@ -20,7 +20,7 @@ function onClickDeleteAccount(event, myId) {
 			})
 			.catch(error => {
 				modifyCommentMsg("Network Error!", false);
-				console.log(error);
+				console.log("in onClickDeleteAccount function", error);
 			});
 	} else {
 		modifyCommentMsg("input 'delete'", false);

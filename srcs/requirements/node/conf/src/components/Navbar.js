@@ -15,7 +15,7 @@ const defaultMyData = {
 }
 
 function onClickShowMyInfo() {
-	navigate("/userpage", );
+	navigate("/userpage",);
 }
 
 function onClickLogout() {
@@ -50,7 +50,7 @@ function Navbar({ position }) {
 				}
 			})
 			.catch(error => {
-				console.log(error);
+				console.log("in Navbar function", error);
 				navigate("/");
 			});
 	}, []);

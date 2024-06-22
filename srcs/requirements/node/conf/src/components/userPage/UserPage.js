@@ -7,7 +7,7 @@ import DeleteMyAccountModal from "./DeleteMyAccountModal.js";
 import MatchRecords from "./MatchRecords.js";
 import WinRateDonut from "./WinRateDonut.js";
 
-const defaultMyData = {
+const defaultData = {
 	"id": 0,
 	"name": "default",
 	"email": "default@student.42seoul.kr",
@@ -18,9 +18,12 @@ const defaultMyData = {
 	"friends": []
 }
 
-function UserPage() {
-	const [myData, setMyData] = MyReact.useState(defaultMyData);
-	const myDataApiUrl = "http://localhost:8000/api/me";
+function UserPage({ id }) {
+	const [myData, setMyData] = MyReact.useState(defaultData);
+	const myDataApiUrl = "http://localhost:8000/api/users/me";
+
+	const [userData, setUserData] = MyReact.useState(defaultData);
+	const userDataApiUrl = `http://localhost:8000/api/users/${id}`;
 
 	MyReact.useEffect(() => {
 		fetch(myDataApiUrl, {
@@ -32,20 +35,39 @@ function UserPage() {
 			})
 			.then(data => {
 				if (data.detail) {
-					tokenRefreshAndGoTo("/mypage");
+					tokenRefreshAndGoTo("/userpage");
+				} else {
+					setUserData(() => data);
+				}
+			})
+			.catch(error => {
+				console.log("in UserPage function", error);
+				navigate("/");
+			});
+
+		fetch(userDataApiUrl, {
+			method: 'GET',
+			credentials: 'include'
+		})
+			.then(response => {
+				return response.json();
+			})
+			.then(data => {
+				if (data.detail) {
+					tokenRefreshAndGoTo("/userpage");
 				} else {
 					setMyData(() => data);
 				}
 			})
 			.catch(error => {
-				console.log(error);
+				console.log("in UserPage function", error);
 				navigate("/");
 			});
 	}, []);
 
 	return (
 		<div>
-			<Navbar name={myData.name} profileImg={myData.avatar} />
+			<Navbar position="/userpage" />
 			<div className="container text-light">
 				<StatChart myData={myData} />
 				<div className="row">

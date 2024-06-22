@@ -24,7 +24,7 @@ function EmailOTP() {
 					alert(data.result);
 				}
 			})
-			.catch(error => console.log(error));
+			.catch(error => console.log("in EmailOTP function", error));
 	}
 	return (
 		<div className="text-light text-center">

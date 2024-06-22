@@ -30,7 +30,6 @@ function Home() {
 				return response.json();
 			})
 			.then(data => {
-				console.log("here!",data);
 				if (data.detail) {
 					tokenRefreshAndGoTo("/home");
 				} else {
@@ -38,7 +37,7 @@ function Home() {
 				}
 			})
 			.catch(error => {
-				console.log(error);
+				console.log("in Home function", error);
 				navigate("/");
 			});
 	}, []);

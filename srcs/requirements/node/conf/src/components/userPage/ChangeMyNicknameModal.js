@@ -34,7 +34,7 @@ function onClickSubmit(event, myId) {
 			})
 			.catch(error => {
 				modifyCommentMsg("Network Error!", false);
-				console.log(error);
+				console.log("in ChangeMyNicknameModal file onClickSubmit function", error);
 			});
 	}
 }
