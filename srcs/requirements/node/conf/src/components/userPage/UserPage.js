@@ -19,12 +19,12 @@ const defaultData = {
 	"friends": []
 }
 
-function UserPage({ id }) {
+function UserPage({ userId }) {
 	const [myData, setMyData] = MyReact.useState(defaultData);
 	const myDataApiUrl = "http://localhost:8000/api/users/me";
 
 	const [userData, setUserData] = MyReact.useState(defaultData);
-	const userDataApiUrl = `http://localhost:8000/api/users/${id}`;
+	const userDataApiUrl = `http://localhost:8000/api/users/${userId}`;
 
 	MyReact.useEffect(() => {
 		fetch(myDataApiUrl, {
