@@ -1,5 +1,5 @@
 import {io} from "socket.io-client";
-import { GAME_TYPE, SOCKET, URL } from "../Game/constant.js";
+import { GAME_TYPE, SOCKET, URL_PATH } from "../Game/constant.js";
 import EventHandler from "./EventHandler.js";
 
 class Socket {
@@ -49,9 +49,9 @@ class Socket {
     }
     #setSocket(gameType, socketOption) {
         if (gameType === GAME_TYPE.PONG)
-            this.#socket = io(URL.SOCKET.PONG, socketOption);
+            this.#socket = io(URL_PATH.SOCKET.PONG, socketOption);
         else
-            this.#socket = io(URL.SOCKET.MTT, socketOption);
+            this.#socket = io(URL_PATH.SOCKET.MTT, socketOption);
     }
     #socket;
     #eventHandler;

@@ -17,7 +17,7 @@ export function Player({ type, socket, id }) {
         return (() => socket.turnOffRoomChannel());
     }, []);
     useEffect(() => {
-        if (isAllReady)
+        if (isAllReady(players))
             countDown(count, setCount);
         return (() => stopCount);
     }, [count]);
