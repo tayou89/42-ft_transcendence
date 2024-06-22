@@ -6,12 +6,13 @@ import BottomLine from "../Room/BottomLine.js";
 import QuitPopUp from "../Room/QuitPopUp.js";
 import ResultPopUp from "./ResultPopUp.js";
 import EventHandler from "../Room/EventHandler.js";
+import { pongSocket, mttSocket } from "../Room/Socket.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
 const eventHandler = new EventHandler();
 
-function Game({ socket, playerPosition }) {
+function Game({ socket = pongSocket, playerPosition = "left"}) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const [ game, setGame ] = useState(getInitialGameData());
     const [ players, setPlayers ] = useState([{}, {}]);

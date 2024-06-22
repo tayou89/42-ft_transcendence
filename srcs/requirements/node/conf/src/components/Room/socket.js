@@ -4,7 +4,7 @@ import EventHandler from "./EventHandler.js";
 
 class Socket {
     constructor (gameType) {
-        const socketOption = this.#getSocketOption(false, false, ['websocket']);
+        const socketOption = this.#getSocketOption(true, true, ['websocket']);
 
         this.#setSocket(gameType, socketOption);
         this.#eventHandler = new EventHandler;

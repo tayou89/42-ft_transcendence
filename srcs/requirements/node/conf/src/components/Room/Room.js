@@ -8,7 +8,7 @@ import { pongSocket, mttSocket } from "./Socket.js";
 import { GAME_TYPE } from "../Game/constant.js";
 import "../../css/room/room.css";
 
-function Room({ title, type, id }) {
+function Room({ title = "title", type = GAME_TYPE.PONG, id = 1 }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const socket = getSocket(type);
 
