@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import  AccessToken
 
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import User
@@ -13,13 +13,13 @@ from ..serializer import UserSerializer
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def me(request):
-    jwt_token = AccessToken(request.COOKIES.get('jwt'))
-    user = User.objects.get(id=jwt_token.payload['user_id'])
-    return Response(UserSerializer(user).data)
+	jwt_token = AccessToken(request.COOKIES.get('jwt'))
+	user = User.objects.get(id=jwt_token.payload['user_id'])
+	return Response(UserSerializer(user).data)
 
 
 class friendView(APIView):
-    
+	
 	# permission_classes = [IsAuthenticated]
  
 	def get_instance(self, request):
@@ -41,7 +41,7 @@ class friendView(APIView):
 			if len(friend_list) != 0:
 				return Response({"result": "already friend"})
 	
-			user.friends.add(friend.pk)
+			user.friends.add(friend)
 			user.save()
 		except:
 			return Response({"result": "no user"})
@@ -49,8 +49,10 @@ class friendView(APIView):
 		return Response({"result": "Successfully Added!"})
 
 
-	def delete(self, request):
+	def delete(self, request, pk):
 		user = self.get_instance(request)
-		user
-		user.friends.delete(pk)
-		user.save()
+		friend = User.objects.get(pk=pk)
+
+		user.friends.remove(friend)
+
+		return Response({"result": "Successfully Removed!"})

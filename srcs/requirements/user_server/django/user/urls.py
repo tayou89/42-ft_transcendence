@@ -10,4 +10,5 @@ urlpatterns = [
 	path('', include(userRouter.urls)),
 	path('me', me), 
 	path('me/friend', friendView.as_view()),
+	path('me/friend/<int:pk>', friendView.as_view()),
 ]
