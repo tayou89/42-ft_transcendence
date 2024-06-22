@@ -1,25 +1,20 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import { DEFAULT_URL} from "../Game/constant.js";
+import { URL_PATH } from "../Game/constant.js";
 
 class Fetch {
-    static setUserData(setFunction, userId = 0, index = -1) {
-        useEffect(() => {
-            const setData = async() => { 
-                const userData = await Fetch.userData(userId);
+    static async setUserData(setFunction, userId = 0, index = -1) {
+        const userData = await Fetch.userData(userId);
 
-                if (index >= 0) 
-                    setFunction((prev) => (setArray(prev, userData, index)));
-                else
-                    setFunction((prev) => (setObject(prev, userData)));
-            };
-            setData();
-        }, []);
+        if (index >= 0) 
+            setFunction((prev) => (setArray(prev, userData, index)));
+        else
+            setFunction((prev) => (setObject(prev, userData)));
     }
     static async userData(id) {
         if (!id)
             throw Error(`Fetch.userData: id doesn't exist: ${id}`);
         try {
-            const url = `${DEFAULT_URL}/api/users/${id}`;
+            const url = `${URL_PATH.BACK_API}/api/users/${id}`;
             const details = { method: 'GET', credentials: 'include' };
             const response = await fetch(url, details);
             const data = await response.json();
@@ -37,7 +32,7 @@ class Fetch {
     }
     static async #photoURL(path) {
         try {
-            const url = DEFAULT_URL + path;
+            const url = URL_PATH.BACK_API + path;
             const details = { method: 'GET', credentials: 'include' };
             const response = await fetch(url, details);
             const blob = await response.blob();

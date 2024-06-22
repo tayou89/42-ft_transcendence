@@ -1,30 +1,30 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import { GAME_TYPE, GAME_POSITION } from "../Game/constant.js";
-import { receivePlayerData } from "./handleSocket.js";
 import PlayerSlot from "./PlayerSlot.js";
 import CountDown  from "./CountDown.js";
 import Fetch  from "./Fetch.js";
 import "../../css/room/room.css";
 
 export function Player({ type, socket, id }) {
-    const defaultPlayers = getDefaultPlayers(type); 
-    const [ players, setPlayers ] = useState(defaultPlayers);
+    const [ players, setPlayers ] = useState(getDefaultPlayers(type));
     const [ count, setCount ] = useState(5);
-    const playerSlots = getPlayerSlots(players, setPlayers, type);
-    const countDown = getCountDown(players, count);
-    const elementId = getElementId(type);
 
-    receivePlayerData(socket, players, setPlayers);
     if (count <= 0)
         navigate("/game");
-        // navigate("/game", { socket, position: getPlayerPosition(id, players) });
-    if (isAllReady(players))
-        startCountDown(count, setCount);
+    useEffect(() => {
+        socket.turnOnRoomChannel(players, setPlayers);
+        return (() => socket.turnOffRoomChannel());
+    }, []);
+    useEffect(() => {
+        if (isAllReady(players))
+            countDown(count, setCount);
+        return (() => stopCount);
+    }, [count]);
     return (
-        <div className="row" id={ elementId }>
-            { playerSlots }
-            { countDown }
+        <div className="row" id={ getElementId(type) }>
+            { getPlayerSlots(players, type, socket) }
+            { getCountDown(players, count) }
         </div>
     );
 }
@@ -49,22 +49,22 @@ function getElementId(type) {
         return ("player-mtt");
 }
 
-function getPlayerSlots(players, setPlayers, type) {
+function getPlayerSlots(players, type, socket) {
     return ( 
-        players.map((p, i) => (
-            <PlayerSlot player={ p } set={ setPlayers } index={ i } type={ type } />))
+        players.map((p) => (
+            <PlayerSlot player={ p } type={ type } socket={ socket } />))
     );
 }
 
-function startCountDown(count, setCount) {
-    useEffect(() => {
-        const countDown = setInterval(() => { 
-            if (count > 0)
-                setCount(count => count -1) 
-        }, 1000);
+function countDown(count, setCount) {
+    setInterval(() => {
+        if (count > 0)
+            setCount(count => count -1) 
+    }, 1000);
+}
 
-        return (() => clearInterval(countDown));
-    }, [count]);
+function stopCount(countDown) {
+    clearInterval(countDown);
 }
 
 function getCountDown(players, count) {
