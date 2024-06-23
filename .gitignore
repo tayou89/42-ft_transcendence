@@ -4,3 +4,4 @@
 test/
 **/.vscode
 **/.DS_Store
+**/migrations

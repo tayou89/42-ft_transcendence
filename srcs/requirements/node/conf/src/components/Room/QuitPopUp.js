@@ -5,7 +5,7 @@ import "../../css/room/quit-popup.css";
 function QuitPopUp({ socket, isClicked, set }) {
     const handleClickYes = () => {
         socket.sendRoomLeaveMessage();
-        navigate("/main");
+        navigate("/home");
     }
     const handleClickNo = () => {
         set((prev) => (!prev));
