@@ -1,29 +1,10 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 
-const sampleMatchRecords = [
-	{
-		"id": 1,
-		"p1_score": 10,
-		"p2_score": 6,
-		"date": "2024-05-01T12:24:37.756097Z",
-		"p1": 1,
-		"p2": 2
-	},
-	{
-		"id": 2,
-		"p1_score": 8,
-		"p2_score": 10,
-		"date": "2024-05-02T12:24:37.756097Z",
-		"p1": 1,
-		"p2": 2
-	}
-];
-
 function MatchRecords({ userId }) {
 	const [userMatchRecords, setUserMatchRecords] = useState([]);
 	const userMatchRecordsApiUrl = `http://localhost:8000/api/users/${userId}/matches`;
 
-	const fetchMatchRecords = () => {
+	useEffect(() => {
 		fetch(userMatchRecordsApiUrl, {
 			method: 'GET',
 			credentials: 'include'
@@ -31,16 +12,12 @@ function MatchRecords({ userId }) {
 			.then(response => response.json())
 			.catch(console.log)
 			.then(data => {
-				setUserMatchRecords(() => sampleMatchRecords);
+				setUserMatchRecords(() => data);
 			})
 			.catch(error => {
 				console.log("in MatchRecords function", error);
 				setUserMatchRecords([]);
 			});
-	}
-
-	useEffect(() => {
-		fetchMatchRecords();
 	}, [])
 
 	return (
@@ -75,10 +52,7 @@ function MatchRecord({ match, userId }) {
 		})
 			.then(response => response.json())
 			.catch(console.log)
-			.then(data => setP1NickName(() => {
-				console.log(data.name);
-				return data.name ? data.name : "unknown";
-			}))
+			.then(data => setP1NickName(() => data.name ? data.name : "unknown"))
 			.catch(console.log);
 
 		fetch(p2DataApiUrl, {
@@ -87,10 +61,7 @@ function MatchRecord({ match, userId }) {
 		})
 			.then(response => response.json())
 			.catch(console.log)
-			.then(data => setP2NickName(() => {
-				console.log(data.name);
-				return data.name ? data.name : "unknown";
-			}))
+			.then(data => setP2NickName(() => data.name ? data.name : "unknown"))
 			.catch(console.log);
 	}, [])
 	return (

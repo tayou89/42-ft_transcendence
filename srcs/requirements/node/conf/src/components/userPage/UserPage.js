@@ -38,7 +38,7 @@ function UserPage() {
 			})
 			.then(data => {
 				if (data.detail) {
-					tokenRefreshAndGoTo(`/userpage?${userId}`);
+					tokenRefreshAndGoTo(`/userpage?userId=${userId}`);
 				} else {
 					setMyData(() => data);
 				}
@@ -56,9 +56,10 @@ function UserPage() {
 				return response.json();
 			})
 			.then(data => {
-				console.log(data);
+				console.log(userDataApiUrl);
+				console.log("GET userData", data);
 				if (data.detail) {
-					tokenRefreshAndGoTo(`/userpage?${userId}`);
+					tokenRefreshAndGoTo(`/userpage?userId=${userId}`);
 				} else {
 					setUserData(() => data);
 				}
