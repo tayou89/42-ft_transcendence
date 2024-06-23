@@ -18,9 +18,6 @@ function StatChart({ myId, userData }) {
 					<div className="p-1 mt-1">
 						{myId === userData.id ? <DeleteMyAccountModal title="delete Account" myId={myId} /> : null}
 					</div>
-					<div className="p-1 mt-3">
-						nickname: {userData.display_name}
-					</div>
 				</div>
 			</div>
 			<div className="container">
@@ -35,6 +32,11 @@ function StatChart({ myId, userData }) {
 					</div>
 					<div className="col-md-7">
 						<div className="container m-1 text-center">
+							<div className="row mt-1 mb-1">
+								<div className="col-4">nickname</div>
+								<div className="col-2">:</div>
+								<div className="col-6">{userData.display_name}</div>
+							</div>
 							<div className="row mt-1 mb-1">
 								<div className="col-4">Level</div>
 								<div className="col-2">:</div>
