@@ -36,7 +36,9 @@ function HomeMatches({ myId }) {
 					<CreateRoomModal myId={myId} />
 				</div>
 			</div>
-			<div className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25">
+			<div
+				className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
+				style="height: 574px; overflow-y: auto;">
 				<div>
 					{rooms
 						.filter(room => room.cur_users !== room.max_users && room.in_game === false)

@@ -23,7 +23,9 @@ function HomeFriends({ myData }) {
 					<AddNewFriendModal title="add Friend" />
 				</div>
 			</div>
-			<div className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25">
+			<div
+				className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
+				style="height: 300px; overflow-y: auto;">
 				{myData.friends.map(id => (
 					<FriendInfo friendId={id} />
 				))}
