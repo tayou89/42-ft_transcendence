@@ -59,13 +59,29 @@ function onCreateNewRoomSubmit(event, myId) {
 	let title = event.target.parentNode.querySelector("#create-room-input").value;
 	const roomType = event.target.parentNode.querySelector("input[name='optradio']:checked").value;
 	if (title === "") {
-		if (roomType === "pong") {
-			title = "Let's play 1:1 with me";
-		} else {
-			title = "Let's play a tournament";
-		}
+		title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament")
 	}
-	navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+
+	const createRoomApiUrl = "http://localhost:8001/api/rooms";
+	fetch(createRoomApiUrl, {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
+		},
+		body: JSON.stringify({
+			name: title,
+			mtt: (roomType === "mtt" ? true : false)
+		})
+	})
+		.then(response => response.json())
+		.then(data => {
+			console.log("well done", data);
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+		})
+		.catch(error => {
+			console.log("error!", error);
+		});
 }
 
 function CreateRoomModal({ myId }) {
@@ -111,8 +127,7 @@ function CreateRoomModal({ myId }) {
 }
 
 function onClickEnterCreatedRoom(title, myId, type) {
-	console.log(title, myId, type);
-	navigate(`/room?title=${title}&myId=${myId}&${type}`);
+	navigate(`/room?title=${title}&myId=${myId}&type=${type}`);
 }
 
 function HomeMatchInfo({ room, myId, active }) {
