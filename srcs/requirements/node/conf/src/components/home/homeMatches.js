@@ -1,59 +1,18 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
-const sampleRooms = [
-	{
-		"id": 1,
-		"name": "room1",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": false,
-		"mtt": false,
-		"max_users": 2,
-		"cur_users": 1
-	},
-	{
-		"id": 2,
-		"name": "room2",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": false,
-		"mtt": false,
-		"max_users": 2,
-		"cur_users": 1
-	},
-	{
-		"id": 3,
-		"name": "room3",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": true,
-		"mtt": true,
-		"max_users": 4,
-		"cur_users": 4
-	}
-]
-
 //???!!! room 보여주는 로직 만들어야함.
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
-	const roomsInfoApiUrl = "http://localhost:8000/api/rooms";
+	const roomsInfoApiUrl = "http://localhost:8001/api/rooms/";
 	useEffect(() => {
 		fetch(roomsInfoApiUrl, {
 			method: 'GET',
 			credentials: 'include'
 		})
-			.then(response => {
-				console.log(response);
-				setRooms(() => sampleRooms);
-			})
-			.catch(console.log);
+			.then(response => response.json())
+			.then(data => setRooms(() => data))
+			.catch(error => console.log("GET created rooms", error));
 	}, []);
 	return (
 		<div>
@@ -91,7 +50,27 @@ function onCreateNewRoomSubmit(event, myId) {
 			title = "Let's play a tournament";
 		}
 	}
-	navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+
+	const createRoomApiUrl = "http://localhost:8001/api/rooms/";
+	fetch(createRoomApiUrl, {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
+		},
+		body: JSON.stringify({
+			name: title,
+			mtt: (roomType === "mtt" ? true : false)
+		})
+	})
+		.then(response => {
+			console.log("create Room", response);
+			return response.json();
+		})
+		.then(data => {
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+		})
+		.catch(console.log);
 }
 
 function CreateRoomModal({ myId }) {
@@ -138,7 +117,7 @@ function CreateRoomModal({ myId }) {
 
 function onClickEnterCreatedRoom(title, myId, type) {
 	console.log(title, myId, type);
-	navigate(`/room?title=${title}&myId=${myId}&${type}`);
+	navigate(`/room?title=${title}&myId=${myId}&type=${type}`);
 }
 
 function HomeMatchInfo({ room, myId, active }) {
