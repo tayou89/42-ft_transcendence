@@ -81,6 +81,7 @@ class Pong(socketio.AsyncNamespace):
   
 		cur_room = self.rooms.get(room_name, None)
 		if cur_room is None:
+			self.rooms[room_name] = {}
 			for key in self.field_list:
 				self.rooms[room_name][key] = {}
 			cur_room = self.rooms[room_name]
