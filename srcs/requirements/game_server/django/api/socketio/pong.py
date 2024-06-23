@@ -1,9 +1,8 @@
 import httpx
-
 import socketio
 import asyncio
 
-from . import sio, manager
+from . import sio
 from .game_state import GameState
 from ..models import Room
 
@@ -18,15 +17,16 @@ class Pong(socketio.AsyncNamespace):
 	
 	def __init__(self, namespace=None):
 		super().__init__(namespace)
+		self.field_list = ['p1', 'p2']
+		self.MAX_USER = 2
  
 	async def on_connect(self, sid, environ):
 		pass
 	
 	async def on_disconnect(self, sid):
-		field_list = ['p1', 'p2']
 		info = await self.get_session(sid)
 
-		if "pid" not in info:
+		if not info:
 			return
   
 		me = info.get('me')
@@ -35,13 +35,13 @@ class Pong(socketio.AsyncNamespace):
   
 		if room_db.in_game:
 			self.rooms[room_name].pop(me)
-			await self.save_session(sid, None)
+			await self.save_session(sid, {})
 			return
   
 		self.rooms[room_name][me] = {}
-		await self.save_session(sid, None)
+		await self.save_session(sid, {})
 		
-		for field in field_list:
+		for field in self.field_list:
 			if field == me:
 				setattr(room_db, field, None)
 				break
@@ -51,40 +51,47 @@ class Pong(socketio.AsyncNamespace):
 			self.rooms.pop(room_name)
 		else:
 			await sync_to_async(room_db.save)()
-			await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
+			await self.emit(
+       			'message',
+          		self.rooms[room_name],
+            	room=room_name,
+             	namespace=self.namespace
+            )
 
 
 	async def on_join_room(self, sid, message):
-		field_list = ['p1', 'p2']
 		pid = message['pid']
 		room_name = message['room']
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
 
-		if room.cur_users == 2:
+		if room.cur_users == self.MAX_USER:
 			return
 		
-		for field in field_list:
+		for field in self.field_list:
 			if getattr(room, field, None) is None:
 				setattr(room, field, pid)
 				break
   
 		room.cur_users += 1
+		await sync_to_async(room.save)()
+
+  
 		await self.enter_room(sid, room_name)
   
 		cur_room = self.rooms.get(room_name, None)
 		if cur_room is None:
-			cur_room = self.rooms[room_name] = {"p1": {}, "p2": {}}
+			for key in self.field_list:
+				self.rooms[room_name][key] = {}
+			cur_room = self.rooms[room_name]
 			
    
 		for key, value in cur_room.items():
-			if value.get('pid') is None:
+			if not value:
 				self.rooms[room_name][key] = {"pid": pid, "ready": False} 
 				await self.save_session(sid, {'me': key, 'room': room_name})
 				break
   
-		await sync_to_async(room.save)()
-   
 		await sio.emit(
 				'room',
 				self.rooms[room_name],
@@ -94,22 +101,22 @@ class Pong(socketio.AsyncNamespace):
 
 
 	async def on_leave_room(self, sid):
-		field_list = ['p1', 'p2']
 		info = await self.get_session(sid)
 		me = info.get('me')
 		room_name = info.get('room')
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
 		
-		for field in field_list:
+		for field in self.field_list:
 			if field == me:
 				setattr(room, field, None)
 				break
   
 		room.cur_users -= 1
+
 		await self.leave_room(sid, room_name)
 		self.rooms[room_name][me] = {}
-		await self.save_session(sid, None)
+		await self.save_session(sid, {})
   
 		if room.cur_users == 0:
 			await sync_to_async(room.delete)()
@@ -133,7 +140,14 @@ class Pong(socketio.AsyncNamespace):
 		await self.emit('room', self.rooms[room_name], room=room_name, namespace=self.namespace)
   
 		cur_room = self.rooms[room_name]
-		if cur_room['p2'] is not None and cur_room['p2']['ready'] and cur_room['p1']['ready']:
+
+
+		flag = True
+		for key, value in cur_room.items():
+			if value and not value['ready']:
+				flag = False
+  
+		if flag:
 			await asyncio.create_task(self.play_pong(room_name))
 
 
