@@ -79,7 +79,7 @@ function FriendInfo({ friendId }) {
 						src={userInfo.avatar} />
 				</div>
 				<div className="col-8">
-					<div className="dropdown dropend" style="user-select: none; cursor: pointer;">
+					<div className="dropdown" style="user-select: none; cursor: pointer;">
 						<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
 							{userInfo.name}
 						</div>
