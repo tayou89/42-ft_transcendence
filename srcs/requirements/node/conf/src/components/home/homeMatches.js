@@ -1,65 +1,36 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
-const sampleRooms = [
-	{
-		"id": 1,
-		"name": "room1",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": false,
-		"mtt": false,
-		"max_users": 2,
-		"cur_users": 1
-	},
-	{
-		"id": 2,
-		"name": "room2",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": false,
-		"mtt": false,
-		"max_users": 2,
-		"cur_users": 2
-	},
-	{
-		"id": 3,
-		"name": "room3",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": false,
-		"mtt": true,
-		"max_users": 4,
-		"cur_users": 3
-	}
-]
-
-//???!!! room 보여주는 로직 만들어야함.
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
-	const roomsInfoApiUrl = "http://localhost:8000/api/rooms";
+	const roomsInfoApiUrl = "http://localhost:8001/api/rooms";
 	useEffect(() => {
 		fetch(roomsInfoApiUrl, {
 			method: 'GET',
 			credentials: 'include'
 		})
-			.then(response => {
-				console.log(response);
-				setRooms(() => sampleRooms);
+			.then(response => response.json())
+			.then(data => {
+				console.log("well done", data);
+				setRooms(() => data);
 			})
-			.catch(console.log);
+			.catch(error => {
+				console.log("error!", error);
+				setRooms(() => []);//api요청 에러시 방 안보임.
+			});
 	}, []);
 	return (
 		<div>
 			<div className="fs-4 row mb-1">
 				<div className="container col-6">
-					Matches
+					<div className="d-flex flex-row">
+						<div className="fs-4">
+							Matches
+						</div>
+						<div className="ms-2 mt-2 fs-6">
+							created: {rooms.length}
+						</div>
+					</div>
 				</div>
 				<div className="container col-6 text-end pe-4">
 					<CreateRoomModal myId={myId} />
