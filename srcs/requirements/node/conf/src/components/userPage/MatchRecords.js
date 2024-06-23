@@ -32,7 +32,7 @@ function MatchRecords({ userId }) {
 			.then(response => response.json())
 			.catch(console.log)
 			.then(data => {
-				setUserMatchRecords(() => sampleMatches);
+				setUserMatchRecords(() => data);
 			})
 			.catch(error => {
 				console.log("in MatchRecords function", error);
