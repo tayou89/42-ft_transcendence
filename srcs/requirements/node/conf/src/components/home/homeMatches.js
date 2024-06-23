@@ -24,7 +24,7 @@ const sampleRooms = [
 		"in_game": false,
 		"mtt": false,
 		"max_users": 2,
-		"cur_users": 1
+		"cur_users": 2
 	},
 	{
 		"id": 3,
@@ -33,10 +33,10 @@ const sampleRooms = [
 		"p2": 1,
 		"p3": null,
 		"p4": null,
-		"in_game": true,
+		"in_game": false,
 		"mtt": true,
 		"max_users": 4,
-		"cur_users": 4
+		"cur_users": 3
 	}
 ]
 
@@ -67,13 +67,16 @@ function HomeMatches({ myId }) {
 			</div>
 			<div className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25">
 				<div>
-					{rooms.map((room) => {
-						if (room.cur_users !== room.max_users && room.in_game === false) {
-							return (<HomeMatchInfo room={room} myId={myId} active={true} />)
-						} else {
-							return (<HomeMatchInfo room={room} myId={myId} active={false} />)
-						}
-					})}
+					{rooms
+						.filter(room => room.cur_users !== room.max_users && room.in_game === false)
+						.map((room) => (
+							<HomeMatchInfo key={room.id} room={room} active={true} />
+						))}
+					{rooms
+						.filter(room => room.cur_users === room.max_users || room.in_game === true)
+						.map((room) => (
+							<HomeMatchInfo key={room.id} room={room} active={false} />
+						))}
 				</div>
 			</div>
 		</div>
