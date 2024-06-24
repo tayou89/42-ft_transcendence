@@ -58,23 +58,22 @@ class Pong(socketio.AsyncNamespace):
              	namespace=self.namespace
             )
 
-	async def check_join(self, room, room_name, pid):
+	async def check_join(self, room, pid, sid):
 		if room.cur_users == self.MAX_USERS:
 			await sio.emit(
 				'error',
-				self.rooms[room_name],
 				"room is full",
+				room=sid,
 				namespace=self.namespace
 			)
 			return False
 
 		for field in self.field_list:
-			user = getattr(room, field, None)
-			if user is not None and user == pid:
+			if getattr(room, field, None) == int(pid):
 				await sio.emit(
 					'error',
-					self.rooms[room_name],
 					"already in room",
+					room=sid,
 					namespace=self.namespace
 				)
 				return False
@@ -87,7 +86,7 @@ class Pong(socketio.AsyncNamespace):
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
 
-		if await self.check_join(room, room_name, pid):
+		if not await self.check_join(room, pid, sid):
 			return
 		
 		for field in self.field_list:
@@ -98,7 +97,6 @@ class Pong(socketio.AsyncNamespace):
 		room.cur_users += 1
 		await sync_to_async(room.save)()
 
-  
 		await self.enter_room(sid, room_name)
   
 		cur_room = self.rooms.get(room_name, None)
@@ -121,6 +119,7 @@ class Pong(socketio.AsyncNamespace):
 				room=room_name,
 				namespace=self.namespace
 		)
+      
 
 
 	async def on_leave_room(self, sid):
