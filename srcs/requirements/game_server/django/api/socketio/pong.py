@@ -69,7 +69,8 @@ class Pong(socketio.AsyncNamespace):
 			return False
 
 		for field in self.field_list:
-			if getattr(room, field, None) == pid:
+			user = getattr(room, field, None)
+			if user is not None and user == pid:
 				await sio.emit(
 					'error',
 					self.rooms[room_name],
@@ -86,7 +87,7 @@ class Pong(socketio.AsyncNamespace):
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
 
-		if not await self.check_join(room, room_name, pid):
+		if await self.check_join(room, room_name, pid):
 			return
 		
 		for field in self.field_list:
