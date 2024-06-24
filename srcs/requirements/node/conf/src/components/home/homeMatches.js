@@ -64,7 +64,7 @@ function onCreateNewRoomSubmit(event, myId) {
 		title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament")
 	}
 
-	const createRoomApiUrl = "http://localhost:8001/api/rooms";
+	const createRoomApiUrl = "http://localhost:8001/api/rooms/";
 	fetch(createRoomApiUrl, {
 		method: 'POST',
 		credentials: 'include',
