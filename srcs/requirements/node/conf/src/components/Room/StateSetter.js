@@ -1,5 +1,4 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { GAME_POSITION } from "../Game/constant.js";
 import Fetch from "./Fetch.js";
 
 class StateSetter {
@@ -29,11 +28,8 @@ class StateSetter {
             setGameData((prev) => ({ 
                 ...prev, score: { p1: newGameData.score[0], p2: newGameData.score[1] }}));
     }
-    setGameResult(newGameResult, playerPosition, setGameResult) {
-        if (playerPosition === GAME_POSITION.LEFT)
-            setGameResult((_) => newGameResult.p1);
-        else
-            setGameResult((_) => newGameResult.p2);
+    setGameResult(newGameResult, setGameResult) {
+        setGameResult((prev) => ({ ...prev, newGameResult }));
     }
     #getNewPlayers(prev, index, readyStatus) {
        const newArray = prev.map((player, i) => {

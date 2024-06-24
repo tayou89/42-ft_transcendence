@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import ReadyButton from "./ReadyButton.js";
-import { GAME_TYPE } from "../Game/constant.js";
+import { GAME } from "../Game/constant.js";
 import "../../css/room/player-slot.css";
 
 function PlayerSlot({ socket, player, type, isMySlot }) {
@@ -22,7 +22,7 @@ function PlayerSlot({ socket, player, type, isMySlot }) {
 
 function getElementsIds(type) {
     const ids = [ "slot", "photo-box", "photo" ];
-    const suffix = (type === GAME_TYPE.PONG) ? "-pong" : "-mtt";
+    const suffix = (type === GAME.TYPE.PONG) ? "-pong" : "-mtt";
     const elementIds = ids.map(id => id + suffix);
     
     return (elementIds);

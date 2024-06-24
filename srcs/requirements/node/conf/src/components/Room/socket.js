@@ -1,5 +1,5 @@
 import {io} from "socket.io-client";
-import { GAME_TYPE, SOCKET, URL_PATH } from "../Game/constant.js";
+import { GAME, SOCKET, URL_PATH } from "../Game/constant.js";
 import EventHandler from "./EventHandler.js";
 
 class Socket {
@@ -35,8 +35,8 @@ class Socket {
     turnOffGameChannel() {
         this.#socket.off(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
     }
-    turnOnResultChannel(playerPosition, setGameResult) {
-        this.#eventHandler.setResultEvent(playerPosition, setGameResult);
+    turnOnResultChannel(setGameResult) {
+        this.#eventHandler.setResultEvent(setGameResult);
         this.#socket.on(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
     }
     turnOffResultChannel() {
@@ -48,7 +48,7 @@ class Socket {
         return (socketOption);
     }
     #setSocket(gameType, socketOption) {
-        if (gameType === GAME_TYPE.PONG)
+        if (gameType === GAME.TYPE.PONG)
             this.#socket = io(URL_PATH.SOCKET.PONG, socketOption);
         else
             this.#socket = io(URL_PATH.SOCKET.MTT, socketOption);
@@ -57,7 +57,7 @@ class Socket {
     #eventHandler;
 }
 
-export const pongSocket = new Socket(GAME_TYPE.PONG);
-export const mttSocket = new Socket(GAME_TYPE.MTT);
+export const pongSocket = new Socket(GAME.TYPE.PONG);
+export const mttSocket = new Socket(GAME.TYPE.MTT);
 
 export default Socket;

@@ -7,7 +7,8 @@ function WinRateDonut({ userData }) {
 			<div className="container fs-4">
 				Win Rate
 			</div>
-			<div className="container border-top border-bottom rounded bg-secondary bg-opacity-25">
+			<div className="container border-top border-bottom rounded bg-secondary bg-opacity-25"
+				style="height: 300px; overflow-y: auto;">
 				<div className="circular-graph">
 					<div className="background"></div>
 					<div className="rate"></div>
