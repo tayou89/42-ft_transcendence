@@ -7,7 +7,7 @@ class StateSetter {
         const promises = []; 
 
         players.forEach((newPlayer, index) => {
-            if (newPlayer?.pid !== currentPlayers[index]?.id)
+            // if (newPlayer?.pid !== currentPlayers[index]?.id)
                 promises.push(Fetch.setUserData(playerSetter, newPlayer.pid, index));
         });
         await Promise.all(promises);
@@ -40,7 +40,6 @@ class StateSetter {
            else
                return (player);
        });
-
         return (newArray);
     }
 }

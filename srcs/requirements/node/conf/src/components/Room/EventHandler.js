@@ -9,6 +9,7 @@ class EventHandler {
     }
     setRoomEvent(currentPlayers, setPlayers) {
         this.#roomEvent = async (newPlayers) => {
+			console.log("Room Event Occured:", newPlayers, currentPlayers);
             await this.#stateSetter.setPlayers(newPlayers, currentPlayers, setPlayers);
         };
     }
