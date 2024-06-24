@@ -1,40 +1,29 @@
+import httpx
 
+import socketio
+import asyncio
 
-from . import sio, manager, room_list, room_table, lock
+from . import sio
 from .game_state import GameState
+from ..models import Room
 
-@sio.event
-async def enter_mtt_room(sid, message):
-	room_name = message['room']
-	player = message['player']
+from asgiref.sync import sync_to_async
+from .pong import Pong
+
+
+class MttPong(Pong):
 	
-	if room_name in room_list and len(room_list[room_name]) == 2:
-		await sio.emit('message', 'full', room=sid)
-		return
+	rooms = {}
+	locker = {}
+	games = {}
+	sub_games = {}
 	
-	await sio.enter_room(sid, room_name)
-
-	if room_name not in room_list:
-
-		room_list[room_name] = {
-			"type": "multi",
-			"p1": {"name": player, 'is_ready': False},
-		}
-  
-		await sio.emit('message', room_list[room_name], room=room_name)
-				   
-	elif "p1" not in room_list[room_name]:
-		cur_room = room_list[room_name]
-		cur_room["p1"] = {"name": player, 'is_ready': False}
-
-		await sio.emit('message', cur_room, room=room_name)
-				   
-	elif "p2" not in room_list[room_name]:
-		cur_room = room_list[room_name]
-		cur_room["p2"] = {"name": player, 'is_ready': False}
-
-		await sio.emit('message', cur_room, room=room_name)
+	def __init__(self, namespace=None):
+		super().__init__(namespace)
+		self.field_list = ['p1', 'p2', 'p3', 'p4']
+		self.MAX_USER = 4
+ 
 	
-	room_table[sid] = {'player': player, 'room': room_name}
 
 
+sio.register_namespace(MttPong('/api/mtt'))

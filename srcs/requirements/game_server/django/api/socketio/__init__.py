@@ -1,3 +1,3 @@
 from .connection import *
-from .message import *
+# from .multi_table import *
 from .pong import *
