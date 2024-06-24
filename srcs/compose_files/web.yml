@@ -31,6 +31,7 @@ services:
     container_name: userserver
     volumes:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
+      - avatars_volume:/app/${DJANGO_PROJECT_NAME}/avatars
     environment:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
@@ -44,12 +45,12 @@ services:
     build:
       context: ${PROJECT_DIR}/requirements/user_server
       dockerfile: dockerfile
-    # healthcheck:
-    #   test: ["CMD-SHELL", "curl -I localhost:8000 | grep -q 'HTTP/1.1 404 Not Found'"]
-    #   interval: 5s
-    #   timeout: 1s
-    #   retries: 3
-    #   start_period: 1s
+    healthcheck:
+      test: ["CMD-SHELL", "curl -I localhost:8000 | grep -q 'HTTP/1.1 404 Not Found'"]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+      start_period: 1s
 
   userdb:
     image: postgres:userserver
@@ -159,6 +160,7 @@ services:
       - ${PROJECT_DIR}/requirements/nginx/conf/:/etc/nginx/templates/conf.d/:ro
       - certs_volume:/certs:ro
       - logs_volume:/logs
+      - avatars_volume:/django/avatars/:ro
     ports:
       - 443:443
       - 9090:9090
@@ -180,3 +182,7 @@ volumes:
   gamedb_volume:
     name: gamedb_volume
     driver: local
+  avatars_volume:
+    name: avatars_volume
+    driver: local
+
