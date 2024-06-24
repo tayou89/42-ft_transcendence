@@ -1,79 +1,55 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
-const sampleRooms = [
-	{
-		"id": 1,
-		"name": "room1",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": false,
-		"mtt": false,
-		"max_users": 2,
-		"cur_users": 1
-	},
-	{
-		"id": 2,
-		"name": "room2",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": false,
-		"mtt": false,
-		"max_users": 2,
-		"cur_users": 1
-	},
-	{
-		"id": 3,
-		"name": "room3",
-		"p1": 1,
-		"p2": 1,
-		"p3": null,
-		"p4": null,
-		"in_game": true,
-		"mtt": true,
-		"max_users": 4,
-		"cur_users": 4
-	}
-]
-
-//???!!! room 보여주는 로직 만들어야함.
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
-	const roomsInfoApiUrl = "http://localhost:8000/api/rooms";
+	const roomsInfoApiUrl = "http://localhost:8001/api/rooms";
 	useEffect(() => {
 		fetch(roomsInfoApiUrl, {
 			method: 'GET',
 			credentials: 'include'
 		})
-			.then(response => {
-				console.log(response);
-				setRooms(() => sampleRooms);
+			.then(response => response.json())
+			.then(data => {
+				console.log("well done", data);
+				setRooms(() => data);
 			})
-			.catch(console.log);
+			.catch(error => {
+				console.log("error!", error);
+				setRooms(() => []);//api요청 에러시 방 안보임.
+			});
 	}, []);
 	return (
 		<div>
 			<div className="fs-4 row mb-1">
 				<div className="container col-6">
-					Matches
+					<div className="d-flex flex-row">
+						<div className="fs-4">
+							Matches
+						</div>
+						<div className="ms-2 mt-2 fs-6">
+							created: {rooms.length}
+						</div>
+					</div>
 				</div>
 				<div className="container col-6 text-end pe-4">
 					<CreateRoomModal myId={myId} />
 				</div>
 			</div>
-			<div className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25">
+			<div
+				className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
+				style="height: 574px; overflow-y: auto;">
 				<div>
-					{rooms.map((room) => {
-						if (room.cur_users !== room.max_users && room.in_game === false) {
-							return (<HomeMatchInfo room={room} myId={myId} active={true} />)
-						} else {
-							return (<HomeMatchInfo room={room} myId={myId} active={false} />)
-						}
-					})}
+					{rooms
+						.filter(room => room.cur_users !== room.max_users && room.in_game === false)
+						.map((room) => (
+							<HomeMatchInfo key={room.id} room={room} active={true} />
+						))}
+					{rooms
+						.filter(room => room.cur_users === room.max_users || room.in_game === true)
+						.map((room) => (
+							<HomeMatchInfo key={room.id} room={room} active={false} />
+						))}
 				</div>
 			</div>
 		</div>
@@ -85,13 +61,29 @@ function onCreateNewRoomSubmit(event, myId) {
 	let title = event.target.parentNode.querySelector("#create-room-input").value;
 	const roomType = event.target.parentNode.querySelector("input[name='optradio']:checked").value;
 	if (title === "") {
-		if (roomType === "pong") {
-			title = "Let's play 1:1 with me";
-		} else {
-			title = "Let's play a tournament";
-		}
+		title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament")
 	}
-	navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+
+	const createRoomApiUrl = "http://localhost:8001/api/rooms";
+	fetch(createRoomApiUrl, {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
+		},
+		body: JSON.stringify({
+			name: title,
+			mtt: (roomType === "mtt" ? true : false)
+		})
+	})
+		.then(response => response.json())
+		.then(data => {
+			console.log("well done", data);
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+		})
+		.catch(error => {
+			console.log("error!", error);
+		});
 }
 
 function CreateRoomModal({ myId }) {
@@ -137,8 +129,7 @@ function CreateRoomModal({ myId }) {
 }
 
 function onClickEnterCreatedRoom(title, myId, type) {
-	console.log(title, myId, type);
-	navigate(`/room?title=${title}&myId=${myId}&${type}`);
+	navigate(`/room?title=${title}&myId=${myId}&type=${type}`);
 }
 
 function HomeMatchInfo({ room, myId, active }) {
