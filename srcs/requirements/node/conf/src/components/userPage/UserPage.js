@@ -3,7 +3,6 @@ import Navbar from "../Navbar.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import MatchRecords from "./MatchRecords.js";
-import WinRateDonut from "./WinRateDonut.js";
 import StatChart from "./StatChart.js";
 
 const defaultData1 = {
@@ -88,13 +87,8 @@ function UserPage() {
 			<Navbar position="/userpage" />
 			<div className="container text-light">
 				<StatChart isMyInfo={myData.id === userData.id} myId={myData.id} userData={userData} />
-				<div className="row">
-					<div className="col-md-5 mt-3">
-						<WinRateDonut userData={userData} />
-					</div>
-					<div className="col-md-7 mt-3">
-						<MatchRecords userId={userId} />
-					</div>
+				<div className="mt-3">
+					<MatchRecords userId={userId} />
 				</div>
 			</div>
 		</div>
