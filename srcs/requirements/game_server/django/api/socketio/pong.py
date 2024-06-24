@@ -25,6 +25,10 @@ class Pong(socketio.AsyncNamespace):
 	async def on_disconnect(self, sid):
 		field_list = ['p1', 'p2']
 		info = await self.get_session(sid)
+
+		if "pid" not in info:
+			return
+  
 		me = info.get('me')
 		room_name = info.get('room')
 		room_db = await sync_to_async(Room.objects.get)(name=room_name)
@@ -44,6 +48,7 @@ class Pong(socketio.AsyncNamespace):
 		room_db.cur_users -= 1
 		if room_db.cur_users == 0:
 			await sync_to_async(room_db.delete)()
+			self.rooms.pop(room_name)
 		else:
 			await sync_to_async(room_db.save)()
 			await self.emit('message', self.rooms[room_name], room=room_name, namespace=self.namespace)
@@ -67,9 +72,10 @@ class Pong(socketio.AsyncNamespace):
 		room.cur_users += 1
 		await self.enter_room(sid, room_name)
   
-		cur_room = self.rooms.get(room_name)
+		cur_room = self.rooms.get(room_name, None)
 		if cur_room is None:
-			self.rooms[room_name] = {"p1": {}, "p2": {}}
+			cur_room = self.rooms[room_name] = {"p1": {}, "p2": {}}
+			
    
 		for key, value in cur_room.items():
 			if value.get('pid') is None:
@@ -85,9 +91,9 @@ class Pong(socketio.AsyncNamespace):
 				room=room_name,
 				namespace=self.namespace
 		)
-  
-  
-	async def on_leave_room(self, sid, message):
+
+
+	async def on_leave_room(self, sid):
 		field_list = ['p1', 'p2']
 		info = await self.get_session(sid)
 		me = info.get('me')

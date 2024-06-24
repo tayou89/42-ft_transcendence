@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'rest_framework',
-	'api',
- 
-	'corsheaders', #CORS
+		'rest_framework',
+		'api',
+
+		'corsheaders', #CORS
 ]
 
 
@@ -158,3 +158,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ASGI_APPLICATION = 'gameserver.asgi.application'
 
+APPEND_SLASH = False
