@@ -139,13 +139,22 @@ let deletions = null;
 function workLoop(deadline) {
   let shouldYield = false;
   
+  onUpdate = true;
   while (nextUnitOfWork && !shouldYield) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
     shouldYield = deadline.timeRemaining() < 1 && !deadline.didTimeout;
   }
   if (!nextUnitOfWork && wipRoot) {
     commitRoot();
+    // console.log("===================commit======================");
   }
+  setStateQueue.forEach((obj) => {
+    obj.queue.push(obj.action);
+    wipRoot = obj.root;
+    nextUnitOfWork = wipRoot;
+  });
+  setStateQueue.length = 0;
+  onUpdate = false;
   requestIdleCallback(workLoop, {timeout: 2000});
 }
 //requestIdleCallback()는 콜스택이 비어있을 경우(idle 상태) 콜백실행
@@ -187,6 +196,9 @@ function updateFunctionComponent(fiber) {
   reconcileChildren(fiber, children);
 }
 
+let setStateQueue = [];
+let onUpdate = false;
+
 export function useState(initial) {
   const oldHook = wipFiber.hooks[hookIndex];
   const NewHook = {
@@ -200,14 +212,25 @@ export function useState(initial) {
   });
   actions.length = 0;
   const setState = action => {
-    hook.queue.push(action);
-      wipRoot = {
+    const tmpRoot = {
       dom: currentRoot ? currentRoot.dom : wipRoot.dom,
       props: currentRoot ? currentRoot.props: wipRoot.dom,
       alternate: currentRoot ? currentRoot: wipRoot,
-      }
+    };
+    if (!onUpdate) {
+      hook.queue.push(action);
+      wipRoot = tmpRoot;
       nextUnitOfWork = wipRoot;
       deletions = [];
+
+    }
+    else {
+      setStateQueue.push({
+        queue: hook.queue,
+        action: action,
+        root: tmpRoot,
+      });
+    }
   };
   if (!oldHook) {
     wipFiber.hooks.push(hook);
