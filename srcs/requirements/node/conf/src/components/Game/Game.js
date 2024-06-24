@@ -9,19 +9,19 @@ import EventHandler from "../Room/EventHandler.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
-const eventHandler = new EventHandler();
-
-function Game({ socket, type, myId, count = 0 }) {
+function Game({ data }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const [ game, setGame ] = useState(getInitialGameData());
     const [ players, setPlayers ] = useState([{}, {}]);
-    const [ result, setResult ] = useState("");
+    const [ gameResult, setGameResult ] = useState({});
 
     useEffect(() => {
-        eventHandler.addKeyEvent(socket);
+        const eventHandler = new EventHandler();
+
+        eventHandler.addKeyEvent(data.socket);
         socket.turnOnRoomChannel(players, setPlayers);
         socket.turnOnGameChannel(game, setGame);
-        socket.turnOnResultChannel(myId, players, setResult);
+        socket.turnOnResultChannel(setGameResult);
         return (() => {
             eventHandler.removeKeyEvent();
             socket.turnOffRoomChannel();
@@ -36,7 +36,7 @@ function Game({ socket, type, myId, count = 0 }) {
             <GameBoard players={ players } ball={ game.ball } paddle={ game.paddle }/>
             <BottomLine socket={ socket } setIsQuitClicked={ setIsQuitClicked }/>
             <QuitPopUp socket={ socket } isClicked={ isQuitClicked } set={ setIsQuitClicked } /> 
-            <ResultPopUp result={ result } />
+            <ResultPopUp gameResult={ gameResult } data={ data } players={ players } />
         </div>
     );
 }
