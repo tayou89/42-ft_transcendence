@@ -5,13 +5,12 @@ import PlayerSlot from "./PlayerSlot.js";
 import CountDown  from "./CountDown.js";
 import "../../css/room/room.css";
 
-export function Player({ type, socket, id }) {
+export function Player({ type, socket, myId }) {
     const [ players, setPlayers ] = useState(getDefaultPlayers(type));
     const [ count, setCount ] = useState(5);
-    const playerPosition = getPlayerPosition(id, players);
 
     if (count <= 0)
-        navigate("/game", { socket, playerPosition });
+        navigate("/game", { socket, type, myId });
     useEffect(() => {
         socket.turnOnRoomChannel(players, setPlayers);
         return (() => socket.turnOffRoomChannel());
@@ -23,7 +22,7 @@ export function Player({ type, socket, id }) {
     }, [players, count]);
     return (
         <div className="row" id={ getElementId(type) }>
-            { getPlayerSlots(players, type, socket, id) }
+            { getPlayerSlots(players, type, socket, myId) }
             { getCountDown(players, count) }
         </div>
     );

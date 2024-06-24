@@ -10,7 +10,7 @@ import "../../css/room/room.css";
 
 function Room() {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
-    const [ title, type, id ] = getRoomData();
+    const [ title, type, myId ] = getRoomData();
     const socket = getSocket(type);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ function Room() {
         <div className="container-fluid" id="room-page">
             <NavigationBar />
             <Title title={ title } type={ type } />
-            <Player type={ type } socket={ socket } id={ id } />
+            <Player type={ type } socket={ socket } myId={ myId } />
             <BottomLine setIsQuitClicked={ setIsQuitClicked } />
             <QuitPopUp socket={ socket } isClicked={ isQuitClicked } set={ setIsQuitClicked } /> 
         </div>
@@ -32,9 +32,9 @@ function getRoomData() {
     const URLData = new URLSearchParams(queryString);
     const title = URLData.get('title');
     const type = URLData.get('type');
-    const id = URLData.get('myId');
+    const myId = URLData.get('myId');
 
-    return ([title, type, id]);
+    return ([title, type, myId]);
 }
 
 function getSocket(gameType) {
