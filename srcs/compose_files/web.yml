@@ -24,22 +24,20 @@ services:
     depends_on:
       userdb:
         condition: service_healthy
-      vault_init:
-        condition: service_completed_successfully
-      vault:
-        condition: service_healthy
+      # vault_init:
+      #   condition: service_completed_successfully
     pull_policy: never
     image: python:userserver
     container_name: userserver
     volumes:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
-      - certs_volume:/certs
+      - avatars_volume:/app/${DJANGO_PROJECT_NAME}/avatars
     environment:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
       USERDATA_DB_PW: ${USERDATA_DB_PW}
-      VAULT_USER_NAME: ${VAULT_USER_NAME}
-      VAULT_PASSWORD: ${VAULT_PASSWORD}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
     ports:
       - 8000:8000
     networks:
@@ -49,10 +47,10 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "curl -I localhost:8000 | grep -q 'HTTP/1.1 404 Not Found'"]
-      interval: 30s
-      timeout: 5s
+      interval: 5s
+      timeout: 1s
       retries: 3
-      start_period: 10s
+      start_period: 1s
 
   userdb:
     image: postgres:userserver
@@ -74,20 +72,18 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-      interval: 30s
+      interval: 1s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 1s
 
   gameserver:
     image: python:gameserver
     pull_policy: never
     depends_on:
-      # gamedb:
-      #   condition: service_healthy
-      vault_init:
-        condition: service_completed_successfully
-      vault:
+      gamedb:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     build:
       context: ${PROJECT_DIR}/requirements/game_server
@@ -95,23 +91,20 @@ services:
     container_name: gameserver
     volumes:
       - ${PROJECT_DIR}/requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
-      - certs_volume:/certs
     ports:
       - 8001:8001
     environment:
       GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
       GAMEDATA_DB_USER: ${USERDATA_DB_USER}
       GAMEDATA_DB_PW: ${USERDATA_DB_PW}
-      VAULT_USER_NAME: ${VAULT_USER_NAME}
-      VAULT_PASSWORD: ${VAULT_PASSWORD}
     networks:
       - my_net
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8001"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+    # healthcheck:
+    #   test: ["CMD-SHELL", "curl -s localhost:8001"]
+    #   interval: 1s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 1s
 
   gamedb:
     image: postgres:gameserver
@@ -133,7 +126,7 @@ services:
       - my_net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -p 5431 -U $POSTGRES_USER"]
-      interval: 1s
+      interval: 5s
       timeout: 5s
       retries: 3
       start_period: 10s
@@ -147,6 +140,12 @@ services:
     container_name: redis
     networks:
       - my_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   nginx:
     depends_on:
@@ -161,6 +160,7 @@ services:
       - ${PROJECT_DIR}/requirements/nginx/conf/:/etc/nginx/templates/conf.d/:ro
       - certs_volume:/certs:ro
       - logs_volume:/logs
+      - avatars_volume:/django/avatars/:ro
     ports:
       - 443:443
       - 9090:9090
@@ -182,3 +182,7 @@ volumes:
   gamedb_volume:
     name: gamedb_volume
     driver: local
+  avatars_volume:
+    name: avatars_volume
+    driver: local
+

@@ -14,23 +14,6 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
-import hvac
-def kv_get(key):
-    client = hvac.Client(
-        url="https://vault:8200",
-        verify="/certs/ca/ca.crt",
-    )
-    client.auth.userpass.login(
-        username=os.getenv('VAULT_USER_NAME'),
-        password=os.getenv('VAULT_PASSWORD')
-    )
-    secret = client.secrets.kv.v2.read_secret_version(path='django-secret', mount_point='kv')
-    ret = secret['data']['data'].get(key)
-    if ret:
-        return ret
-    else:
-        raise ValueError(f"Key '{key}' not found in the secret data.")
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = kv_get('GAME_SERVER_SECRET_KEY')
+SECRET_KEY = 'django-insecure-$ywy1)s6lw4y40okbju%g(4t542x^k6=9#env-pgyjtx+ukx+0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -56,13 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'rest_framework',
-	'api',
-	'channels',
+		'rest_framework',
+		'api',
+
+		'corsheaders', #CORS
 ]
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -71,6 +57,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8080',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'gameserver.urls'
 
@@ -93,7 +85,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gameserver.wsgi.application'
 
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -105,37 +96,15 @@ DATABASES = {
     }
 }
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('redis', 6379)],  # Redis 서버 주소
-        },
-    },
-}
-
-
-CACHES = {  
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-			'REDIS_CLIENT_KWARGS': {
-                'decode_responses': True,
-            },
-        },
-    }
-}
-
-
 JWT_SECRET_KEY='hihi'
 
 SIMPLE_JWT = {
-    'SIGNING_KEY': 'hihi',
+    'ALGORITHM': 'HS256',
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ALGORITHM': 'HS256',
+
+    'SIGNING_KEY': 'hihi',
+    
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
@@ -189,3 +158,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ASGI_APPLICATION = 'gameserver.asgi.application'
 
+APPEND_SLASH = False

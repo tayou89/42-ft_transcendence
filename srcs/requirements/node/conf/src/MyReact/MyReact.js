@@ -48,12 +48,26 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(prevProps)
     .filter(isProperty)
     .filter(isGone(prevProps, nextProps))
-    .forEach(name => dom[name] = "");
+    .forEach(name => {
+      if (name.startsWith("data-")) {
+        dom.removeAttribute(name);
+      }
+      else {
+        dom[name] = "";
+      }
+    });
   //Set new or changed properties
   Object.keys(nextProps)
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
-    .forEach(name => dom[name] = nextProps[name]);
+    .forEach(name => {
+      if (name.startsWith("data-")) {
+        dom.setAttribute(name, nextProps[name]);
+      }
+      else {
+        dom[name] = nextProps[name];
+      }
+    });
   //Add event Listeners
   Object.keys(nextProps)
     .filter(isEvent)
@@ -85,6 +99,8 @@ function commitWork(fiber) {
   }
   else if (fiber.effectTag === "DELETION") {
     commitDeletion(fiber, domParent);
+    commitWork(fiber.sibling);
+    return;
   }
   else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate.props, fiber.props);
@@ -125,15 +141,15 @@ function workLoop(deadline) {
   
   while (nextUnitOfWork && !shouldYield) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
-    shouldYield = deadline.timeRemaining() < 1;
+    shouldYield = deadline.timeRemaining() < 1 && !deadline.didTimeout;
   }
   if (!nextUnitOfWork && wipRoot) {
     commitRoot();
   }
-  requestIdleCallback(workLoop);
+  requestIdleCallback(workLoop, {timeout: 2000});
 }
 //requestIdleCallback()는 콜스택이 비어있을 경우(idle 상태) 콜백실행
-requestIdleCallback(workLoop);
+requestIdleCallback(workLoop, {timeout: 2000});
 
 function performUnitOfWork(fiber) {
   const isFunctionComponent = fiber.type instanceof Function;
@@ -160,39 +176,42 @@ let hookIndex = null;
 let effectIndex = null;
 
 function updateFunctionComponent(fiber) {
+  const oldHooks = fiber.alternate && fiber.alternate.hooks;
+
   wipFiber = fiber;
   hookIndex = 0;
   effectIndex = 0;
-  wipFiber.hooks = [];
+  wipFiber.hooks = oldHooks ? oldHooks : [];
   wipFiber.effects = [];
   const children = [fiber.type(fiber.props)];
   reconcileChildren(fiber, children);
 }
 
 export function useState(initial) {
-  const oldHook =
-    wipFiber.alternate &&
-    wipFiber.alternate.hooks &&
-    wipFiber.alternate.hooks[hookIndex];
-  const hook = {
-    state: oldHook ? oldHook.state : initial,
+  const oldHook = wipFiber.hooks[hookIndex];
+  const NewHook = {
+    state: initial,
     queue: [],
   };
-  const actions = oldHook ? oldHook.queue : [];
+  const hook = oldHook ? oldHook : NewHook;
+  const actions = hook.queue;
   actions.forEach(action => {
     hook.state = action(hook.state);
   });
+  actions.length = 0;
   const setState = action => {
     hook.queue.push(action);
-    wipRoot = {
-      dom: currentRoot.dom,
-      props: currentRoot.props,
-      alternate: currentRoot,
-    }
-    nextUnitOfWork = wipRoot;
-    deletions = [];
+      wipRoot = {
+      dom: currentRoot ? currentRoot.dom : wipRoot.dom,
+      props: currentRoot ? currentRoot.props: wipRoot.dom,
+      alternate: currentRoot ? currentRoot: wipRoot,
+      }
+      nextUnitOfWork = wipRoot;
+      deletions = [];
+  };
+  if (!oldHook) {
+    wipFiber.hooks.push(hook);
   }
-  wipFiber.hooks.push(hook);
   ++hookIndex;
   return [hook.state, setState];
 }

@@ -1,0 +1,30 @@
+#score-board {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 32px;
+    margin-top: 60px;
+    min-width: 700px;
+}
+
+#score1 {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    font-size: 64px;
+}
+
+#seperator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 64px;
+	flex: 0 0 500px;
+}
+
+#score2 {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    font-size: 64px;
+}

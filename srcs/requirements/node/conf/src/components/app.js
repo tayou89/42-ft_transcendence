@@ -1,17 +1,25 @@
 import MyReact from "../MyReact/MyReact.js";
-import Home from "./home.js";
 import { Route } from "../MyReact/MyReactRouter.js";
+import Home from "./home/home.js";
+import UserPage from "./userPage/UserPage.js";
 import Login from "./login.js";
-import Room from "./room.js";
+import Interchange from "./interchange.js";
+import EmailOTP from "./emailOTP.js";
+import Game from "./Game/Game.js";
+import Room from "./Room/Room.js";
 
 function App() {
-  return (
-    <div>
-      <Route path="/" component={Home} />
-      <Route path="/login" component={Login} />
-      <Route path="/room" component={Room} />
-    </div>
-  );
+	return (
+		<div>
+			<Route path="/" component={Interchange} />
+			<Route path="/emailotp" component={EmailOTP} />
+			<Route path="/home" component={Home} />
+			<Route path="/userpage" component={UserPage} />
+			<Route path="/login" component={Login} />
+			<Route path="/game" component={Game} />
+			<Route path="/room" component={Room} />
+		</div>
+	);
 }
 
 export default App;

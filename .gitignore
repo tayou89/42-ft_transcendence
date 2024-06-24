@@ -1,7 +1,7 @@
 # **/.env
-**/migrations
 **/avatars
 **/__pycache__
 test/
 **/.vscode
 **/.DS_Store
+**/migrations
