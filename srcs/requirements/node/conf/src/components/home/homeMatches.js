@@ -3,13 +3,16 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
-	const roomsInfoApiUrl = "http://localhost:8001/api/rooms";
+	const roomsInfoApiUrl = "http://localhost:8001/api/rooms/";
 	useEffect(() => {
 		fetch(roomsInfoApiUrl, {
 			method: 'GET',
 			credentials: 'include'
 		})
-			.then(response => response.json())
+			.then(response => {
+				console.log(response);
+				return response.json();
+			})
 			.then(data => {
 				console.log("well done", data);
 				setRooms(() => data);
@@ -64,7 +67,7 @@ function onCreateNewRoomSubmit(event, myId) {
 		title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament")
 	}
 
-	const createRoomApiUrl = "http://localhost:8001/api/rooms";
+	const createRoomApiUrl = "http://localhost:8001/api/rooms/";
 	fetch(createRoomApiUrl, {
 		method: 'POST',
 		credentials: 'include',
