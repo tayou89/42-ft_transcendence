@@ -1,4 +1,4 @@
-import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { MyReact } from "../../MyReact/MyReact.js";
 import Fetch from "./Fetch.js";
 
 class StateSetter {
@@ -9,10 +9,12 @@ class StateSetter {
         players.forEach((newPlayer, index) => {
             if (newPlayer?.pid !== currentPlayers[index]?.id)
                 promises.push(Fetch.setUserData(playerSetter, newPlayer.pid, index));
+        });
+        await Promise.all(promises);
+        players.forEach((newPlayer, index) => {
             if (newPlayer.pid && (newPlayer.ready !== currentPlayers[index]?.ready))
                 playerSetter((prev) => this.#getNewPlayers(prev, index, newPlayer.ready));
         });
-        await Promise.all(promises);
     }
     setGameData(newGameData, currentGameData, setGameData) {
         if (currentGameData.ball.x !== newGameData.ball[0] || 

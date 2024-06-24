@@ -14,7 +14,7 @@ function Room() {
     const socket = getSocket(type);
 
     useEffect(() => {
-        socket.sendRoomJoinMessage(id, title);
+        socket.sendRoomJoinMessage(myId, title);
     }, []);
     return (
         <div className="container-fluid" id="room-page">
@@ -32,7 +32,7 @@ function getRoomData() {
     const URLData = new URLSearchParams(queryString);
     const title = URLData.get('title');
     const type = URLData.get('type');
-    const myId = URLData.get('myId');
+    const myId = Number(URLData.get('myId'));
 
     return ([title, type, myId]);
 }

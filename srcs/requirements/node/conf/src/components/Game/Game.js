@@ -10,6 +10,7 @@ import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
 function Game({ data }) {
+    console.log("GamePage Data:", data);
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const [ game, setGame ] = useState(getInitialGameData());
     const [ players, setPlayers ] = useState([{}, {}]);

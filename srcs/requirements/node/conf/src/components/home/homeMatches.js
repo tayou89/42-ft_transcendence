@@ -2,8 +2,9 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
 function HomeMatches({ myId }) {
+    console.log("HomeMatches : ", myId);
 	const [rooms, setRooms] = useState([]);
-	const roomsInfoApiUrl = "http://localhost:8001/api/rooms";
+	const roomsInfoApiUrl = "http://localhost:8001/api/rooms/";
 	useEffect(() => {
 		fetch(roomsInfoApiUrl, {
 			method: 'GET',
@@ -43,7 +44,7 @@ function HomeMatches({ myId }) {
 					{rooms
 						.filter(room => room.cur_users !== room.max_users && room.in_game === false)
 						.map((room) => (
-							<HomeMatchInfo key={room.id} room={room} active={true} />
+							<HomeMatchInfo key={room.id} myId={myId} room={room} active={true} />
 						))}
 					{rooms
 						.filter(room => room.cur_users === room.max_users || room.in_game === true)
@@ -129,6 +130,7 @@ function CreateRoomModal({ myId }) {
 }
 
 function onClickEnterCreatedRoom(title, myId, type) {
+    console.log("Enter Room : ",myId);
 	navigate(`/room?title=${title}&myId=${myId}&type=${type}`);
 }
 

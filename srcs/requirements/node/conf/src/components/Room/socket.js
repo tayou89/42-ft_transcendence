@@ -14,12 +14,14 @@ class Socket {
     }
     sendRoomLeaveMessage() {
         this.#socket.emit(SOCKET.EVENT.LEAVE_ROOM);
+        console.log("Socket: leaving room message has been sent!");
     }
     sendKeyValue(value) {
         this.#socket.emit(SOCKET.EVENT.KEY, value);
     }
     sendReadyStatus(readyStatus) {
         this.#socket.emit(SOCKET.EVENT.READY, readyStatus);
+        console.log("Socket: Ready message has been sent!");
     }
     turnOnRoomChannel(currentPlayers, setPlayers) {
         this.#eventHandler.setRoomEvent(currentPlayers, setPlayers);
