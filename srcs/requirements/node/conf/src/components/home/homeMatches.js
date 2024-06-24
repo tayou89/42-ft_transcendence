@@ -43,12 +43,12 @@ function HomeMatches({ myId }) {
 					{rooms
 						.filter(room => room.cur_users !== room.max_users && room.in_game === false)
 						.map((room) => (
-							<HomeMatchInfo key={room.id} room={room} active={true} />
+							<HomeMatchInfo myId={myId} room={room} active={true} />
 						))}
 					{rooms
 						.filter(room => room.cur_users === room.max_users || room.in_game === true)
 						.map((room) => (
-							<HomeMatchInfo key={room.id} room={room} active={false} />
+							<HomeMatchInfo myId={myId} room={room} active={false} />
 						))}
 				</div>
 			</div>
