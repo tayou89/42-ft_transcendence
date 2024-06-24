@@ -18,7 +18,7 @@ class Pong(socketio.AsyncNamespace):
 	def __init__(self, namespace=None):
 		super().__init__(namespace)
 		self.field_list = ['p1', 'p2']
-		self.MAX_USER = 2
+		self.MAX_USERS = 2
  
 	async def on_connect(self, sid, environ):
 		pass
@@ -58,6 +58,27 @@ class Pong(socketio.AsyncNamespace):
              	namespace=self.namespace
             )
 
+	async def check_join(self, room, room_name, pid):
+		if room.cur_users == self.MAX_USERS:
+			await sio.emit(
+				'error',
+				self.rooms[room_name],
+				"room is full",
+				namespace=self.namespace
+			)
+			return False
+
+		for field in self.field_list:
+			if getattr(room, field, None) == pid:
+				await sio.emit(
+					'error',
+					self.rooms[room_name],
+					"already in room",
+					namespace=self.namespace
+				)
+				return False
+
+		return True
 
 	async def on_join_room(self, sid, message):
 		pid = message['pid']
@@ -65,7 +86,7 @@ class Pong(socketio.AsyncNamespace):
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
 
-		if room.cur_users == self.MAX_USER:
+		if not await self.check_join(room, room_name, pid):
 			return
 		
 		for field in self.field_list:
@@ -214,6 +235,5 @@ class Pong(socketio.AsyncNamespace):
 		game: GameState = self.games[room_name]
 		pid = self.rooms[room_name][info['me']]['pid']
 		game.set_player_dy(pid, message)
-
 
 sio.register_namespace(Pong('/api/pong'))
