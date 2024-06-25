@@ -225,7 +225,7 @@ export function useState(initial) {
   const setState = action => {
     const tmpRoot = {
       dom: currentRoot ? currentRoot.dom : wipRoot.dom,
-      props: currentRoot ? currentRoot.props: wipRoot.dom,
+      props: currentRoot ? currentRoot.props: wipRoot.props,
       alternate: currentRoot ? currentRoot: wipRoot,
     };
     if (!onUpdate) {
@@ -279,7 +279,7 @@ function updateHostComponent(fiber) {
   if (!fiber.dom) {
     fiber.dom = craeteDom(fiber);
   }
-  const elements = fiber.props.children;
+  const elements = [fiber.props.children];
   reconcileChildren(fiber, elements);
 }
 
