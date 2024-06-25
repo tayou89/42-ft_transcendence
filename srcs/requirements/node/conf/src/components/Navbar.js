@@ -3,6 +3,7 @@ import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "./utility/tokenRefreshAndGoTo.js";
 import fetchGetMyData from "./utility/fetchGetMyData.js";
+import fetchTokenRefresh from "./utility/fetchTokenRefresh.js";
 
 const defaultMyData = {
 	"id": 0,
@@ -33,36 +34,44 @@ function onClickLogout() {
 
 function Navbar({ position }) {
 	const [myData, setMyData] = MyReact.useState(defaultMyData);
-	const myDataApiUrl = "http://localhost:8000/api/me";
 
 	MyReact.useEffect(async () => {
 		try {
-			const myData = await fetchGetMyData();
+			const myUserData = await fetchGetMyData();
+			setMyData(() => myUserData);
 		} catch (error) {
-			console.log(error);
+			console.log(error)
+			if (error.reason === "access token refused") {
+				try {
+					const response = await fetchTokenRefresh();
+					console.log("navbar response: ", response);
+				} catch (error) {
+					navigate("/login");
+				}
+			}
 		}
 	}, [])
 
-	MyReact.useEffect(() => {
-		fetch(myDataApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => {
-				return response.json();
-			})
-			.then(data => {
-				if (data.detail) {
-					tokenRefreshAndGoTo(position);
-				} else {
-					setMyData(() => data);
-				}
-			})
-			.catch(error => {
-				console.log("in Navbar function", error);
-				navigate("/");
-			});
-	}, []);
+	// MyReact.useEffect(() => {
+	// 	fetch(myDataApiUrl, {
+	// 		method: 'GET',
+	// 		credentials: 'include'
+	// 	})
+	// 		.then(response => {
+	// 			return response.json();
+	// 		})
+	// 		.then(data => {
+	// 			if (data.detail) {
+	// 				tokenRefreshAndGoTo(position);
+	// 			} else {
+	// 				setMyData(() => data);
+	// 			}
+	// 		})
+	// 		.catch(error => {
+	// 			console.log("in Navbar function", error);
+	// 			navigate("/");
+	// 		});
+	// }, []);
 
 	return (
 		<div className="container-fluid bg-dark bg-opacity-75" style="user-select: none;">

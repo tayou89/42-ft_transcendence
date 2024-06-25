@@ -8,7 +8,7 @@ async function fetchGetMyData() {
 		});
 		if (response.status === 200) {
 			const data = await response.json();
-			return (data);
+			return data;
 		} else if (response.status == 401) {//access token 에러
 			return Promise.reject({ reason: "access token refused" });
 		} else {//unknown 에러
