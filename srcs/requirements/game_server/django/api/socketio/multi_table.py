@@ -77,11 +77,11 @@ class MttPong(Pong):
 			await sync_to_async(room.save)()
 
 			sub1_winner, sub2_winner = await asyncio.gather(
-				self.make_room_and_play('p1', 'p2', room_name, 'sub_1'),
-				self.make_room_and_play('p3', 'p4', room_name, 'sub_2')
+				self.make_room_and_play('p1', 'p2', room_name, '_sub1'),
+				self.make_room_and_play('p3', 'p4', room_name, '_sub2')
 			)
 
-			await asyncio.create_task(self.make_room_and_play(sub1_winner, sub2_winner, room_name, 'final'))
+			await asyncio.create_task(self.make_room_and_play(sub1_winner, sub2_winner, room_name, '_final'))
    
 			await sync_to_async(room.delete)()
 			self.rooms.pop(room_name)
