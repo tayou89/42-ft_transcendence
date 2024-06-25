@@ -13,7 +13,6 @@ from .pong import Pong
 
 class MttPong(Pong):
 	
-	sub_games = {}
 	sessions = {}
 	
 	def __init__(self, namespace=None):
@@ -30,15 +29,15 @@ class MttPong(Pong):
   
 		if me == 'p1' or me == 'p2':
 			sub_game  = self.sub_games.get(room_name + "_sub1", None)
-			if sub_game is not None:
+			if sub_game:
 				sub_game.pop(me)
 		else:
 			sub_game  = self.sub_games.get(room_name + "_sub2", None)
-			if sub_game is not None:
+			if sub_game:
 				sub_game.pop(me)
 
 		sub_game  = self.sub_games.get(room_name + "_sub3", None)
-		if sub_game is not None:
+		if sub_game:
 			sub_game.pop(me)
 
 
@@ -72,10 +71,22 @@ class MttPong(Pong):
 				break;
   
 		if flag:
+			cur_sesseion = self.session[room_name]
 			await asyncio.create_task(self.play_pong(room_name))
 
-	async def make_room_and_play(self, room, room_name):
-		pass
+	async def make_room_and_play(self, session, room_name):
+		await self.enter_room(session['p1'], room_name + 'sub_1')
+		await self.save_session(session['p1'], {'me': 'p1', 'room': room_name + 'sub_1'})
+		await self.enter_room(session['p2'], room_name + 'sub_1')
+		await self.save_session(session['p2'], {'me': 'p2', 'room': room_name + 'sub_1'})
+		await self.enter_room(session['p3'], room_name + 'sub_2')
+		await self.save_session(session['p3'], {'me': 'p3', 'room': room_name + 'sub_2'})
+		await self.enter_room(session['p4'], room_name + 'sub_2')
+		await self.save_session(session['p4'], {'me': 'p4', 'room': room_name + 'sub_2'})
+
+		await asyncio.create_task(self.play_pong(room_name + 'sub_1', session['p1'], session['p2']))
+		await asyncio.create_task(self.play_pong(room_name + 'sub_2', session['p3'], session['p4']))
+
 
 	async def play_pong(self, room_name, p1_pid, p2_pid):
 		game = self.games[room_name] = GameState()
@@ -113,8 +124,12 @@ class MttPong(Pong):
 			namespace=self.namespace
 		)
 
-		await self.save_result(self.rooms[room_name], game)
-		cur_room = Room.objects.get(name=room_name)
-		cur_room.delete()
+
+	async def on_key(self, sid, message):
+		info = await self.get_session(sid)
+		room_name = info.get('room')
+  
+		game: GameState = self.games[room_name]
+		game.set_player_dy(sid, message)
 
 sio.register_namespace(MttPong('/api/mtt'))
