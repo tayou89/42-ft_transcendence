@@ -13,6 +13,7 @@ from .pong import Pong
 
 class MttPong(Pong):
 	
+	sub_games = {}
 	sessions = {}
 	
 	def __init__(self, namespace=None):
@@ -71,38 +72,92 @@ class MttPong(Pong):
 				break;
   
 		if flag:
-			cur_sesseion = self.session[room_name]
-			await asyncio.create_task(self.play_pong(room_name))
+			room = Room.objects.get(name=room_name)
+			room.in_game = True
+			await sync_to_async(room.save)()
 
-	async def make_room_and_play(self, session, room_name):
-		await self.enter_room(session['p1'], room_name + 'sub_1')
-		await self.save_session(session['p1'], {'me': 'p1', 'room': room_name + 'sub_1'})
-		await self.enter_room(session['p2'], room_name + 'sub_1')
-		await self.save_session(session['p2'], {'me': 'p2', 'room': room_name + 'sub_1'})
-		await self.enter_room(session['p3'], room_name + 'sub_2')
-		await self.save_session(session['p3'], {'me': 'p3', 'room': room_name + 'sub_2'})
-		await self.enter_room(session['p4'], room_name + 'sub_2')
-		await self.save_session(session['p4'], {'me': 'p4', 'room': room_name + 'sub_2'})
+			sub1_winner, sub2_winner = await asyncio.gather(
+				self.make_room_and_play('p1', 'p2', room_name, 'sub_1'),
+				self.make_room_and_play('p3', 'p4', room_name, 'sub_2')
+			)
 
-		await asyncio.create_task(self.play_pong(room_name + 'sub_1', session['p1'], session['p2']))
-		await asyncio.create_task(self.play_pong(room_name + 'sub_2', session['p3'], session['p4']))
+			await asyncio.create_task(self.make_room_and_play(sub1_winner, sub2_winner, room_name, 'final'))
+   
+			await sync_to_async(room.delete)()
+			self.rooms.pop(room_name)
+			self.session.pop(room_name)
+
+
+
+	async def make_room_and_play(self, p1, p2, room_name, room_num):
+		session = self.session[room_name]
+
+		await self.enter_room(session[p1], room_name + room_num)
+		await self.save_session(session[p1], {'me': 'p1', 'room': room_name + room_num})
+
+		await self.enter_room(session[p2], room_name + room_num)
+		await self.save_session(session[p2], {'me': 'p2', 'room': room_name + room_num})
+  
+		self.sub_games[room_name + room_num ] = {
+	  		'p1': self.rooms[room_name][p1], 
+			'p2': self.rooms[room_name][p2],
+		}
+
+		winner = await asyncio.create_task(self.play_pong(room_name + room_num, session[p1], session[p2]))
+  
+		await self.leave_room(session[p1], room_name + room_num)
+		await self.leave_room(session[p2], room_name + room_num)
+		self.sub_games.pop(room_name + room_num)
+  
+		winner_data = {}
+  
+		if winner == 'p1':
+			winner_data = self.rooms[room_name][p1]
+			await self.save_session(session[p2], {})
+			winner = p1
+		else:
+			winner_data = self.rooms[room_name][p2]
+			await self.save_session(session[p1], {})
+			winner = p2
+   
+		if room_num != 'final':
+			final_room = self.sub_games.get(room_name + 'final', None)
+			if not final_room:
+				final_room = self.sub_games[room_name + 'final'] = {} 
+	
+			for pnum in ['p1', 'p2']:
+				if not final_room.get(pnum, None):
+					final_room[pnum] = winner_data
+					break
+		
+			await sio.emit(
+				'room',
+				final_room,
+				room=room_name,
+				namespace=self.namespace
+			)
+	
+		return winner
 
 
 	async def play_pong(self, room_name, p1_pid, p2_pid):
 		game = self.games[room_name] = GameState()
-		game.p1_pid = self.rooms[room_name]['p1']['pid']
-		game.p2_pid = self.rooms[room_name]['p2']['pid']
-  
-		room_db = await sync_to_async(Room.objects.get)(name=room_name)
-		room_db.in_game = True
-		await sync_to_async(room_db.save)()
+		game.p1_pid = p1_pid
+		game.p2_pid = p2_pid
   
 		await sio.sleep(5)
+  
+		await sio.emit(
+			'room',
+			self.sub_games[room_name],
+			room=room_name,
+			namespace=self.namespace
+		)
 		
 		while game.status != 'end':
-			
+	  
 			if len(self.rooms[room_name]) != 2:
-				if 'p1' in self.rooms[room_name]:
+				if 'p1' in self.sub_games[room_name]:
 					game.unearned_win('p1')
 				else:
 					game.unearned_win('p2')
@@ -123,6 +178,11 @@ class MttPong(Pong):
 			room=room_name,
 			namespace=self.namespace
 		)
+  
+		if game.get_result()['p1'] == "win":
+			return "p1"
+		else:
+			return "p2"
 
 
 	async def on_key(self, sid, message):

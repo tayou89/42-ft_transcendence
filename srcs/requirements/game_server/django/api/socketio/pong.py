@@ -182,7 +182,8 @@ class Pong(socketio.AsyncNamespace):
 		room_db.in_game = True
 		await sync_to_async(room_db.save)()
   
-		await sio.sleep(5)
+		await sio.sleep(6)
+		await self.emit('room', self.rooms[room_name], room=room_name, namespace=self.namespace)
 		
 		while game.status != 'end':
 			
