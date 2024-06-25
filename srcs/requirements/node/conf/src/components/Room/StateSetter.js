@@ -24,7 +24,7 @@ class StateSetter {
          }));
     }
     setGameResult(newGameResult, setGameResult) {
-        setGameResult((prev) => ({ ...prev, newGameResult }));
+        setGameResult((prev) => ({ ...prev, ...newGameResult }));
     }
     #getNewPlayers(prev, index, readyStatus) {
        const newArray = prev.map((player, i) => {
