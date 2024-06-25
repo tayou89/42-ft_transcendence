@@ -164,10 +164,10 @@ function workLoop() {
   });
   setStateQueue.length = 0;
   onUpdate = false;
-  requestAnimationFrame(workLoop);
+  setTimeout(workLoop, 20);
 }
 //requestIdleCallback()는 콜스택이 비어있을 경우(idle 상태) 콜백실행
-requestAnimationFrame(workLoop);
+setTimeout(workLoop, 20);
 
 function performUnitOfWork(fiber) {
   const isFunctionComponent = fiber.type instanceof Function;
