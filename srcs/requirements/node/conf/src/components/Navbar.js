@@ -2,6 +2,7 @@ import MyReact from "../MyReact/MyReact.js";
 import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "./utility/tokenRefreshAndGoTo.js";
+import fetchGetMyData from "./utility/fetchGetMyData.js";
 
 const defaultMyData = {
 	"id": 0,
@@ -33,6 +34,14 @@ function onClickLogout() {
 function Navbar({ position }) {
 	const [myData, setMyData] = MyReact.useState(defaultMyData);
 	const myDataApiUrl = "http://localhost:8000/api/me";
+
+	MyReact.useEffect(async () => {
+		try {
+			const myData = await fetchGetMyData();
+		} catch (error) {
+			console.log(error);
+		}
+	}, [])
 
 	MyReact.useEffect(() => {
 		fetch(myDataApiUrl, {

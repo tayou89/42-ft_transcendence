@@ -2,7 +2,6 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
 function HomeMatches({ myId }) {
-    console.log("HomeMatches : ", myId);
 	const [rooms, setRooms] = useState([]);
 	const roomsInfoApiUrl = "http://localhost:8001/api/rooms/";
 	useEffect(() => {
@@ -11,11 +10,9 @@ function HomeMatches({ myId }) {
 			credentials: 'include'
 		})
 			.then(response => {
-				console.log(response);
 				return response.json();
 			})
 			.then(data => {
-				console.log("well done", data);
 				setRooms(() => data);
 			})
 			.catch(error => {
