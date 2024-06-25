@@ -1,3 +1,4 @@
+import logging
 import httpx
 import socketio
 import asyncio
@@ -12,13 +13,12 @@ from asgiref.sync import sync_to_async
 class Pong(socketio.AsyncNamespace):
 	
 	rooms = {}
-	locker = {}
 	games = {}
 	
 	def __init__(self, namespace=None):
 		super().__init__(namespace)
 		self.field_list = ['p1', 'p2']
-		self.MAX_USER = 2
+		self.MAX_USERS = 2
  
 	async def on_connect(self, sid, environ):
 		pass
@@ -58,6 +58,27 @@ class Pong(socketio.AsyncNamespace):
              	namespace=self.namespace
             )
 
+	async def check_join(self, room, pid, sid):
+		# if room.cur_users == self.MAX_USERS:
+		# 	await sio.emit(
+		# 		'error',
+		# 		"room is full",
+		# 		room=sid,
+		# 		namespace=self.namespace
+		# 	)
+		# 	return False
+
+		# for field in self.field_list:
+		# 	if getattr(room, field, None) == int(pid):
+		# 		await sio.emit(
+		# 			'error',
+		# 			"already in room",
+		# 			room=sid,
+		# 			namespace=self.namespace
+		# 		)
+		# 		return False
+
+		return True
 
 	async def on_join_room(self, sid, message):
 		pid = message['pid']
@@ -65,7 +86,7 @@ class Pong(socketio.AsyncNamespace):
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
 
-		if room.cur_users == self.MAX_USER:
+		if not await self.check_join(room, pid, sid):
 			return
 		
 		for field in self.field_list:
@@ -76,7 +97,6 @@ class Pong(socketio.AsyncNamespace):
 		room.cur_users += 1
 		await sync_to_async(room.save)()
 
-  
 		await self.enter_room(sid, room_name)
   
 		cur_room = self.rooms.get(room_name, None)
@@ -99,6 +119,7 @@ class Pong(socketio.AsyncNamespace):
 				room=room_name,
 				namespace=self.namespace
 		)
+      
 
 
 	async def on_leave_room(self, sid):
@@ -153,6 +174,7 @@ class Pong(socketio.AsyncNamespace):
 			await asyncio.create_task(self.play_pong(room_name))
 
 
+
 	async def play_pong(self, room_name):
 		game = self.games[room_name] = GameState()
 		game.p1_pid = self.rooms[room_name]['p1']['pid']
@@ -162,7 +184,8 @@ class Pong(socketio.AsyncNamespace):
 		room_db.in_game = True
 		await sync_to_async(room_db.save)()
   
-		await sio.sleep(5)
+		await sio.sleep(6)
+		await self.emit('room', self.rooms[room_name], room=room_name, namespace=self.namespace)
 		
 		while game.status != 'end':
 			
@@ -189,21 +212,31 @@ class Pong(socketio.AsyncNamespace):
 			namespace=self.namespace
 		)
 
-		await self.save_result(self.rooms[room_name], game)
-		cur_room = Room.objects.get(name=room_name)
-		cur_room.delete()
+		await self.save_result(room_name, game)
    
-	async def save_result(self, room, game: GameState):
-	
+	async def save_result(self, room_name, game: GameState):
+		room = await sync_to_async(Room.objects.get)(name=room_name)
+ 
 		body = {
-			"p1": room['p1']['pid'],
-			"p2": room['p2']['pid'],
+			"p1": room.p1,
+			"p2": room.p2,
 			"p1_score": game.score[0],
 			"p2_score": game.score[1],
 		}
   
+		await sync_to_async(room.delete)()
+  
 		async with httpx.AsyncClient() as client:
-			await client.post("http://localhost:8000/api/matches", json=body)
+			try:
+				response = await client.post("http://localhost:8000/api/matches/", json=body)
+				response.raise_for_status()  # 이를 통해 HTTP 에러 발생 시 예외를 발생시킵니다
+				logging.debug(f'------------------ {response.status_code} ------------------------')
+			except httpx.HTTPStatusError as exc:
+				logging.error(f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}")
+			except httpx.RequestError as exc:
+				logging.error(f"Request failed: {exc}")
+			except Exception as exc:
+				logging.error(f"An error occurred: {exc}")
 		
 
 
@@ -214,6 +247,5 @@ class Pong(socketio.AsyncNamespace):
 		game: GameState = self.games[room_name]
 		pid = self.rooms[room_name][info['me']]['pid']
 		game.set_player_dy(pid, message)
-
 
 sio.register_namespace(Pong('/api/pong'))
