@@ -1,4 +1,4 @@
-import { MyReact } from "../../MyReact/MyReact.js";
+import { useEffect, MyReact } from "../../MyReact/MyReact.js";
 import { GAME } from "./constant.js";
 import EventHandler from "../Room/EventHandler.js";
 import "../../css/game/result-popup.css";
@@ -6,6 +6,7 @@ import "../../css/game/result-popup.css";
 
 function ResultPopUp({ gameResult, data, players }) {
     const myResult = getMyResult(gameResult, data.myId, players);
+    console.log("myResult:", myResult);
     const resultText = getResultText(myResult);
 
     if (!Object.keys(gameResult).length)
@@ -13,7 +14,7 @@ function ResultPopUp({ gameResult, data, players }) {
     useEffect(() => {
         const eventHandler = new EventHandler();
 
-        eventHandler.addGameEndEvent(myResult, gameData);
+        eventHandler.addGameEndEvent(myResult, data);
         return (() => eventHandler.removeGameEndEvent());
     }, []);
     return (
@@ -24,8 +25,10 @@ function ResultPopUp({ gameResult, data, players }) {
 }
 
 function getMyResult(gameResult, myId, players) {
+    console.log("gameResult, myId, Players: ", gameResult, myId, players);
     const myPosition = getMyPosition(myId, players);
 
+    console.log("myPosition:", myPosition);
     if (myPosition === GAME.POSITION.LEFT)
         return (gameResult.p1);
     else

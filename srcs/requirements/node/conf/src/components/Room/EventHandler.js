@@ -56,17 +56,17 @@ class EventHandler {
     }
     #setGameEndEvent(myResult, gameData) {
         if (gameData.type === GAME.TYPE.PONG)
-            this.#gameEndEvent = () => { navigate("/main") };
+            this.#gameEndEvent = () => { navigate("/home") };
         else {
             if (gameData.gameRound >= 2)
-                this.#gameEndEvent = () => { navigate("/main") };
+                this.#gameEndEvent = () => { navigate("/home") };
             if (myResult === GAME.RESULT.WIN) {
                 this.#gameEndEvent = () => { 
                     navigate("/game", { data: { ...gameData, gameRound: gameData.gameRound + 1 } });
                 };
             }
             else
-                this.#gameEndEvent = () => { navigate("/main") };
+                this.#gameEndEvent = () => { navigate("/home") };
         }
     }
     get roomEvent() {

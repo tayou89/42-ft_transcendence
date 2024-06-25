@@ -7,12 +7,10 @@ class StateSetter {
         const promises = []; 
 
         players.forEach((newPlayer, index) => {
-            // if (newPlayer?.pid !== currentPlayers[index]?.id)
                 promises.push(Fetch.setUserData(playerSetter, newPlayer.pid, index));
         });
         await Promise.all(promises);
         players.forEach((newPlayer, index) => {
-            console.log("Ready setting time:", newPlayer, currentPlayers);
             if (newPlayer.pid && (newPlayer.ready !== currentPlayers[index]?.ready))
                 playerSetter((prev) => this.#getNewPlayers(prev, index, newPlayer.ready));
         });
