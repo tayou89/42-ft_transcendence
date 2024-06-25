@@ -6,15 +6,16 @@ class Fetch {
     static async setUserData(setFunction, userId = 0, index = -1) {
         const userData = await Fetch.userData(userId);
 
+		console.log(userData, index);
         if (index >= 0) 
             setFunction((prev) => (setArray(prev, userData, index)));
         else
             setFunction((prev) => (setObject(prev, userData)));
     }
     static async userData(id) {
-        if (!id)
-            throw Error(`Fetch.userData: id doesn't exist: ${id}`);
         try {
+			if (!id)
+				throw Error(`Fetch.userData: id doesn't exist: ${id}`);
             const path = id === "me" ? `/api/${id}` : `/api/users/${id}`;
             const url = `${URL_PATH.BACK_API}${path}`;
             const details = { method: 'GET', credentials: 'include' };
@@ -30,6 +31,7 @@ class Fetch {
         }
         catch (error) {
             console.error("Error", error);
+			return (null);
         }
     }
     static async #photoURL(path) {
@@ -57,6 +59,7 @@ function setArray(prev, data, index) {
         newArray[index] = {};
     else
         newArray[index] = data;
+	console.log("newArray:", newArray);
     return (newArray);
 }
 

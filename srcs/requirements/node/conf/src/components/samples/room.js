@@ -14,7 +14,6 @@ function Room() {
                 isHostSet(_ => data.is_host);
             });
     }, []);
-
     return (
         <div>
             <h3>{roomCode}</h3>

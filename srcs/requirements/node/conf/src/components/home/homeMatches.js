@@ -2,6 +2,7 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 
 function HomeMatches({ myId }) {
+    console.log("HomeMatches : ", myId);
 	const [rooms, setRooms] = useState([]);
 	const roomsInfoApiUrl = "http://localhost:8001/api/rooms/";
 	useEffect(() => {

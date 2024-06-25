@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { GAME_TYPE } from "../Game/constant.js";
+import { GAME } from "../Game/constant.js";
 import "../../css/room/title.css";
 
 function Title({ title, type } ) {
@@ -14,7 +14,7 @@ function Title({ title, type } ) {
 }
 
 function getGameType(type) {
-    if (type === GAME_TYPE.PONG)
+    if (type === GAME.TYPE.PONG)
         return ("1 vs 1");
     else
         return ("Tournament");

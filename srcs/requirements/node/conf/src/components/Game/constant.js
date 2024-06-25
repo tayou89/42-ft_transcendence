@@ -52,20 +52,20 @@ export const KEY = {
     }
 }
 
-export const GAME_TYPE = {
-    PONG: "pong",
-    MTT: "mtt",
+export const GAME = {
+    TYPE: {
+        PONG: "pong",
+        MTT: "mtt",
+    },
+    POSITION: {
+        LEFT: "left",
+        RIGHT: "right",
+    },
+    RESULT: {
+        WIN: "win",
+        LOSE: "lose",
+    },
 };
-
-export const GAME_POSITION = {
-    LEFT: "left",
-    RIGHT: "right",
-}
-
-export const GAME_RESULT = {
-    WIN: "win",
-    LOSE: "lose",
-}
 
 const DEFAULT_URL = "http://localhost";
 

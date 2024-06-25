@@ -1,19 +1,18 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-import { GAME_TYPE, GAME_POSITION } from "../Game/constant.js";
+import { GAME } from "../Game/constant.js";
 import PlayerSlot from "./PlayerSlot.js";
 import CountDown  from "./CountDown.js";
 import "../../css/room/room.css";
 
-export function Player({ type, socket, id }) {
+export function Player({ type, socket, myId }) {
     const [ players, setPlayers ] = useState(getDefaultPlayers(type));
     const [ count, setCount ] = useState(5);
-    const playerPosition = getPlayerPosition(id, players);
 
     if (count <= 0)
-        navigate("/game", { socket, playerPosition });
+        navigate("/game", { data: { socket, type, myId, gameRound: 1 }} );
     useEffect(() => {
-        socket.turnOnRoomChannel(players, setPlayers);
+    	socket.turnOnRoomChannel(players, setPlayers);
         return (() => socket.turnOffRoomChannel());
     }, []);
     useEffect(() => {
@@ -23,14 +22,14 @@ export function Player({ type, socket, id }) {
     }, [players, count]);
     return (
         <div className="row" id={ getElementId(type) }>
-            { getPlayerSlots(players, type, socket, id) }
+            { getPlayerSlots(players, type, socket, myId) }
             { getCountDown(players, count) }
         </div>
     );
 }
 
 function getDefaultPlayers(type) {
-    if (type === GAME_TYPE.PONG)
+    if (type === GAME.TYPE.PONG)
         return ([{}, {}]);
     else
         return ([{}, {}, {}, {}]);
@@ -43,7 +42,7 @@ function isAllReady(players) {
 }
 
 function getElementId(type) {
-    if (type === GAME_TYPE.PONG)
+    if (type === GAME.TYPE.PONG)
         return ("player-pong");
     else
         return ("player-mtt");
@@ -81,15 +80,5 @@ function getCountDown(players, count) {
     else
         return (null); 
 }
-
-function getPlayerPosition(id, players) {
-    const myPlayerSlotNumber = (players.findIndex(player => player.id === id)) + 1;
-
-    if (myPlayerSlotNumber % 2 === 1)
-        return (GAME_POSITION.LEFT)
-    else
-        return (GAME_POSITION.RIGHT)
-}
-
 
 export default Player;
