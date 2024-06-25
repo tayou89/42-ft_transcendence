@@ -9,6 +9,8 @@ import EventHandler from "../Room/EventHandler.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
+const eventHandler = new EventHandler();
+
 function Game({ data }) {
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const [ game, setGame ] = useState(getInitialGameData());
@@ -17,7 +19,6 @@ function Game({ data }) {
     const socket = data.socket;
 
     useEffect(() => {
-        const eventHandler = new EventHandler();
 
         console.log("=================This is Game Page==================");
         eventHandler.addKeyEvent(socket);

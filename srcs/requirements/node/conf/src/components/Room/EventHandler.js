@@ -40,12 +40,16 @@ class EventHandler {
     }
     removeGameEndEvent() {
         document.removeEventListener("click", this.#gameEndEvent);
-        document.addEventListener("keydown", this.#gameEndEvent);
+        document.removeEventListener("keydown", this.#gameEndEvent);
     }
     #setKeyDownEvent(socket) {
         this.#keyDownEvent = (event) => {
             if (event.repeat)
                 return ;
+            if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                console.log("This is Arrow Key!!!");
+                event.preventDefault();
+            }
             if (KEY.UP.includes(event.key))
                 socket.sendKeyValue(KEY.VALUE.UP);
             else if (KEY.DOWN.includes(event.key))
