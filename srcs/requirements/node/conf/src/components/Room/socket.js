@@ -1,5 +1,5 @@
 import {io} from "socket.io-client";
-import { GAME_TYPE, SOCKET, URL_PATH } from "../Game/constant.js";
+import { GAME, SOCKET, URL_PATH } from "../Game/constant.js";
 import EventHandler from "./EventHandler.js";
 
 class Socket {
@@ -21,22 +21,22 @@ class Socket {
     sendReadyStatus(readyStatus) {
         this.#socket.emit(SOCKET.EVENT.READY, readyStatus);
     }
-    turnOnRoomChannel(currentPlayers, setPlayers) {
-        this.#eventHandler.setRoomEvent(currentPlayers, setPlayers);
+    turnOnRoomChannel(setPlayers) {
+        this.#eventHandler.setRoomEvent(setPlayers);
         this.#socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
     turnOffRoomChannel() {
         this.#socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
-    turnOnGameChannel(currentGameData, setGameData) {
-        this.#eventHandler.setGameEvent(currentGameData, setGameData);
+    turnOnGameChannel(setGameData) {
+        this.#eventHandler.setGameEvent(setGameData);
         this.#socket.on(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
     }
     turnOffGameChannel() {
         this.#socket.off(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
     }
-    turnOnResultChannel(playerPosition, setGameResult) {
-        this.#eventHandler.setResultEvent(playerPosition, setGameResult);
+    turnOnResultChannel(setGameResult) {
+        this.#eventHandler.setResultEvent(setGameResult);
         this.#socket.on(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
     }
     turnOffResultChannel() {
@@ -48,7 +48,7 @@ class Socket {
         return (socketOption);
     }
     #setSocket(gameType, socketOption) {
-        if (gameType === GAME_TYPE.PONG)
+        if (gameType === GAME.TYPE.PONG)
             this.#socket = io(URL_PATH.SOCKET.PONG, socketOption);
         else
             this.#socket = io(URL_PATH.SOCKET.MTT, socketOption);
@@ -57,7 +57,7 @@ class Socket {
     #eventHandler;
 }
 
-export const pongSocket = new Socket(GAME_TYPE.PONG);
-export const mttSocket = new Socket(GAME_TYPE.MTT);
+export const pongSocket = new Socket(GAME.TYPE.PONG);
+export const mttSocket = new Socket(GAME.TYPE.MTT);
 
 export default Socket;

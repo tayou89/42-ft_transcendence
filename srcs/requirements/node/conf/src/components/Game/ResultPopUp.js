@@ -1,12 +1,22 @@
-import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { GAME_RESULT } from "./constant.js";
+import { useEffect, MyReact } from "../../MyReact/MyReact.js";
+import { GAME } from "./constant.js";
+import EventHandler from "../Room/EventHandler.js";
 import "../../css/game/result-popup.css";
 
-function ResultPopUp({ result }) {
-    if (result === "")
-        return (null);
-    const resultText = getResultText(result);
 
+function ResultPopUp({ gameResult, data, players }) {
+    const myResult = getMyResult(gameResult, data.myId, players);
+    console.log("myResult:", myResult);
+    const resultText = getResultText(myResult);
+
+    if (!Object.keys(gameResult).length)
+        return (null);
+    useEffect(() => {
+        const eventHandler = new EventHandler();
+
+        eventHandler.addGameEndEvent(myResult, data);
+        return (() => eventHandler.removeGameEndEvent());
+    }, []);
     return (
         <div id="result-text-box">
             <div id="result-text">{ resultText }</div>
@@ -14,11 +24,31 @@ function ResultPopUp({ result }) {
     );
 }
 
-function getResultText(result) {
-    if (result === GAME_RESULT.WIN)
+function getMyResult(gameResult, myId, players) {
+    console.log("gameResult, myId, Players: ", gameResult, myId, players);
+    const myPosition = getMyPosition(myId, players);
+
+    console.log("myPosition:", myPosition);
+    if (myPosition === GAME.POSITION.LEFT)
+        return (gameResult.p1);
+    else
+        return (gameResult.p2);
+}
+
+function getResultText(myResult) {
+    if (myResult === GAME.RESULT.WIN)
         return ("You Win!");
     else
         return ("You Lose");
+}
+
+function getMyPosition(myId, players) {
+    const myIndex = players.findIndex(player => player.id === myId);
+
+    if (myIndex === 0)
+        return (GAME.POSITION.LEFT);
+    else
+        return (GAME.POSITION.RIGHT);
 }
 
 export default ResultPopUp;

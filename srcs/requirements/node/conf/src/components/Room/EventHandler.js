@@ -1,29 +1,26 @@
-import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { MyReact } from "../../MyReact/MyReact.js";
+import { navigate } from "../../MyReact/MyReactRouter.js";
+import { KEY, GAME } from "../Game/constant.js";
 import StateSetter from "./StateSetter.js";
-import { KEY } from "../Game/constant.js";
 
 class EventHandler {
     constructor (){
         this.#stateSetter = new StateSetter();
     }
-    setRoomEvent(currentPlayers, setPlayers) {
+    setRoomEvent(setPlayers) {
         this.#roomEvent = async (newPlayers) => {
-            console.log("Room event occured!", "player:", newPlayers);
-            await this.#stateSetter.setPlayers(newPlayers, currentPlayers, setPlayers);
+			console.log("Room Event Occured:", newPlayers);
+            await this.#stateSetter.setPlayers(newPlayers, setPlayers);
         };
     }
-    setGameEvent(currentGameData, setGameData) {
+    setGameEvent(setGameData) {
         this.#gameEvent = (newGameData)  => {
-            this.#stateSetter.setGameData(newGameData, currentGameData, setGameData);
+            this.#stateSetter.setGameData(newGameData, setGameData);
         };
     }
-    setResultEvent(playerPosition, setGameResult) {
+    setResultEvent(setGameResult) {
         this.#resultEvent = (newGameResult) => {
-            const clickEvent = () => navigate("/main");
-
-            this.#stateSetter.setGameResult(newGameResult, playerPosition, setGameResult);
-            document.addEventListener("click", clickEvent);
-            return (() => document.removeEventListener("click", clickEvent));
+            this.#stateSetter.setGameResult(newGameResult, setGameResult);
         };
     }
     addKeyEvent(socket) {
@@ -32,9 +29,16 @@ class EventHandler {
         document.addEventListener("keydown", this.#keyDownEvent);
         document.addEventListener("keyup", this.#keyUpEvent);
     }
+    addGameEndEvent(myResult, gameData) {
+        this.#setGameEndEvent(myResult, gameData);
+        document.addEventListener("click", this.#gameEndEvent);
+    }
     removeKeyEvent() {
         document.removeEventListener("keydown", this.#keyDownEvent);
         document.removeEventListener("keyup", this.#keyUpEvent);
+    }
+    removeGameEndEvent() {
+        document.removeEventListener("click", this.#gameEndEvent);
     }
     #setKeyDownEvent(socket) {
         this.#keyDownEvent = (event) => {
@@ -49,6 +53,21 @@ class EventHandler {
             if (KEY.UP.includes(event.key) || KEY.DOWN.includes(event.key))
                 socket.sendKeyValue(KEY.VALUE.NONE);
         };
+    }
+    #setGameEndEvent(myResult, gameData) {
+        if (gameData.type === GAME.TYPE.PONG)
+            this.#gameEndEvent = () => { navigate("/home") };
+        else {
+            if (gameData.gameRound >= 2)
+                this.#gameEndEvent = () => { navigate("/home") };
+            if (myResult === GAME.RESULT.WIN) {
+                this.#gameEndEvent = () => { 
+                    navigate("/game", { data: { ...gameData, gameRound: gameData.gameRound + 1 } });
+                };
+            }
+            else
+                this.#gameEndEvent = () => { navigate("/home") };
+        }
     }
     get roomEvent() {
         return (this.#roomEvent);
@@ -65,11 +84,15 @@ class EventHandler {
     get resultEvent() {
         return (this.#resultEvent);
     }
+    get gameEndEvent() {
+        return (this.#gameEndEvent);
+    }
     #roomEvent;
     #gameEvent;
     #resultEvent;
     #keyDownEvent;
     #keyUpEvent;
+    #gameEndEvent;
     #stateSetter;
 }
 
