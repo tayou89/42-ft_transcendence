@@ -228,7 +228,7 @@ class Pong(socketio.AsyncNamespace):
   
 		async with httpx.AsyncClient() as client:
 			try:
-				response = await client.post("http://localhost:8000/api/matches/", json=body)
+				response = await client.post("http://userserver:8000/api/matches/", json=body)
 				response.raise_for_status()  # 이를 통해 HTTP 에러 발생 시 예외를 발생시킵니다
 				logging.debug(f'------------------ {response.status_code} ------------------------')
 			except httpx.HTTPStatusError as exc:

@@ -14,7 +14,7 @@ from .pong import Pong
 class MttPong(Pong):
 	
 	sub_games = {}
-	sessions = {}
+	player_sessions = {}
 	
 	def __init__(self, namespace=None):
 		super().__init__(namespace)
@@ -22,7 +22,7 @@ class MttPong(Pong):
 		self.MAX_USER = 4
 
 	async def on_disconnect(self, sid):
-		super().on_disconnect(sid)
+		await super().on_disconnect(sid)
 		
 		info = await self.get_session(sid)
 		room_name = info.get('room')
@@ -43,14 +43,14 @@ class MttPong(Pong):
 
 
 	async def on_join_room(self, sid, message):
-		super().on_join_room(sid, message)
+		await super().on_join_room(sid, message)
 		
 		room_name = message['room']
-		room_sessions = self.session.get(room_name, None)
+		room_sessions = self.player_sessions.get(room_name, None)
 		if room_sessions is None:
-			room_sessions = self.session[room_name] = {}
+			room_sessions = self.player_sessions[room_name] = {}
 
-		session_data = await sio.get_session(sid)
+		session_data = await self.get_session(sid)
 		room_sessions[session_data['me']] = sid
 
 
@@ -72,7 +72,7 @@ class MttPong(Pong):
 				break;
   
 		if flag:
-			room = Room.objects.get(name=room_name)
+			room = await sync_to_async(Room.objects.get)(name=room_name)
 			room.in_game = True
 			await sync_to_async(room.save)()
 
@@ -85,12 +85,12 @@ class MttPong(Pong):
    
 			await sync_to_async(room.delete)()
 			self.rooms.pop(room_name)
-			self.session.pop(room_name)
+			self.player_sessions.pop(room_name)
 
 
 
 	async def make_room_and_play(self, p1, p2, room_name, room_num):
-		session = self.session[room_name]
+		session = self.player_sessions[room_name]
 
 		await self.enter_room(session[p1], room_name + room_num)
 		await self.save_session(session[p1], {'me': 'p1', 'room': room_name + room_num})
@@ -156,7 +156,7 @@ class MttPong(Pong):
 		
 		while game.status != 'end':
 	  
-			if len(self.rooms[room_name]) != 2:
+			if len(self.sub_games[room_name]) != 2:
 				if 'p1' in self.sub_games[room_name]:
 					game.unearned_win('p1')
 				else:
