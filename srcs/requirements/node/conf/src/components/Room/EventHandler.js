@@ -32,6 +32,7 @@ class EventHandler {
     addGameEndEvent(myResult, gameData) {
         this.#setGameEndEvent(myResult, gameData);
         document.addEventListener("click", this.#gameEndEvent);
+        document.addEventListener("keydown", this.#gameEndEvent);
     }
     removeKeyEvent() {
         document.removeEventListener("keydown", this.#keyDownEvent);
@@ -39,9 +40,12 @@ class EventHandler {
     }
     removeGameEndEvent() {
         document.removeEventListener("click", this.#gameEndEvent);
+        document.addEventListener("keydown", this.#gameEndEvent);
     }
     #setKeyDownEvent(socket) {
         this.#keyDownEvent = (event) => {
+            if (event.repeat)
+                return ;
             if (KEY.UP.includes(event.key))
                 socket.sendKeyValue(KEY.VALUE.UP);
             else if (KEY.DOWN.includes(event.key))
