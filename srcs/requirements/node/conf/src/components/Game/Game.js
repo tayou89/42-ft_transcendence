@@ -19,9 +19,10 @@ function Game({ data }) {
     useEffect(() => {
         const eventHandler = new EventHandler();
 
-        eventHandler.addKeyEvent(data.socket);
-        socket.turnOnRoomChannel(players, setPlayers);
-        socket.turnOnGameChannel(game, setGame);
+        console.log("=================This is Game Page==================");
+        eventHandler.addKeyEvent(socket);
+        socket.turnOnRoomChannel(setPlayers);
+        socket.turnOnGameChannel(setGame);
         socket.turnOnResultChannel(setGameResult);
         return (() => {
             eventHandler.removeKeyEvent();

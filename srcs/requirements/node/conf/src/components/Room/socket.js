@@ -21,15 +21,15 @@ class Socket {
     sendReadyStatus(readyStatus) {
         this.#socket.emit(SOCKET.EVENT.READY, readyStatus);
     }
-    turnOnRoomChannel(currentPlayers, setPlayers) {
-        this.#eventHandler.setRoomEvent(currentPlayers, setPlayers);
+    turnOnRoomChannel(setPlayers) {
+        this.#eventHandler.setRoomEvent(setPlayers);
         this.#socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
     turnOffRoomChannel() {
         this.#socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
-    turnOnGameChannel(currentGameData, setGameData) {
-        this.#eventHandler.setGameEvent(currentGameData, setGameData);
+    turnOnGameChannel(setGameData) {
+        this.#eventHandler.setGameEvent(setGameData);
         this.#socket.on(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
     }
     turnOffGameChannel() {
