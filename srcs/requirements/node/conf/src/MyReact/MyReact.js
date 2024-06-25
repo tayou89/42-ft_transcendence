@@ -22,7 +22,7 @@ export function createTextElement(text) {
   };
 }
 
-function craeteDom(fiber) {
+function createDom(fiber) {
   const dom =
   fiber.type == "TEXT_ELEMENT"
     ? document.createTextNode("")
@@ -79,7 +79,17 @@ function updateDom(dom, prevProps, nextProps) {
 }
 
 function commitRoot() {
-  deletions.forEach(commitWork);
+  deletions.forEach((fiber) => {
+    if (!fiber) {
+      return;
+    }
+    let domParentFiber = fiber.parent;
+    while (!domParentFiber.dom) {
+      domParentFiber = domParentFiber.parent;
+    }
+    const domParent = domParentFiber.dom;
+    commitDeletion(fiber, domParent);
+  });
   commitWork(wipRoot.child);
   currentRoot = wipRoot;
   wipRoot = null;
@@ -97,11 +107,12 @@ function commitWork(fiber) {
   if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
     domParent.appendChild(fiber.dom);
   }
-  else if (fiber.effectTag === "DELETION") {
-    commitDeletion(fiber, domParent);
-    commitWork(fiber.sibling);
-    return;
-  }
+  // else if (fiber.effectTag === "DELETION") {
+  //   commitDeletion(fiber, domParent);
+  //   fiber.effectTag = "DELETED";
+  //   commitWork(fiber.sibling);
+  //   return;
+  // }
   else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate.props, fiber.props);
   }
@@ -139,13 +150,22 @@ let deletions = null;
 function workLoop(deadline) {
   let shouldYield = false;
   
+  onUpdate = true;
   while (nextUnitOfWork && !shouldYield) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
     shouldYield = deadline.timeRemaining() < 1 && !deadline.didTimeout;
   }
   if (!nextUnitOfWork && wipRoot) {
     commitRoot();
+    // console.log("===================commit======================");
   }
+  setStateQueue.forEach((obj) => {
+    obj.queue.push(obj.action);
+    wipRoot = obj.root;
+    nextUnitOfWork = wipRoot;
+  });
+  setStateQueue.length = 0;
+  onUpdate = false;
   requestIdleCallback(workLoop, {timeout: 2000});
 }
 //requestIdleCallback()는 콜스택이 비어있을 경우(idle 상태) 콜백실행
@@ -187,6 +207,9 @@ function updateFunctionComponent(fiber) {
   reconcileChildren(fiber, children);
 }
 
+let setStateQueue = [];
+let onUpdate = false;
+
 export function useState(initial) {
   const oldHook = wipFiber.hooks[hookIndex];
   const NewHook = {
@@ -200,14 +223,24 @@ export function useState(initial) {
   });
   actions.length = 0;
   const setState = action => {
-    hook.queue.push(action);
-      wipRoot = {
+    const tmpRoot = {
       dom: currentRoot ? currentRoot.dom : wipRoot.dom,
-      props: currentRoot ? currentRoot.props: wipRoot.dom,
+      props: currentRoot ? currentRoot.props: wipRoot.props,
       alternate: currentRoot ? currentRoot: wipRoot,
-      }
+    };
+    if (!onUpdate) {
+      hook.queue.push(action);
+      wipRoot = tmpRoot;
       nextUnitOfWork = wipRoot;
       deletions = [];
+    }
+    else {
+      setStateQueue.push({
+        queue: hook.queue,
+        action: action,
+        root: tmpRoot,
+      });
+    }
   };
   if (!oldHook) {
     wipFiber.hooks.push(hook);
@@ -244,7 +277,7 @@ export function useEffect(callback, deps) {
 
 function updateHostComponent(fiber) {
   if (!fiber.dom) {
-    fiber.dom = craeteDom(fiber);
+    fiber.dom = createDom(fiber);
   }
   const elements = fiber.props.children;
   reconcileChildren(fiber, elements);

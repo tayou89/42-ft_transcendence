@@ -20,8 +20,8 @@ import os
 
 class UserVeiwSet(viewsets.ModelViewSet):
 
-	authentication_classes = [CustomJWTAuthentication]
-	permission_classes = [IsAuthenticated]
+	# authentication_classes = [CustomJWTAuthentication]
+	# permission_classes = [IsAuthenticated]
 	
 	queryset = User.objects.all()
 	serializer_class = UserSerializer

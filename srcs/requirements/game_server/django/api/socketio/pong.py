@@ -81,6 +81,7 @@ class Pong(socketio.AsyncNamespace):
   
 		cur_room = self.rooms.get(room_name, None)
 		if cur_room is None:
+			self.rooms[room_name] = {}
 			for key in self.field_list:
 				self.rooms[room_name][key] = {}
 			cur_room = self.rooms[room_name]
@@ -146,6 +147,7 @@ class Pong(socketio.AsyncNamespace):
 		for key, value in cur_room.items():
 			if value and not value['ready']:
 				flag = False
+				break;
   
 		if flag:
 			await asyncio.create_task(self.play_pong(room_name))
@@ -186,8 +188,10 @@ class Pong(socketio.AsyncNamespace):
 			room=room_name,
 			namespace=self.namespace
 		)
-  
+
 		await self.save_result(self.rooms[room_name], game)
+		cur_room = Room.objects.get(name=room_name)
+		cur_room.delete()
    
 	async def save_result(self, room, game: GameState):
 	

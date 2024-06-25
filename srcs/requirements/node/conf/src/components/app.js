@@ -5,6 +5,8 @@ import UserPage from "./userPage/UserPage.js";
 import Login from "./login.js";
 import Interchange from "./interchange.js";
 import EmailOTP from "./emailOTP.js";
+import Game from "./Game/Game.js";
+import Room from "./Room/Room.js";
 
 function App() {
 	return (
@@ -14,6 +16,8 @@ function App() {
 			<Route path="/home" component={Home} />
 			<Route path="/userpage" component={UserPage} />
 			<Route path="/login" component={Login} />
+			<Route path="/game" component={Game} />
+			<Route path="/room" component={Room} />
 		</div>
 	);
 }

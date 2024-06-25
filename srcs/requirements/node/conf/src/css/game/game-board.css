@@ -2,8 +2,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: end;
-    padding-right: 3vw;
+    align-items: center;
+    padding-right: 10px;
     font-size: 40px;
 }
 
@@ -11,8 +11,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: start;
-    padding-left: 3vw;
+    align-items: center;
+    padding-left: 10px;
     font-size: 40px;
 }
 

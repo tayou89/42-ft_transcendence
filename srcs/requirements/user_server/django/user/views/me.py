@@ -13,8 +13,8 @@ from ..serializer import UserSerializer
 import json
 
 @api_view(['GET'])
-@authentication_classes([CustomJWTAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([CustomJWTAuthentication])
+# @permission_classes([IsAuthenticated])
 def me(request):
 	jwt_token = AccessToken(request.COOKIES.get('jwt'))
 	user = User.objects.get(id=jwt_token.payload['user_id'])
