@@ -1,3 +1,4 @@
+import logging
 import httpx
 import socketio
 import asyncio
@@ -173,6 +174,7 @@ class Pong(socketio.AsyncNamespace):
 			await asyncio.create_task(self.play_pong(room_name))
 
 
+
 	async def play_pong(self, room_name):
 		game = self.games[room_name] = GameState()
 		game.p1_pid = self.rooms[room_name]['p1']['pid']
@@ -210,21 +212,31 @@ class Pong(socketio.AsyncNamespace):
 			namespace=self.namespace
 		)
 
-		await self.save_result(self.rooms[room_name], game)
-		cur_room = Room.objects.get(name=room_name)
-		cur_room.delete()
+		await self.save_result(room_name, game)
    
-	async def save_result(self, room, game: GameState):
-	
+	async def save_result(self, room_name, game: GameState):
+		room = await sync_to_async(Room.objects.get)(name=room_name)
+ 
 		body = {
-			"p1": room['p1']['pid'],
-			"p2": room['p2']['pid'],
+			"p1": room.p1,
+			"p2": room.p2,
 			"p1_score": game.score[0],
 			"p2_score": game.score[1],
 		}
   
+		await sync_to_async(room.delete)()
+  
 		async with httpx.AsyncClient() as client:
-			await client.post("http://localhost:8000/api/matches", json=body)
+			try:
+				response = await client.post("http://localhost:8000/api/matches/", json=body)
+				response.raise_for_status()  # 이를 통해 HTTP 에러 발생 시 예외를 발생시킵니다
+				logging.debug(f'------------------ {response.status_code} ------------------------')
+			except httpx.HTTPStatusError as exc:
+				logging.error(f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}")
+			except httpx.RequestError as exc:
+				logging.error(f"Request failed: {exc}")
+			except Exception as exc:
+				logging.error(f"An error occurred: {exc}")
 		
 
 

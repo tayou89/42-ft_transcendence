@@ -30,6 +30,29 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1']
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/hello.log',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,10 +62,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-		'rest_framework',
-		'api',
+	'rest_framework',
+	'api',
 
-		'corsheaders', #CORS
+	'corsheaders', #CORS
 ]
 
 
