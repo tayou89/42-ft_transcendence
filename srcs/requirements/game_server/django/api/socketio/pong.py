@@ -227,17 +227,7 @@ class Pong(socketio.AsyncNamespace):
 		await sync_to_async(room.delete)()
   
 		async with httpx.AsyncClient() as client:
-			try:
-				response = await client.post("http://userserver:8000/api/matches/", json=body)
-				response.raise_for_status()  # 이를 통해 HTTP 에러 발생 시 예외를 발생시킵니다
-				logging.debug(f'------------------ {response.status_code} ------------------------')
-			except httpx.HTTPStatusError as exc:
-				logging.error(f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}")
-			except httpx.RequestError as exc:
-				logging.error(f"Request failed: {exc}")
-			except Exception as exc:
-				logging.error(f"An error occurred: {exc}")
-		
+			await client.post("http://userserver:8000/api/matches/", json=body)
 
 
 	async def on_key(self, sid, message):

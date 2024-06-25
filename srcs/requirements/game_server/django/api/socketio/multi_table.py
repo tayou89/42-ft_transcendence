@@ -179,11 +179,16 @@ class MttPong(Pong):
 			namespace=self.namespace
 		)
   
+		# self.save_result(room_name, game)
+  
 		if game.get_result()['p1'] == "win":
 			return "p1"
 		else:
 			return "p2"
 
+
+	# async def save_result(self, room_name, game: GameState):
+	# 	return await super().save_result(room_name, game)
 
 	async def on_key(self, sid, message):
 		info = await self.get_session(sid)
