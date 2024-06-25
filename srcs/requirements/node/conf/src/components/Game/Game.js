@@ -10,15 +10,17 @@ import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
 function Game({ data }) {
-    console.log("GamePage Data:", data);
+    console.log("Game data:", data);
     const [ isQuitClicked, setIsQuitClicked ] = useState(false);
     const [ game, setGame ] = useState(getInitialGameData());
     const [ players, setPlayers ] = useState([{}, {}]);
     const [ gameResult, setGameResult ] = useState({});
+    const socket = data.socket;
 
     useEffect(() => {
         const eventHandler = new EventHandler();
 
+        console.log("useEffect function!");
         eventHandler.addKeyEvent(data.socket);
         socket.turnOnRoomChannel(players, setPlayers);
         socket.turnOnGameChannel(game, setGame);
