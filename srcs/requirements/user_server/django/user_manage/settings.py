@@ -19,11 +19,11 @@ import hvac
 def kv_get(key):
     client = hvac.Client(
         url="https://vault:8200",
-        verify="/certs/ca/ca.crt",
+        verify=False,
     )
     client.auth.userpass.login(
-        username=os.getenv('VAULT_USER_NAME'),
-        password=os.getenv('VAULT_PASSWORD')
+        username='server',
+        password='qlalfqjsgh'
     )
     secret = client.secrets.kv.v2.read_secret_version(path='django-secret', mount_point='kv')
     ret = secret['data']['data'].get(key)
@@ -42,12 +42,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = kv_get('USER_SERVER_SECRET_KEY')
+# SECRET_KEY = kv_get('DJANGO_SECRET_KEY')
+SECRET_KEY = 'django-insecure-lo0q8rwc4qvn*9t933jr+j2#0pn93h3i$km-)sx)5q5av9@l-^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1', 'userserver', 'userserver:8000']
+ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1', 'userserver', 'userserver:8000', 'gameserver', 'gameserver:8001']
 
 
 # Application definition
@@ -61,7 +62,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 	'rest_framework',
-	'api',
+	'rest_framework_simplejwt.token_blacklist',
+	'user',
+	'oauth',
+	'match',
 
     'corsheaders', #CORS
 ]
@@ -81,6 +85,8 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8080',
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'user_manage.urls'
 
@@ -139,14 +145,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -157,7 +162,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'user.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
@@ -177,7 +182,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'SIGNING_KEY': 'hihi',
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ALGORITHM': 'HS256',
     'VERIFYING_KEY': None,
@@ -186,7 +191,12 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'AUTH_TOKEN_CLASSES': (
+        'rest_framework_simplejwt.tokens.AccessToken',
+        'rest_framework_simplejwt.tokens.RefreshToken',
+    ),
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ROTATE_REFRESH_TOKENS': False,
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
@@ -196,7 +206,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'tkdwjd4512@gmail.com'
-EMAIL_HOST_PASSWORD = 'smxk uqnk cpaz gucr'
+EMAIL_HOST_PASSWORD = 'mqju xkdl ydpy jcyq'
 
 LOG_PATH='/logs/user_server'
 os.makedirs(f'{LOG_PATH}', exist_ok=True)

@@ -1,0 +1,27 @@
+ #game-slot-photo-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-basis: 250px;
+    height: 250px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+#game-slot-photo {
+    width:210px;
+    height: 210px;
+    border-radius: 50%;
+}
+
+#player-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#player-level {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

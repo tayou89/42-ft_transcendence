@@ -3,7 +3,7 @@
 cd django
 
 python3 manage.py makemigrations
-python3 manage.py makemigrations api
+python3 manage.py makemigrations user match oauth
 
 python3 manage.py migrate
 

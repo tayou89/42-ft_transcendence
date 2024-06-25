@@ -39,12 +39,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = kv_get('GAME_SERVER_SECRET_KEY')
+SECRET_KEY = 'django-insecure-$ywy1)s6lw4y40okbju%g(4t542x^k6=9#env-pgyjtx+ukx+0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '0.0.0.0', '127.0.0.1']
+
+
 
 
 # Application definition
@@ -58,11 +60,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 	'rest_framework',
 	'api',
-	'channels',
+
+	'corsheaders', #CORS
 ]
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -72,6 +77,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'gameserver.middleware.RequestLoggingMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8080',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'gameserver.urls'
 
@@ -94,7 +105,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'gameserver.wsgi.application'
 
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -106,37 +116,15 @@ DATABASES = {
     }
 }
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('redis', 6379)],  # Redis 서버 주소
-        },
-    },
-}
-
-
-CACHES = {  
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-			'REDIS_CLIENT_KWARGS': {
-                'decode_responses': True,
-            },
-        },
-    }
-}
-
-
 JWT_SECRET_KEY='hihi'
 
 SIMPLE_JWT = {
-    'SIGNING_KEY': 'hihi',
+    'ALGORITHM': 'HS256',
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ALGORITHM': 'HS256',
+
+    'SIGNING_KEY': 'hihi',
+    
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
     'ISSUER': None,
@@ -220,6 +208,11 @@ LOGGING = {
         },
     },
     'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/hello.log',
+        },
         'console': {
             'level': 'INFO',
             'filters': ['require_debug_true'],
@@ -247,8 +240,9 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
         'django.server': {
             'handlers': ['django.server'],
@@ -262,3 +256,4 @@ LOGGING = {
         },
     },
 }
+APPEND_SLASH = False

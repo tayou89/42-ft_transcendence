@@ -37,10 +37,13 @@ services:
       - ${PROJECT_DIR}/requirements/user_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
       - certs_volume:/certs
       - django_log_volume:/logs
+      - avatars_volume:/app/${DJANGO_PROJECT_NAME}/avatars
     environment:
       USERDATA_DB_NAME: ${USERDATA_DB_NAME}
       USERDATA_DB_USER: ${USERDATA_DB_USER}
       USERDATA_DB_PW: ${USERDATA_DB_PW}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
       VAULT_USER_NAME: ${VAULT_USER_NAME}
       VAULT_PASSWORD: ${VAULT_PASSWORD}
     ports:
@@ -55,7 +58,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 1s
 
   userdb:
     image: postgres:userserver
@@ -77,17 +80,19 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-      interval: 30s
+      interval: 1s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 1s
 
   gameserver:
     image: python:gameserver
     pull_policy: never
     depends_on:
-      # gamedb:
-      #   condition: service_healthy
+      gamedb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
       vault_init:
         condition: service_completed_successfully
       vault:
@@ -139,7 +144,7 @@ services:
       - my_net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -p 5431 -U $POSTGRES_USER"]
-      interval: 1s
+      interval: 5s
       timeout: 5s
       retries: 3
       start_period: 10s
@@ -153,6 +158,12 @@ services:
     container_name: redis
     networks:
       - my_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   nginx:
     depends_on:
@@ -167,6 +178,7 @@ services:
       - ${PROJECT_DIR}/requirements/nginx/conf/:/etc/nginx/templates/conf.d/:ro
       - certs_volume:/certs:ro
       - logs_volume:/logs
+      - avatars_volume:/django/avatars/:ro
     ports:
       - 443:443
       - 9090:9090
@@ -191,3 +203,7 @@ volumes:
   django_log_volume:
     name: django_log_volume
     driver: local
+  avatars_volume:
+    name: avatars_volume
+    driver: local
+
