@@ -147,13 +147,11 @@ let currentRoot = null;
 let deletions = null;
 
 //랜더링 도중 dom이 업데이트 되면 부자연스러우므로 idle상태일 때만 업데이트 진행
-function workLoop(deadline) {
-  let shouldYield = false;
+function workLoop() {
   
   onUpdate = true;
-  while (nextUnitOfWork && !shouldYield) {
+  while (nextUnitOfWork) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
-    shouldYield = deadline.timeRemaining() < 1 && !deadline.didTimeout;
   }
   if (!nextUnitOfWork && wipRoot) {
     commitRoot();
@@ -166,10 +164,10 @@ function workLoop(deadline) {
   });
   setStateQueue.length = 0;
   onUpdate = false;
-  requestIdleCallback(workLoop, {timeout: 2000});
+  requestAnimationFrame(workLoop);
 }
 //requestIdleCallback()는 콜스택이 비어있을 경우(idle 상태) 콜백실행
-requestIdleCallback(workLoop, {timeout: 2000});
+requestAnimationFrame(workLoop);
 
 function performUnitOfWork(fiber) {
   const isFunctionComponent = fiber.type instanceof Function;
