@@ -6,7 +6,6 @@ import "../../css/game/result-popup.css";
 
 function ResultPopUp({ gameResult, data, players }) {
     const myResult = getMyResult(gameResult, data.myId, players);
-    console.log("myResult:", myResult);
     const resultText = getResultText(myResult);
 
     if (!Object.keys(gameResult).length)
@@ -25,10 +24,8 @@ function ResultPopUp({ gameResult, data, players }) {
 }
 
 function getMyResult(gameResult, myId, players) {
-    console.log("gameResult, myId, Players: ", gameResult, myId, players);
     const myPosition = getMyPosition(myId, players);
 
-    console.log("myPosition:", myPosition);
     if (myPosition === GAME.POSITION.LEFT)
         return (gameResult.p1);
     else

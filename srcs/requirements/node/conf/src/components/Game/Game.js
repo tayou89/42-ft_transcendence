@@ -20,7 +20,6 @@ function Game({ data }) {
 
     useEffect(() => {
 
-        console.log("=================This is Game Page==================");
         eventHandler.addKeyEvent(socket);
         socket.turnOnRoomChannel(setPlayers);
         socket.turnOnGameChannel(setGame);
