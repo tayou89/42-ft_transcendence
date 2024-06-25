@@ -12,7 +12,6 @@ from asgiref.sync import sync_to_async
 class Pong(socketio.AsyncNamespace):
 	
 	rooms = {}
-	locker = {}
 	games = {}
 	
 	def __init__(self, namespace=None):
@@ -59,24 +58,24 @@ class Pong(socketio.AsyncNamespace):
             )
 
 	async def check_join(self, room, pid, sid):
-		if room.cur_users == self.MAX_USERS:
-			await sio.emit(
-				'error',
-				"room is full",
-				room=sid,
-				namespace=self.namespace
-			)
-			return False
+		# if room.cur_users == self.MAX_USERS:
+		# 	await sio.emit(
+		# 		'error',
+		# 		"room is full",
+		# 		room=sid,
+		# 		namespace=self.namespace
+		# 	)
+		# 	return False
 
-		for field in self.field_list:
-			if getattr(room, field, None) == int(pid):
-				await sio.emit(
-					'error',
-					"already in room",
-					room=sid,
-					namespace=self.namespace
-				)
-				return False
+		# for field in self.field_list:
+		# 	if getattr(room, field, None) == int(pid):
+		# 		await sio.emit(
+		# 			'error',
+		# 			"already in room",
+		# 			room=sid,
+		# 			namespace=self.namespace
+		# 		)
+		# 		return False
 
 		return True
 
