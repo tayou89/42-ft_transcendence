@@ -22,7 +22,7 @@ export function createTextElement(text) {
   };
 }
 
-function craeteDom(fiber) {
+function createDom(fiber) {
   const dom =
   fiber.type == "TEXT_ELEMENT"
     ? document.createTextNode("")
@@ -225,7 +225,7 @@ export function useState(initial) {
   const setState = action => {
     const tmpRoot = {
       dom: currentRoot ? currentRoot.dom : wipRoot.dom,
-      props: currentRoot ? currentRoot.props: wipRoot.dom,
+      props: currentRoot ? currentRoot.props: wipRoot.props,
       alternate: currentRoot ? currentRoot: wipRoot,
     };
     if (!onUpdate) {
@@ -277,7 +277,7 @@ export function useEffect(callback, deps) {
 
 function updateHostComponent(fiber) {
   if (!fiber.dom) {
-    fiber.dom = craeteDom(fiber);
+    fiber.dom = createDom(fiber);
   }
   const elements = fiber.props.children;
   reconcileChildren(fiber, elements);

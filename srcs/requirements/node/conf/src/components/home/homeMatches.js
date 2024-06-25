@@ -10,7 +10,10 @@ function HomeMatches({ myId }) {
 			method: 'GET',
 			credentials: 'include'
 		})
-			.then(response => response.json())
+			.then(response => {
+				console.log(response);
+				return response.json();
+			})
 			.then(data => {
 				console.log("well done", data);
 				setRooms(() => data);
@@ -44,12 +47,12 @@ function HomeMatches({ myId }) {
 					{rooms
 						.filter(room => room.cur_users !== room.max_users && room.in_game === false)
 						.map((room) => (
-							<HomeMatchInfo key={room.id} myId={myId} room={room} active={true} />
+							<HomeMatchInfo myId={myId} room={room} active={true} />
 						))}
 					{rooms
 						.filter(room => room.cur_users === room.max_users || room.in_game === true)
 						.map((room) => (
-							<HomeMatchInfo key={room.id} room={room} active={false} />
+							<HomeMatchInfo myId={myId} room={room} active={false} />
 						))}
 				</div>
 			</div>
@@ -130,7 +133,6 @@ function CreateRoomModal({ myId }) {
 }
 
 function onClickEnterCreatedRoom(title, myId, type) {
-    console.log("Enter Room : ",myId);
 	navigate(`/room?title=${title}&myId=${myId}&type=${type}`);
 }
 

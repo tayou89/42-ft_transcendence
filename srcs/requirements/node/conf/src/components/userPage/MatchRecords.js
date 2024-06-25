@@ -30,9 +30,12 @@ function MatchRecords({ userId }) {
 			credentials: 'include'
 		})
 			.then(response => response.json())
-			.catch(console.log)
 			.then(data => {
-				setUserMatchRecords(() => data);
+				if (userId !== null) {
+					setUserMatchRecords(() => data);
+				} else {
+					setUserMatchRecords(() => []);
+				}
 			})
 			.catch(error => {
 				console.log("in MatchRecords function", error);
