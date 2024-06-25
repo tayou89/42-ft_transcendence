@@ -12,7 +12,7 @@ export function Player({ type, socket, myId }) {
     if (count <= 0)
         navigate("/game", { data: { socket, type, myId, gameRound: 1 }} );
     useEffect(() => {
-    	socket.turnOnRoomChannel(players, setPlayers);
+    	socket.turnOnRoomChannel(setPlayers);
         return (() => socket.turnOffRoomChannel());
     }, []);
     useEffect(() => {

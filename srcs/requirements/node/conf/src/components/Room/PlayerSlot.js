@@ -13,7 +13,7 @@ function PlayerSlot({ socket, player, type, isMySlot }) {
             <div id={ elementIds[1] } >
                 <img id={ elementIds[2] } src={ player.photoURL } />
             </div>
-            <div id="name">{ player.name }</div>
+            <div id="name">{ player.display_name}</div>
             <div id="level">Level { Math.floor( player.exp / 1000) }</div>
             <ReadyButton status={ player.ready } socket={ socket } isMySlot={ isMySlot } />
         </div>

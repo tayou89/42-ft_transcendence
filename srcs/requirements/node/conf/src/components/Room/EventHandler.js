@@ -7,15 +7,15 @@ class EventHandler {
     constructor (){
         this.#stateSetter = new StateSetter();
     }
-    setRoomEvent(currentPlayers, setPlayers) {
+    setRoomEvent(setPlayers) {
         this.#roomEvent = async (newPlayers) => {
-			console.log("Room Event Occured:", newPlayers, currentPlayers);
-            await this.#stateSetter.setPlayers(newPlayers, currentPlayers, setPlayers);
+			console.log("Room Event Occured:", newPlayers);
+            await this.#stateSetter.setPlayers(newPlayers, setPlayers);
         };
     }
-    setGameEvent(currentGameData, setGameData) {
+    setGameEvent(setGameData) {
         this.#gameEvent = (newGameData)  => {
-            this.#stateSetter.setGameData(newGameData, currentGameData, setGameData);
+            this.#stateSetter.setGameData(newGameData, setGameData);
         };
     }
     setResultEvent(setGameResult) {

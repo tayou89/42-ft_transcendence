@@ -12,7 +12,7 @@ function PlayerSlot({ id, player }) {
             <div className="row" id="game-slot-photo-box">
                 <img className="col" id="game-slot-photo" src={ player.photoURL } />
             </div>
-            <div className="row" id="player-name">{ player.name }</div>
+            <div className="row" id="player-name">{ player.display_name }</div>
             <div className="row" id="player-level">Level { level }</div>
         </div>
     );
