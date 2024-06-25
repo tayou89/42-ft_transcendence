@@ -5,7 +5,6 @@ function ReadyButton({ status, socket, isMySlot }) {
     const id = getElementsId(status);;
     const handleClickEvent = () => { socket.sendReadyStatus(!status); };
 
-    console.log("isMySlot:", isMySlot);
     if (isMySlot) 
         return (<div className="ready-button" id={ id } onClick={ handleClickEvent }>Ready</div>);
     else

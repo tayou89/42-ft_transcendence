@@ -12,6 +12,7 @@ class StateSetter {
         });
         await Promise.all(promises);
         players.forEach((newPlayer, index) => {
+            console.log("Ready setting time:", newPlayer, currentPlayers);
             if (newPlayer.pid && (newPlayer.ready !== currentPlayers[index]?.ready))
                 playerSetter((prev) => this.#getNewPlayers(prev, index, newPlayer.ready));
         });
