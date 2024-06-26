@@ -1,17 +1,17 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import "../../css/room/bottom-line.css";
 
-function BottomLine({ setIsQuitClicked }) {
+function BottomLine({ setRoom }) {
     return (
         <div className="row" id="room-bottom">
-            <QuitButton setIsQuitClicked={ setIsQuitClicked } />
+            <QuitButton setRoom={ setRoom } />
         </div>
     );
 }
 
-function QuitButton({ setIsQuitClicked }) {
+function QuitButton({ setRoom }) {
     const handleClickEvent = () => { 
-        setIsQuitClicked((prev) => (!prev)); 
+        setRoom((prev) => ({...prev, isQuitClicked: !prev.isQuitClicked })); 
     };
 
     return ( <div id="quit-button" onClick={ handleClickEvent }>Quit</div> );

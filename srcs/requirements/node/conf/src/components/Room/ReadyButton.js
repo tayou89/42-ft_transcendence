@@ -2,6 +2,7 @@ import { MyReact } from "../../MyReact/MyReact.js";
 import "../../css/room/ready-button.css";
 
 function ReadyButton({ status, socket, isMySlot }) {
+    console.log("ReadyButton status, socket, isMySlot:", status, socket, isMySlot);
     const id = getElementsId(status);;
     const handleClickEvent = () => { socket.sendReadyStatus(!status); };
 

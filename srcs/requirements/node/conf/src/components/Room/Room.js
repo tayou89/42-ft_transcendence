@@ -9,39 +9,33 @@ import { GAME } from "../Game/constant.js";
 import "../../css/room/room.css";
 
 function Room() {
-    const [ isQuitClicked, setIsQuitClicked ] = useState(false);
-    const [ title, type, myId ] = getRoomData();
-    const socket = getSocket(type);
+    const [ room, setRoom ] = useState(getInitialRoomData());
 
     useEffect(() => {
-        socket.sendRoomJoinMessage(myId, title);
+        room.socket.sendRoomJoinMessage(room.myId, room.title);
     }, []);
     return (
         <div className="container-fluid" id="room-page">
             <NavigationBar />
-            <Title title={ title } type={ type } />
-            <Player type={ type } socket={ socket } myId={ myId } />
-            <BottomLine setIsQuitClicked={ setIsQuitClicked } />
-            <QuitPopUp socket={ socket } isClicked={ isQuitClicked } set={ setIsQuitClicked } /> 
+            <Title room={ room } />
+            <Player room={ room } />
+            <BottomLine setRoom={ setRoom } />
+            <QuitPopUp room={ room } setRoom={ setRoom } /> 
         </div>
     );
 }
 
-function getRoomData() {
+function getInitialRoomData() {
     const queryString = window.location.search;
     const URLData = new URLSearchParams(queryString);
-    const title = URLData.get('title');
-    const type = URLData.get('type');
-    const myId = Number(URLData.get('myId'));
 
-    return ([title, type, myId]);
-}
-
-function getSocket(gameType) {
-    if (gameType === GAME.TYPE.PONG)
-        return (pongSocket);
-    else
-        return (mttSocket);
+    return ({ 
+        title: URLData.get('title'),
+        myId: Number(URLData.get('myId')),
+        type: URLData.get('type'),
+        socket: URLData.get('type') === GAME.TYPE.PONG ? pongSocket : mttSocket,
+        isQuitClicked: false,
+    });
 }
 
 export default Room
