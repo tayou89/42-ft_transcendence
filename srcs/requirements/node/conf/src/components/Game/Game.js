@@ -19,16 +19,13 @@ function Game({ data }) {
     const socket = data.socket;
 
     useEffect(() => {
-
-        eventHandler.addKeyEvent(socket);
-        socket.turnOnRoomChannel(setPlayers);
-        socket.turnOnGameChannel(setGame);
-        socket.turnOnResultChannel(setGameResult);
+        disableScroll();
+        addEvents(socket, { setIsQuitClicked }); 
+        turnOnSocketChannels(socket, { setPlayers, setGame, setGameResult });
         return (() => {
-            eventHandler.removeKeyEvent();
-            socket.turnOffRoomChannel();
-            socket.turnOffGameChannel();
-            socket.turnOffResultChannel();
+            enableScroll();
+            removeEvents();
+            turnOffSocketChannels();
         });
     }, []);
     return (
@@ -50,6 +47,37 @@ function getInitialGameData() {
         score: { p1: 0, p2: 0},
     }
     return (initialGameData);
+}
+
+function disableScroll() {
+    document.body.id = "no-scroll";
+}
+
+function addEvents(socket, setFunctions) {
+    eventHandler.addKeyEvent(socket);
+    eventHandler.addRefreshEvent(setFunctions.setIsQuitClicked);
+    eventHandler.addPageBackEvent(setFunctions.setIsQuitClicked);
+}
+
+function turnOnSocketChannels(socket, setFunctions) {
+    socket.turnOnRoomChannel(setFunctions.setPlayers);
+    socket.turnOnGameChannel(setFunctions.setGame);
+    socket.turnOnResultChannel(setFunctions.setGameResult);
+}
+
+function enableScroll() {
+    document.body.id = "";
+}
+
+function removeEvents() {
+    eventHandler.removeKeyEvent();
+    eventHandler.removeRefreshEvent();
+}
+
+function turnOffSocketChannels() {
+    socket.turnOffRoomChannel();
+    socket.turnOffGameChannel();
+    socket.turnOffResultChannel();
 }
 
 export default Game;
