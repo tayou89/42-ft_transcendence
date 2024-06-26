@@ -215,7 +215,7 @@ class MttPong(Pong):
 				"loser": getattr(room, loser),
 			}
 
-			await client.patch(f'http://userserver:8000/api/match-result', json=json)
+			await client.patch('http://userserver:8000/api/match-result', json=json)
 
 
 	async def on_key(self, sid, message):
