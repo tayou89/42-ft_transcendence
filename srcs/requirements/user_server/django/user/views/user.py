@@ -19,7 +19,7 @@ from rest_framework.permissions import IsAuthenticated
 from user_manage.authentication import CustomJWTAuthentication
 from rest_framework.permissions import AllowAny
 
-
+ 
 class GameResultView(APIView):
 	permission_classes = [AllowAny]
 	def patch(self, request):

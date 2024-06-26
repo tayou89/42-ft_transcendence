@@ -11,5 +11,5 @@ urlpatterns = [
 	path('me', me), 
 	path('me/friend', friendView.as_view()),
 	path('me/friend/<int:pk>', friendView.as_view()),
-	path('user-update', GameResultView.as_view())
+	path('match-result', GameResultView.as_view())
 ]

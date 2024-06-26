@@ -1,6 +1,6 @@
 import math
 
-END_SCORE = 1
+END_SCORE = 5
 
 WIDTH = 1300
 HEIGHT = 800

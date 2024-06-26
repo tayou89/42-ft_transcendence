@@ -22,9 +22,13 @@ class MttPong(Pong):
 		self.MAX_USER = 4
 
 	async def on_disconnect(self, sid):
+     
+		info = await self.get_session(sid)
+		if not info:
+			return
+
 		await super().on_disconnect(sid)
 		
-		info = await self.get_session(sid)
 		room_name = info.get('room')
 		me = info.get('me')
   
@@ -114,10 +118,12 @@ class MttPong(Pong):
 		if winner == 'p1':
 			winner_data = self.rooms[room_name][p1]
 			await self.save_session(session[p2], {})
+			await self.save_result(room_name, self.games[room_name + room_num], p1, p2)
 			winner = p1
 		else:
 			winner_data = self.rooms[room_name][p2]
 			await self.save_session(session[p1], {})
+			await self.save_result(room_name, self.games[room_name + room_num], p2, p1)
 			winner = p2
    
 		if room_num != 'final':
@@ -179,16 +185,38 @@ class MttPong(Pong):
 			namespace=self.namespace
 		)
   
-		# self.save_result(room_name, game)
-  
 		if game.get_result()['p1'] == "win":
 			return "p1"
 		else:
 			return "p2"
 
 
-	# async def save_result(self, room_name, game: GameState):
-	# 	return await super().save_result(room_name, game)
+	async def save_result(self, room_name, game: GameState, winner, loser):
+		room = await sync_to_async(Room.objects.get)(name=room_name)
+  
+		body = {
+			"p1_score": game.score[0],
+			"p2_score": game.score[1],
+		}
+  
+		if game.score[0] > game.score[1]:
+			body["p1"] = winner
+			body["p2"] = loser
+		else:
+			body["p1"] = loser
+			body["p2"] = winner
+
+		async with httpx.AsyncClient() as client:
+      
+			await client.post("http://userserver:8000/api/matches/", json=body)
+
+			json = {
+				"winner": getattr(room, winner),
+				"loser": getattr(room, loser),
+			}
+
+			await client.patch(f'http://userserver:8000/api/match-result', json=json)
+
 
 	async def on_key(self, sid, message):
 		info = await self.get_session(sid)
