@@ -12,9 +12,12 @@ function ResultPopUp({ gameResult, data, players }) {
         return (null);
     useEffect(() => {
         const eventHandler = new EventHandler();
-
+        
         eventHandler.addGameEndEvent(myResult, data);
-        return (() => eventHandler.removeGameEndEvent());
+        return (() => {
+            console.log("==========================CleanUp=========================");
+            return eventHandler.removeGameEndEvent();
+        });
     }, []);
     return (
         <div id="result-text-box">

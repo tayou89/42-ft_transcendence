@@ -195,12 +195,13 @@ let effectIndex = null;
 
 function updateFunctionComponent(fiber) {
   const oldHooks = fiber.alternate && fiber.alternate.hooks;
+  const oldEffects = fiber.alternate && fiber.alternate.effects;
 
   wipFiber = fiber;
   hookIndex = 0;
   effectIndex = 0;
   wipFiber.hooks = oldHooks ? oldHooks : [];
-  wipFiber.effects = [];
+  wipFiber.effects = oldEffects ? oldEffects : [];
   const children = [fiber.type(fiber.props)];
   reconcileChildren(fiber, children);
 }
@@ -247,15 +248,9 @@ export function useState(initial) {
   return [hook.state, setState];
 }
 export function useEffect(callback, deps) {
-  const oldEffect =
-    wipFiber.alternate &&
-    wipFiber.alternate.effects &&
-    wipFiber.alternate.effects[effectIndex];
-  const effect = {
-    deps: deps,
-    cleanUp: null,
-  };
+  const oldEffect = wipFiber.effects[effectIndex];
   let hasChanged = true;
+  let newCleanUp = null;
   const oldDeps = oldEffect ? oldEffect.deps : null;
   if (oldDeps && deps) {
     hasChanged = deps.some(
@@ -267,9 +262,18 @@ export function useEffect(callback, deps) {
     if (cleanUp) {
       cleanUp();
     }
-    effect.cleanUp = callback();
+    newCleanUp = callback();
   }
-  wipFiber.effects.push(effect);
+  if (!oldEffect) {
+    const newEffect = {
+      deps: deps,
+      cleanUp: newCleanUp,
+    };
+    wipFiber.effects.push(newEffect);
+  }
+  else if (oldEffect && hasChanged) {
+    oldEffect.cleanUp = newCleanUp;
+  }
   ++effectIndex;
 }
 
@@ -327,6 +331,7 @@ function reconcileChildren(wipFiber, elements) {
           oldFiber.alternate.effects;
         if (oldEffects) {
           oldEffects.forEach(({_, cleanUp}) => cleanUp());
+          oldEffects = [];
         }
         oldFiber.effectTag = "DELETION";
         deletions.push(oldFiber);
