@@ -19,11 +19,11 @@ import hvac
 def kv_get(key):
     client = hvac.Client(
         url="https://vault:8200",
-        verify=False,
+        verify="/certs/ca/ca.crt",
     )
     client.auth.userpass.login(
-        username='server',
-        password='qlalfqjsgh'
+        username=os.getenv('VAULT_USER_NAME'),
+        password=os.getenv('VAULT_PASSWORD')
     )
     secret = client.secrets.kv.v2.read_secret_version(path='django-secret', mount_point='kv')
     ret = secret['data']['data'].get(key)
@@ -42,8 +42,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = kv_get('DJANGO_SECRET_KEY')
-SECRET_KEY = 'django-insecure-lo0q8rwc4qvn*9t933jr+j2#0pn93h3i$km-)sx)5q5av9@l-^'
+SECRET_KEY = kv_get('USER_SERVER_SECRET_KEY')
+# SECRET_KEY = 'django-insecure-lo0q8rwc4qvn*9t933jr+j2#0pn93h3i$km-)sx)5q5av9@l-^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -258,8 +258,8 @@ LOGGING = {
             'ssl_enable': True,
             'ssl_verify': True,
             'ca_certs': '/certs/ca/ca.crt',
-            'certfile': '/certs/user_server/user_server.crt',
-            'keyfile': '/certs/user_server/user_server.key',
+            'certfile': '/certs/userserver/userserver.crt',
+            'keyfile': '/certs/userserver/userserver.key',
             'database_path': '{}/logstash.db'.format(LOG_PATH),
         },
     },

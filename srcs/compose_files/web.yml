@@ -54,7 +54,7 @@ services:
       context: ${PROJECT_DIR}/requirements/user_server
       dockerfile: dockerfile
     healthcheck:
-      test: ["CMD-SHELL", "curl -sL localhost:8000/api/health | grep -q '{\"status\": \"OK\"}'"]
+      test: ["CMD-SHELL", "curl -sL localhost:8000/api/health/ | grep -q '{\"status\": \"OK\"}'"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -80,7 +80,7 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-      interval: 1s
+      interval: 10s
       timeout: 5s
       retries: 3
       start_period: 1s
@@ -118,7 +118,7 @@ services:
     networks:
       - my_net
     healthcheck:
-      test: ["CMD-SHELL", "curl -s localhost:8001"]
+      test: ["CMD-SHELL", "curl -sL localhost:8001/api/health/ | grep -q '{\"status\": \"OK\"}'"]
       interval: 30s
       timeout: 5s
       retries: 3

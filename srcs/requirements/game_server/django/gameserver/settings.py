@@ -39,7 +39,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$ywy1)s6lw4y40okbju%g(4t542x^k6=9#env-pgyjtx+ukx+0'
+SECRET_KEY = kv_get('GAME_SERVER_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -233,8 +233,8 @@ LOGGING = {
             'ssl_enable': True,
             'ssl_verify': True,
             'ca_certs': '/certs/ca/ca.crt',
-            'certfile': '/certs/user_server/user_server.crt',
-            'keyfile': '/certs/user_server/user_server.key',
+            'certfile': '/certs/gameserver/gameserver.crt',
+            'keyfile': '/certs/gameserver/gameserver.key',
             'database_path': '{}/logstash.db'.format(LOG_PATH),
         },
     },

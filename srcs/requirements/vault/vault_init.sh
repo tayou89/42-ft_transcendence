@@ -180,7 +180,7 @@ curl --cacert ${CA_CERT} -s -XPOST \
 
 #creating certificates
 echo "creating certificates."
-CERT_NAMES="es01 es02 kibana logstash filebeat nginx grafana user_server"
+CERT_NAMES="es01 es02 kibana logstash filebeat nginx grafana userserver gameserver"
 for CERT_NAME in ${CERT_NAMES}; do
     response=$(curl --cacert ${CA_CERT} -s -XPOST \
         ${vaultURL}/v1/pki/issue/${CA_NAME} \
