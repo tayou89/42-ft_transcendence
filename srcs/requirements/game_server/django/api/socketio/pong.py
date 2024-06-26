@@ -128,6 +128,9 @@ class Pong(socketio.AsyncNamespace):
 		room_name = info.get('room')
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
+		if room.in_game:
+			self.rooms[room_name].pop(me)
+			return
 		
 		for field in self.field_list:
 			if field == me:
