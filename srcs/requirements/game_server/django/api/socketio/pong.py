@@ -224,11 +224,26 @@ class Pong(socketio.AsyncNamespace):
 			"p2_score": game.score[1],
 		}
   
-		await sync_to_async(room.delete)()
   
 		async with httpx.AsyncClient() as client:
 			await client.post("http://userserver:8000/api/matches/", json=body)
+			json = {}
 
+			if game.score[0] > game.score[1]:
+				json = {
+					"winner": room.p1,
+					"loser": room.p2,
+				}
+			else:
+				json = {
+					"winner": room.p2,
+					"loser": room.p1,
+				}
+    
+			await client.patch(f'http://userserver:8000/api/user-update', json=json)
+
+
+		await sync_to_async(room.delete)()
 
 	async def on_key(self, sid, message):
 		info = await self.get_session(sid)
