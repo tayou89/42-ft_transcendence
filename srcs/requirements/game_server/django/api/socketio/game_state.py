@@ -1,6 +1,6 @@
 import math
 
-END_SCORE = 5
+END_SCORE = 100
 
 WIDTH = 1300
 HEIGHT = 800
@@ -9,8 +9,8 @@ BALL_RADIUS = 15
 
 BAR_SPEED = 20
 BAR_OFFSET = 50
-BAR_HEIGHT = 60
-BAR_WIDTH = 12
+BAR_HEIGHT = 120
+BAR_WIDTH = 20
 
 X = 0
 Y = 1
@@ -19,22 +19,28 @@ P1 = 0
 P2 = 1
 
 def calculate_bounce_angle(ball_dir, ball_y, paddle_y) -> list:
+
 	relative_intersect_y = (ball_y - paddle_y) / (BAR_HEIGHT / 2)
 	
-	max_bounce_angle = math.pi / 2  # 60도
+	max_bounce_angle = math.pi / 2  # 최대 반사각도 (예: 45도)
 	bounce_angle = relative_intersect_y * max_bounce_angle
-	
-	if ball_dir[X] < 0:
-		return [math.cos(bounce_angle), math.sin(bounce_angle)]
-	else:
-		return [-math.cos(bounce_angle), math.sin(bounce_angle)]
 
-def get_distance(ball, bar):
+	new_direction_x = math.cos(bounce_angle)
+	new_direction_y = math.sin(bounce_angle)
 
-	horizontal_hit = bar[X] <= (ball[X] + BALL_RADIUS) <= bar[X] + BAR_WIDTH
-	vertical_hit = bar[Y] <= (ball[Y] + BALL_RADIUS) <= bar[Y] + BAR_HEIGHT
+	return [new_direction_x, new_direction_y]
 
-	return horizontal_hit and vertical_hit
+	# if ball_dir[X] < 0:
+		# return [math.cos(bounce_angle), math.sin(bounce_angle)]
+	# else:
+	# 	return [-math.cos(bounce_angle), math.sin(bounce_angle)]
+
+def get_distance(ball, bar) -> list:
+	ball_x, ball_y = ball	
+	bar_x, bar_y = bar
+
+	distance = math.sqrt((ball_x - bar_x) ** 2 + (ball_y - bar_y) ** 2)
+	return distance
 
 def clamp(value, min_value, max_value):
 	return max(min(value, max_value), min_value)
@@ -97,10 +103,10 @@ class GameState:
   
 
 	def check_paddle_collision(self):
-		if get_distance(self.ball_coords, self.p1_coords):
+		if get_distance(self.ball_coords, self.p1_coords) < BALL_RADIUS:
 			self.ball_dir = calculate_bounce_angle(self.ball_dir, self.ball_coords[Y], self.p1_coords[Y])
 
-		if get_distance(self.ball_coords, self.p2_coords):
+		if get_distance(self.ball_coords, self.p2_coords) < BALL_RADIUS:
 			self.ball_dir = calculate_bounce_angle(self.ball_dir, self.ball_coords[Y], self.p2_coords[Y])
    
 	def check_wall_collision(self):
