@@ -172,6 +172,7 @@ class Pong(socketio.AsyncNamespace):
   
 		if flag:
 			await asyncio.create_task(self.play_pong(room_name))
+			self.rooms.pop(room_name)
 
 
 

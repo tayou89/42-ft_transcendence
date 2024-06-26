@@ -107,7 +107,7 @@ class MttPong(Pong):
 			'p2': self.rooms[room_name][p2],
 		}
 
-		winner = await asyncio.create_task(self.play_pong(room_name + room_num, session[p1], session[p2]))
+		winner = self.play_pong(room_name + room_num, session[p1], session[p2])
   
 		await self.leave_room(session[p1], room_name + room_num)
 		await self.leave_room(session[p2], room_name + room_num)
