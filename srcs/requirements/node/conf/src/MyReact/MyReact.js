@@ -78,10 +78,34 @@ function updateDom(dom, prevProps, nextProps) {
     })
 }
 
+function cleanUpFiber(fiber) {
+  if (fiber.effects) {
+    fiber.effects.forEach(({_, cleanUp}) => {
+      if (typeof(cleanUp) === 'function') {
+        cleanUp();
+      }
+    });
+    fiber.effects.length = 0;
+  }
+  if (fiber.child) {
+    cleanUpFiber(fiber.child);
+  }
+  if (fiber.sibling) {
+    cleanUpFiber(fiber.sibling);
+  }
+}
+
 function commitRoot() {
   deletions.forEach((fiber) => {
     if (!fiber) {
       return;
+    }
+    if (fiber.effects) {
+      fiber.effects.forEach(({_, cleanUp}) => cleanUp());
+      fiber.effects.length = 0;
+    }
+    if (fiber.child) {
+      cleanUpFiber(fiber.child);
     }
     let domParentFiber = fiber.parent;
     while (!domParentFiber.dom) {
@@ -107,12 +131,6 @@ function commitWork(fiber) {
   if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
     domParent.appendChild(fiber.dom);
   }
-  // else if (fiber.effectTag === "DELETION") {
-  //   commitDeletion(fiber, domParent);
-  //   fiber.effectTag = "DELETED";
-  //   commitWork(fiber.sibling);
-  //   return;
-  // }
   else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate.props, fiber.props);
   }
@@ -326,13 +344,6 @@ function reconcileChildren(wipFiber, elements) {
         }
       }
       if (oldFiber) {
-        const oldEffects =
-          oldFiber.alternate &&
-          oldFiber.alternate.effects;
-        if (oldEffects) {
-          oldEffects.forEach(({_, cleanUp}) => cleanUp());
-          oldEffects = [];
-        }
         oldFiber.effectTag = "DELETION";
         deletions.push(oldFiber);
       }

@@ -25,7 +25,7 @@ function Game({ data }) {
         return (() => {
             enableScroll();
             removeEvents();
-            turnOffSocketChannels();
+            turnOffSocketChannels(socket);
         });
     }, []);
     return (
@@ -74,7 +74,8 @@ function removeEvents() {
     eventHandler.removeRefreshEvent();
 }
 
-function turnOffSocketChannels() {
+function turnOffSocketChannels(socket) {
+console.log("@@@@@@@@@@@@@turnOffSocketChannels@@@@@@@@@@@@@@");
     socket.turnOffRoomChannel();
     socket.turnOffGameChannel();
     socket.turnOffResultChannel();
