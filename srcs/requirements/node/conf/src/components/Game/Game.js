@@ -9,75 +9,65 @@ import EventHandler from "../Room/EventHandler.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
-const eventHandler = new EventHandler();
-
 function Game({ data }) {
-    const [ isQuitClicked, setIsQuitClicked ] = useState(false);
-    const [ game, setGame ] = useState(getInitialGameData());
-    const [ players, setPlayers ] = useState([{}, {}]);
-    const [ gameResult, setGameResult ] = useState({});
-    const socket = data.socket;
+    const [ game, setGame ] = useState(getInitialGameData(data));
 
     useEffect(() => {
-        disableScroll();
-        addEvents(socket, { setIsQuitClicked }); 
-        turnOnSocketChannels(socket, { setPlayers, setGame, setGameResult });
+        addEvents(game); 
+        turnOnSocketChannels(game, setGame);
         return (() => {
-            enableScroll();
-            removeEvents();
-            turnOffSocketChannels();
+            removeEvents(game);
+            turnOffSocketChannels(game);
         });
     }, []);
     return (
         <div className="container-fluid" id="game-page">
             <NavigationBar />
-            <ScoreBoard score={ game.score }/>
-            <GameBoard players={ players } ball={ game.ball } paddle={ game.paddle }/>
-            <BottomLine socket={ socket } setIsQuitClicked={ setIsQuitClicked }/>
-            <QuitPopUp socket={ socket } isClicked={ isQuitClicked } set={ setIsQuitClicked } /> 
-            <ResultPopUp gameResult={ gameResult } data={ data } players={ players } />
+            <ScoreBoard game={ game } />
+            <GameBoard game={ game } />
+            <BottomLine setFunction={ setGame } />
+            <QuitPopUp data={ game } setFunction={ setGame } /> 
+            <ResultPopUp game={ game } />
         </div>
     );
 }
 
-function getInitialGameData() {
-    const initialGameData = {
+function getInitialGameData(data) {
+    return ({
+        socket: data.socket,
+        type: data.type,
+        myId: data.myId,
+        round: data.gameRound,
         ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
         paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
         score: { p1: 0, p2: 0},
-    }
-    return (initialGameData);
+        players: [{}, {}],
+        result: {},
+        isQuitClicked: false,
+        eventHandler: new EventHandler(),
+    });
 }
 
-function disableScroll() {
-    document.body.id = "no-scroll";
+function addEvents(game) {
+    game.eventHandler.addKeyEvent(game.socket);
+    game.eventHandler.addRefreshEvent();
 }
 
-function addEvents(socket, setFunctions) {
-    eventHandler.addKeyEvent(socket);
-    eventHandler.addRefreshEvent(setFunctions.setIsQuitClicked);
-    eventHandler.addPageBackEvent(setFunctions.setIsQuitClicked);
+function removeEvents(game) {
+    game.eventHandler.removeKeyEvent();
+    game.eventHandler.removeRefreshEvent();
 }
 
-function turnOnSocketChannels(socket, setFunctions) {
-    socket.turnOnRoomChannel(setFunctions.setPlayers);
-    socket.turnOnGameChannel(setFunctions.setGame);
-    socket.turnOnResultChannel(setFunctions.setGameResult);
+function turnOnSocketChannels(game, setGame) {
+    game.socket.turnOnRoomChannel(setGame);
+    game.socket.turnOnGameChannel(setGame);
+    game.socket.turnOnResultChannel(setGame);
 }
 
-function enableScroll() {
-    document.body.id = "";
-}
-
-function removeEvents() {
-    eventHandler.removeKeyEvent();
-    eventHandler.removeRefreshEvent();
-}
-
-function turnOffSocketChannels() {
-    socket.turnOffRoomChannel();
-    socket.turnOffGameChannel();
-    socket.turnOffResultChannel();
+function turnOffSocketChannels(game) {
+    game.socket.turnOffRoomChannel();
+    game.socket.turnOffGameChannel();
+    game.socket.turnOffResultChannel();
 }
 
 export default Game;

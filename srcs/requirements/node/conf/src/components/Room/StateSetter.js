@@ -12,7 +12,7 @@ class StateSetter {
         await Promise.all(promises);
         players.forEach((newPlayer, index) => {
             if (newPlayer.pid)
-                playerSetter((prev) => this.#getNewPlayers(prev, index, newPlayer.ready));
+                playerSetter((prev) => prev);
         });
     }
     setGameData(newGameData, setGameData) {

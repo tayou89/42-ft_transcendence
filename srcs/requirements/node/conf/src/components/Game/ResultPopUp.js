@@ -1,20 +1,17 @@
 import { useEffect, MyReact } from "../../MyReact/MyReact.js";
 import { GAME } from "./constant.js";
-import EventHandler from "../Room/EventHandler.js";
 import "../../css/game/result-popup.css";
 
 
-function ResultPopUp({ gameResult, data, players }) {
-    const myResult = getMyResult(gameResult, data.myId, players);
+function ResultPopUp({ game }) {
+    const myResult = getMyResult(game);
     const resultText = getResultText(myResult);
 
-    if (!Object.keys(gameResult).length)
+    if (isGameResultEmpty(game.result))
         return (null);
     useEffect(() => {
-        const eventHandler = new EventHandler();
-
-        eventHandler.addGameEndEvent(myResult, data);
-        return (() => eventHandler.removeGameEndEvent());
+        game.eventHandler.addGameEndEvent(myResult, game);
+        return (() => gameeventHandler.removeGameEndEvent());
     }, []);
     return (
         <div id="result-text-box">
@@ -23,29 +20,24 @@ function ResultPopUp({ gameResult, data, players }) {
     );
 }
 
-function getMyResult(gameResult, myId, players) {
-    const myPosition = getMyPosition(myId, players);
+function getMyResult(game) {
+    const myPosition = getMyPosition(game.myId, game.players);
 
-    if (myPosition === GAME.POSITION.LEFT)
-        return (gameResult.p1);
-    else
-        return (gameResult.p2);
-}
-
-function getResultText(myResult) {
-    if (myResult === GAME.RESULT.WIN)
-        return ("You Win!");
-    else
-        return ("You Lose");
+    return (myPosition === GAME.POSITION.LEFT ? game.result.p1 : game.result.p2);
 }
 
 function getMyPosition(myId, players) {
     const myIndex = players.findIndex(player => player.id === myId);
 
-    if (myIndex === 0)
-        return (GAME.POSITION.LEFT);
-    else
-        return (GAME.POSITION.RIGHT);
+    return (myIndex === 0 ? GAME.POSITION.LEFT : GAME.POSITION.RIGHT);
+}
+
+function getResultText(myResult) {
+    return (myResult === GAME.RESULT.WIN ? "You Win!" : "You Lose");
+}
+
+function isGameResultEmpty(gameResult) {
+    return (Object.keys(gameResult).length ? false : true);
 }
 
 export default ResultPopUp;

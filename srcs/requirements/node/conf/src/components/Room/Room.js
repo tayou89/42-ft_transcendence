@@ -19,8 +19,8 @@ function Room() {
             <NavigationBar />
             <Title room={ room } />
             <Player room={ room } />
-            <BottomLine setRoom={ setRoom } />
-            <QuitPopUp room={ room } setRoom={ setRoom } /> 
+            <BottomLine setFunction={ setRoom } />
+            <QuitPopUp data={ room } setFunction={ setRoom } /> 
         </div>
     );
 }
