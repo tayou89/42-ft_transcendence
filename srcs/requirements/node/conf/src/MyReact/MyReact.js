@@ -100,13 +100,6 @@ function commitRoot() {
     if (!fiber) {
       return;
     }
-    if (fiber.effects) {
-      fiber.effects.forEach(({_, cleanUp}) => cleanUp());
-      fiber.effects.length = 0;
-    }
-    if (fiber.child) {
-      cleanUpFiber(fiber.child);
-    }
     let domParentFiber = fiber.parent;
     while (!domParentFiber.dom) {
       domParentFiber = domParentFiber.parent;
@@ -344,6 +337,17 @@ function reconcileChildren(wipFiber, elements) {
         }
       }
       if (oldFiber) {
+        if (oldFiber.effects) {
+          oldFiber.effects.forEach(({_, cleanUp}) => {
+            if (typeof(cleanUp) === 'function') {
+              cleanUp();
+            }
+          });
+          oldFiber.effects.length = 0;
+        }
+        if (oldFiber.child) {
+          cleanUpFiber(oldFiber.child);
+        }
         oldFiber.effectTag = "DELETION";
         deletions.push(oldFiber);
       }

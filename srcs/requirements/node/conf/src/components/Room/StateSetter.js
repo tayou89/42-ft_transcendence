@@ -4,15 +4,19 @@ import Fetch from "./Fetch.js";
 class StateSetter {
     async setPlayers(newPlayers, playerSetter) {
         const players = Object.values(newPlayers);
-        const promises = []; 
+        const promises = [];
 
         players.forEach((newPlayer, index) => {
                 promises.push(Fetch.setUserData(playerSetter, newPlayer.pid, index));
         });
         await Promise.all(promises);
         players.forEach((newPlayer, index) => {
-            if (newPlayer.pid)
-                playerSetter((prev) => this.#getNewPlayers(prev, index, newPlayer.ready));
+            if (newPlayer.pid) {
+                playerSetter((prev) => {
+                    const ret = this.#getNewPlayers(prev, index, newPlayer.ready);
+                    return (ret);
+                });
+            }
         });
     }
     setGameData(newGameData, setGameData) {
