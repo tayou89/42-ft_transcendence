@@ -1,7 +1,7 @@
 import Navbar from "./Navbar";
 import MyReact from "../../MyReact/MyReact";
 
-function Login() {
+export function Login() {
   return (
     <div>
       <Navbar />

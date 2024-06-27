@@ -16,7 +16,15 @@ function GameBorad() {
   )
 }
 
-function Home() {
+export function Home() {
+  const [state, setState] = useState(0);
+  const onClick = () => {
+    setState((prev) => prev + 1);
+  };
+  useEffect(() => {
+    console.log("Home Callback state:",state);
+    return (() => {console.log("Home CleanUp")});
+  }, [state]);
   return (
     // <div>
     //   <Navbar />
@@ -24,6 +32,8 @@ function Home() {
     // </div>
     <div>
       <Navbar />
+      <p1>{state}</p1>
+      <button onClick={onClick}>click me!</button>
       <div className="container-fluid p-5 bg-primary text-white text-center">
         <h1>My First Bootstrap Page</h1>
         <p>Resize this responsive page to see the effect!</p>
