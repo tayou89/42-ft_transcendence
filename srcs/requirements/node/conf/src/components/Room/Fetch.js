@@ -6,7 +6,7 @@ class Fetch {
     static async setUserData(setFunction, userId = 0, index = -1) {
         const userData = await Fetch.userData(userId);
 
-		console.log(userData, index);
+		// console.log(userData, index);
         if (index >= 0) 
             setFunction((prev) => (setArray(prev, userData, index)));
         else
@@ -59,7 +59,7 @@ function setArray(prev, data, index) {
         newArray[index] = {};
     else
         newArray[index] = data;
-	console.log("newArray:", newArray);
+	// console.log("newArray:", newArray);
     return (newArray);
 }
 

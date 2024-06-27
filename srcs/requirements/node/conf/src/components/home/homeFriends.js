@@ -44,7 +44,7 @@ function onClickUnFriend(friendId) {
 
 
 function onClickShowFriendsInfo(friendId) {
-	console.log(friendId);
+	// console.log(friendId);
 	navigate(`/userpage?userId=${friendId}`);
 }
 
@@ -59,7 +59,7 @@ function FriendInfo({ friendId }) {
 		})
 			.then(response => response.json())
 			.then(data => {
-				console.log(data);
+				// console.log(data);
 				setUserInfo(() => data);
 			})
 			.catch(error => {
@@ -129,7 +129,7 @@ function onClickAddNewFriendSubmit(event) {
 		})
 	})
 		.then(response => {
-			console.log(response);
+			// console.log(response);
 			return response.json();
 		})
 		.then(data => {

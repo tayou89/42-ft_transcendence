@@ -11,15 +11,15 @@ function HomeMatches({ myId }) {
 			credentials: 'include'
 		})
 			.then(response => {
-				console.log(response);
+				// console.log(response);
 				return response.json();
 			})
 			.then(data => {
-				console.log("well done", data);
+				// console.log("well done", data);
 				setRooms(() => data);
 			})
 			.catch(error => {
-				console.log("error!", error);
+				// console.log("error!", error);
 				setRooms(() => []);//api요청 에러시 방 안보임.
 			});
 	}, []);
@@ -82,7 +82,7 @@ function onCreateNewRoomSubmit(event, myId) {
 	})
 		.then(response => response.json())
 		.then(data => {
-			console.log("well done", data);
+			// console.log("well done", data);
 			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
 		})
 		.catch(error => {

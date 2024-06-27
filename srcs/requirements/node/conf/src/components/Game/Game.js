@@ -75,7 +75,6 @@ function removeEvents() {
 }
 
 function turnOffSocketChannels(socket) {
-console.log("@@@@@@@@@@@@@turnOffSocketChannels@@@@@@@@@@@@@@");
     socket.turnOffRoomChannel();
     socket.turnOffGameChannel();
     socket.turnOffResultChannel();

@@ -68,8 +68,8 @@ function UserPage() {
 				return response.json();
 			})
 			.then(data => {
-				console.log(userDataApiUrl);
-				console.log("GET userData", data);
+				// console.log(userDataApiUrl);
+				// console.log("GET userData", data);
 				if (data.detail) {
 					tokenRefreshAndGoTo(`/userpage?userId=${userId}`);
 				} else {
