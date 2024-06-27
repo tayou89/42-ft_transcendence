@@ -151,14 +151,14 @@ class MttPong(Pong):
 		game.p1_pid = p1_pid
 		game.p2_pid = p2_pid
   
-		await sio.sleep(5)
+		await sio.sleep(6)
   
-		await sio.emit(
-			'room',
-			self.sub_games[room_name],
-			room=room_name,
-			namespace=self.namespace
-		)
+		await self.emit(
+      		'room',
+            self.rooms[room_name],
+            room=room_name,
+            namespace=self.namespace
+        )
 		
 		while game.status != 'end':
 	  
