@@ -5,6 +5,7 @@ import PlayerSlot from "./PlayerSlot.js";
 import "../../css/game/game-board.css";
 
 function GameBoard({ game }) {
+    console.log("game.players:", game.players);
     return (
         <div className="row" id="game-board">
             <PlayerSlot id="player1" player={ game.players[0] }/>

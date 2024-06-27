@@ -2,15 +2,15 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import "../../css/room/count-down.css";
 
-function CountDown({ players, room }) {
+function CountDown({ room }) {
     const [ count, setCount ] = useState(5);
 
-    if (!isAllReady(players))
+    if (!isAllReady(room.players))
         return (null);
     if (count <= 0)
         navigate("/game", { data: getDeliveryDataToGame(room) } );
     useEffect(() => {
-        if (isAllReady(players))
+        if (isAllReady(room.players))
             countDown(count, setCount);
         return (() => stopCount(countDown));
     }, [count]);

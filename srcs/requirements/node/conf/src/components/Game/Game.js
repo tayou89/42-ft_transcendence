@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import NavigationBar from "../utility/NavigationBar.js";
+import TopLine from "../Room/TopLine.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "../Room/BottomLine.js";
@@ -22,7 +22,7 @@ function Game({ data }) {
     }, []);
     return (
         <div className="container-fluid" id="game-page">
-            <NavigationBar />
+            <TopLine />
             <ScoreBoard game={ game } />
             <GameBoard game={ game } />
             <BottomLine setFunction={ setGame } />
@@ -41,8 +41,8 @@ function getInitialGameData(data) {
         ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
         paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
         score: { p1: 0, p2: 0},
-        players: [{}, {}],
         result: {},
+        players: [{}, {}],
         isQuitClicked: false,
         eventHandler: new EventHandler(),
     });

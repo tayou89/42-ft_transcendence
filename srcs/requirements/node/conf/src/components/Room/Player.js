@@ -5,33 +5,25 @@ import CountDown  from "./CountDown.js";
 import "../../css/room/room.css";
 
 export function Player({ room }) {
-    const [ players, setPlayers ] = useState(getInitialPlayers(room.type));
     const elementId = getElementId(room.type);
-    const playerSlots = getPlayerSlots(players, room);
+    const playerSlots = getPlayerSlots(room);
 
     useEffect(() => {
-    	room.socket.turnOnRoomChannel(setPlayers);
-        return (() => room.socket.turnOffRoomChannel());
     }, []);
     return (
         <div className="row" id={ elementId }>
             { playerSlots }
-            <CountDown players={ players } room={ room } />
+            <CountDown room={ room } />
         </div>
     );
 }
-
-function getInitialPlayers(type) {
-    return (type === GAME.TYPE.PONG ? [{}, {}] : [{}, {}, {}, {}]);
-}
-
 
 function getElementId(type) {
     return (type === GAME.TYPE.PONG ? "player-pong" : "player-mtt");
 }
 
-function getPlayerSlots(players, room) {
-    return (players.map((player) => 
+function getPlayerSlots(room) {
+    return (room.players.map((player) => 
         <PlayerSlot player={ player } room={ room } isMySlot={ room.myId === player.id } />
     ));
 }
