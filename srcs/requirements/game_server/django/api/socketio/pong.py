@@ -128,6 +128,9 @@ class Pong(socketio.AsyncNamespace):
 		room_name = info.get('room')
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
+		if room.in_game:
+			self.rooms[room_name].pop(me)
+			return
 		
 		for field in self.field_list:
 			if field == me:
@@ -172,6 +175,7 @@ class Pong(socketio.AsyncNamespace):
   
 		if flag:
 			await asyncio.create_task(self.play_pong(room_name))
+			self.rooms.pop(room_name)
 
 
 
@@ -240,7 +244,7 @@ class Pong(socketio.AsyncNamespace):
 					"loser": room.p1,
 				}
     
-			await client.patch(f'http://userserver:8000/api/user-update', json=json)
+			await client.patch('http://userserver:8000/api/match-result', json=json)
 
 
 		await sync_to_async(room.delete)()
