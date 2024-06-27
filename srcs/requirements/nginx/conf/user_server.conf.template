@@ -1,6 +1,6 @@
 server {
-    listen       443 ssl;
-    listen  [::]:443 ssl;
+    listen       8000;
+    listen  [::]:8000;
     server_name  localhost;
 
     ssl_certificate_key /etc/nginx/conf/server.key;
@@ -12,7 +12,7 @@ server {
     #modsecurity on;
     #modsecurity_rules_file /etc/nginx/modsecurity.d/modsecurity.conf;
     
-    location /api/ {
+    location / {
         proxy_pass http://userserver:8000;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

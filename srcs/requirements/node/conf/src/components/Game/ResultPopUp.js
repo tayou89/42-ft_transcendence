@@ -15,7 +15,6 @@ function ResultPopUp({ gameResult, data, players }) {
         
         eventHandler.addGameEndEvent(myResult, data);
         return (() => {
-            console.log("==========================CleanUp=========================");
             return eventHandler.removeGameEndEvent();
         });
     }, []);
