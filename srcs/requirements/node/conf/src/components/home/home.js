@@ -1,10 +1,8 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { navigate } from "../../MyReact/MyReactRouter.js";
-import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import Navbar from "../Navbar.js";
-import HomeMyInfo from "./homeMyInfo.js";
-import HomeFriends from "./homeFriends.js";
-import HomeMatches from "./homeMatches.js";
+import HomeMyInfo from "./HomeMyInfo.js";
+import HomeFriends from "./HomeFriends.js";
+import HomeMatches from "./HomeMatches.js";
 import getMyData from "../utility/getMyData.js";
 import logout from "../utility/logout.js";
 
