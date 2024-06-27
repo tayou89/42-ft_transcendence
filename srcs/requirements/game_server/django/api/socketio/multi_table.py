@@ -200,11 +200,11 @@ class MttPong(Pong):
 		}
   
 		if game.score[0] > game.score[1]:
-			body["p1"] = winner
-			body["p2"] = loser
+			body["p1"] = getattr(room, winner)
+			body["p2"] = getattr(room, loser)
 		else:
-			body["p1"] = loser
-			body["p2"] = winner
+			body["p1"] = getattr(room, loser)
+			body["p2"] = getattr(room, winner)
 
 		async with httpx.AsyncClient() as client:
       
