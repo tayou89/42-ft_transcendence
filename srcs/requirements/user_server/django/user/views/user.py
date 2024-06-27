@@ -66,7 +66,7 @@ class UserVeiwSet(viewsets.ModelViewSet):
 	def matches(self, request, pk=True):
 		user = self.get_object()
 
-		matches = MatchHistory.objects.filter(Q(p1=user) | Q(p2=user))
+		matches = MatchHistory.objects.filter(Q(p1=user) | Q(p2=user)).order_by('-date')
 		serializer = MatchSerializer(matches, many=True)
 
 		return Response(serializer.data)
