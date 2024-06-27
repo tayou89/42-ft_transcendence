@@ -4,8 +4,8 @@ export const BOARD = {
 };
 
 export const PADDLE = {
-    WIDTH: 12,
-    HEIGHT: 60,
+    WIDTH: 20,
+    HEIGHT: 120,
     OFFSET_X: 50,
     BORDER_RADIUS: 3,
     COLOR: "white",

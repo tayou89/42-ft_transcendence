@@ -46,6 +46,7 @@ class EventHandler {
         document.removeEventListener("keyup", this.#keyUpEvent);
     }
     removeGameEndEvent() {
+        console.log("removeGameEndEvent");
         document.removeEventListener("click", this.#gameEndEvent);
         document.removeEventListener("keydown", this.#gameEndEvent);
     }

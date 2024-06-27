@@ -7,6 +7,8 @@ import Interchange from "./interchange.js";
 import EmailOTP from "./emailOTP.js";
 import Game from "./Game/Game.js";
 import Room from "./Room/Room.js";
+import {Home as HomeTest} from './samples/home.js';
+import {Login as LoginTest} from './samples/login.js';
 
 function App() {
 	return (
@@ -19,6 +21,10 @@ function App() {
 			<Route path="/game" component={Game} />
 			<Route path="/room" component={Room} />
 		</div>
+		// <div>
+		// 	<Route path="/" component={HomeTest} />
+		// 	<Route path="/login" component={LoginTest} />
+		// </div>
 	);
 }
 

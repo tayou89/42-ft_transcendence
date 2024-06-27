@@ -128,6 +128,9 @@ class Pong(socketio.AsyncNamespace):
 		room_name = info.get('room')
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
+		if room.in_game:
+			self.rooms[room_name].pop(me)
+			return
 		
 		for field in self.field_list:
 			if field == me:
@@ -172,6 +175,7 @@ class Pong(socketio.AsyncNamespace):
   
 		if flag:
 			await asyncio.create_task(self.play_pong(room_name))
+			self.rooms.pop(room_name)
 
 
 
@@ -224,11 +228,26 @@ class Pong(socketio.AsyncNamespace):
 			"p2_score": game.score[1],
 		}
   
-		await sync_to_async(room.delete)()
   
 		async with httpx.AsyncClient() as client:
 			await client.post("http://userserver:8000/api/matches/", json=body)
+			json = {}
 
+			if game.score[0] > game.score[1]:
+				json = {
+					"winner": room.p1,
+					"loser": room.p2,
+				}
+			else:
+				json = {
+					"winner": room.p2,
+					"loser": room.p1,
+				}
+    
+			await client.patch('http://userserver:8000/api/match-result', json=json)
+
+
+		await sync_to_async(room.delete)()
 
 	async def on_key(self, sid, message):
 		info = await self.get_session(sid)
