@@ -1,16 +1,19 @@
 
 import requests
 from rest_framework.permissions import BasePermission
+import logging
 
 class CustomPermission(BasePermission):
 	def has_permission(self, request, view):
-		auth_header = request.headers.get('Authorization')
+		cookies = request.COOKIES
 
-		if not auth_header:
+		if not cookies:
 			return False
-		
-		response = requests.get(f'http://userserver:8000/api/users/me/', headers={'Authorization': f'{auth_header}'})
+
+		response = requests.get('http://userserver:8000/api/me', cookies=cookies)
+		logging.debug(f'{response}')
+
+
 		if response.status_code != 200:
 			return False
-		
 		return True
