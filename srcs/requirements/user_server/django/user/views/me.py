@@ -22,6 +22,9 @@ def me(request):
 
 
 class friendView(APIView):
+
+	authentication_classes = [CustomJWTAuthentication]
+	permission_classes = [IsAuthenticated]
  
 	def get_instance(self, request):
 		jwt_token = AccessToken(request.COOKIES.get('jwt'))
