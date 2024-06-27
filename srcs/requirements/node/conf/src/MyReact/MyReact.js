@@ -101,7 +101,11 @@ function commitRoot() {
       return;
     }
     if (fiber.effects) {
-      fiber.effects.forEach(({_, cleanUp}) => cleanUp());
+      fiber.effects.forEach(({_, cleanUp}) => {
+        if (typeof(cleanUp) === 'function') {
+          cleanUp();
+        }
+      });
       fiber.effects.length = 0;
     }
     if (fiber.child) {
