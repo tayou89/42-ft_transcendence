@@ -154,8 +154,8 @@ class MttPong(Pong):
 		await sio.sleep(6)
   
 		await self.emit(
-      		'game_player',
-            self.rooms[room_name],
+      		'room',
+            self.sub_games[room_name],
             room=room_name,
             namespace=self.namespace
         )
@@ -200,11 +200,11 @@ class MttPong(Pong):
 		}
   
 		if game.score[0] > game.score[1]:
-			body["p1"] = getattr(room, winner)
-			body["p2"] = getattr(room, loser)
+			body["p1"] = winner
+			body["p2"] = loser
 		else:
-			body["p1"] = getattr(room, loser)
-			body["p2"] = getattr(room, winner)
+			body["p1"] = loser
+			body["p2"] = winner
 
 		async with httpx.AsyncClient() as client:
       

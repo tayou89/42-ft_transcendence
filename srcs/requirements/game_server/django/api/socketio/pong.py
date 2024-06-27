@@ -190,7 +190,7 @@ class Pong(socketio.AsyncNamespace):
   
 		await sio.sleep(6)
 		await self.emit(
-      		'game_player',
+      		'room',
             self.rooms[room_name],
             room=room_name,
             namespace=self.namespace
