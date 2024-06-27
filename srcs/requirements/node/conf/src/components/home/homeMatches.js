@@ -1,24 +1,36 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
+import tokenRefresh from "../utility/tokenRefresh.js";
+import logout from "../utility/logout.js";
+async function getOpenRooms() {
+	try {
+		const response = await fetch("http://localhost:8001/api/rooms/", {
+			method: 'GET',
+			credentials: 'include'
+		});
+		if (response.status === 200) {
+			return await response.json();
+		} else if (response.status === 401) {
+			return await tokenRefresh(getOpenRooms);
+		} else {
+			return Promise.reject({ reason: "unknown" });
+		}
+	} catch (error) {
+		console.log("getOpenRooms Error: ", error);
+		return Promise.reject({ reason: "network" });
+	}
+}
 
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
-	const roomsInfoApiUrl = "http://localhost:8001/api/rooms/";
-	useEffect(() => {
-		fetch(roomsInfoApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => {
-				return response.json();
-			})
-			.then(data => {
-				setRooms(() => data);
-			})
-			.catch(error => {
-				console.log("error!", error);
-				setRooms(() => []);//api요청 에러시 방 안보임.
-			});
+	useEffect(async () => {
+		try {
+			const _rooms = await getOpenRooms();
+			setRooms(() => _rooms);
+		} catch (error) {
+			console.log("HomeMatches Error: ", error);
+			logout();
+		}
 	}, []);
 	return (
 		<div>

@@ -1,9 +1,8 @@
-import MyReact from "../MyReact/MyReact.js";
+import { useEffect, useState, MyReact } from "../MyReact/MyReact.js";
 import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
-import tokenRefreshAndGoTo from "./utility/tokenRefreshAndGoTo.js";
-import fetchGetMyData from "./utility/fetchGetMyData.js";
-import fetchTokenRefresh from "./utility/fetchTokenRefresh.js";
+import getMyData from "./utility/getMyData.js";
+import logout from "./utility/logout.js";
 
 const defaultMyData = {
 	"id": 0,
@@ -20,58 +19,17 @@ function onClickShowMyInfo(userId) {
 	navigate(`/userpage?userId=${userId}`);
 }
 
-function onClickLogout() {
-	const logoutApiUrl = "http://localhost:8000/api/logout";
-	fetch(logoutApiUrl, {
-		method: 'POST',
-		credentials: 'include'
-	})
-		.then(() => {
-			navigate("/");
-		})
-		.catch(console.log);
-}
+function Navbar() {
+	const [myData, setMyData] = useState(defaultMyData);
 
-function Navbar({ position }) {
-	const [myData, setMyData] = MyReact.useState(defaultMyData);
-
-	MyReact.useEffect(async () => {
+	useEffect(async () => {
 		try {
-			const myUserData = await fetchGetMyData();
-			setMyData(() => myUserData);
+			const _myData = await getMyData();
+			setMyData(() => _myData);
 		} catch (error) {
-			console.log(error)
-			if (error.reason === "access token refused") {
-				try {
-					const response = await fetchTokenRefresh();
-					console.log("navbar response: ", response);
-				} catch (error) {
-					navigate("/login");
-				}
-			}
+			logout();
 		}
-	}, [])
-
-	// MyReact.useEffect(() => {
-	// 	fetch(myDataApiUrl, {
-	// 		method: 'GET',
-	// 		credentials: 'include'
-	// 	})
-	// 		.then(response => {
-	// 			return response.json();
-	// 		})
-	// 		.then(data => {
-	// 			if (data.detail) {
-	// 				tokenRefreshAndGoTo(position);
-	// 			} else {
-	// 				setMyData(() => data);
-	// 			}
-	// 		})
-	// 		.catch(error => {
-	// 			console.log("in Navbar function", error);
-	// 			navigate("/");
-	// 		});
-	// }, []);
+	}, []);
 
 	return (
 		<div className="container-fluid bg-dark bg-opacity-75" style="user-select: none;">
@@ -87,11 +45,11 @@ function Navbar({ position }) {
 							</div>
 							<div className="dropdown col">
 								<div className=" btn-primary btn-sm text-center text-light fs-4" style="cursor: pointer;" data-bs-toggle="dropdown">
-									{myData.name}
+									{myData.display_name}
 								</div>
 								<ul className="dropdown-menu" style="cursor: pointer;">
 									<li className="dropdown-item" onClick={() => onClickShowMyInfo(myData.id)}>Show Info</li>
-									<li className="dropdown-item text-danger" onClick={onClickLogout}>Logout</li>
+									<li className="dropdown-item text-danger" onClick={logout}>Logout</li>
 								</ul>
 							</div>
 						</div>
