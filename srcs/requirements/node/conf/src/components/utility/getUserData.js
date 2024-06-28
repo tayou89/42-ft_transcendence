@@ -11,7 +11,7 @@ async function getUserData(userId) {
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => { getUserData(userId) });
+			return await tokenRefresh(() => getUserData(userId));
 		} else {
 			return Promise.reject({ reason: "unknown" });
 		}
