@@ -4,16 +4,18 @@ import getMyData from "../utility/getMyData.js";
 import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import modalClose from "../utility/modalClose.js"
+import getUserData from "../utility/getUserData.js";
 
-const defaultUserData = {
+const defaultFriendData = {
 	"id": 0,
-	"name": "default",
-	"email": "default@student.42seoul.kr",
+	"name": "",
+	"email": "",
 	"avatar": "https://www.studiopeople.kr/common/img/default_profile.png",
 	"exp": 0,
 	"wins": 0,
 	"losses": 0,
-	"friends": []
+	"friends": [],
+	"online": true
 }
 
 function HomeFriends() {
@@ -84,38 +86,32 @@ function onClickShowFriendsInfo(friendId) {
 
 //!!!??? 빨간점, 초록점 이미지
 function FriendInfo({ friendId, setFriends }) {
-	const [userInfo, setUserInfo] = useState(defaultUserData);
-	const userInfoApiUrl = `http://localhost:8000/api/users/${friendId}`;
-	useEffect(() => {
-		fetch(userInfoApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => response.json())
-			.then(data => {
-				console.log(data);
-				setUserInfo(() => data);
-			})
-			.catch(error => {
-				console.log(error);
-			});
-	}, [])
-
+	const [userData, setUserData] = useState(defaultFriendData);
 	const greenDotImage = "greendot.png";
 	const redDotImage = "reddot.png";
 
+	useEffect(async () => {
+		try {
+			const _userData = await getUserData(friendId);
+			setUserData(() => _userData);
+		} catch (error) {
+			console.log("FriendInfo Error: ", error);
+			logout();
+		}
+	}, [])
+
 	return (
-		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 " + (userInfo.online === true ? "border-success bg-success" : "border-danger bg-danger")}>
+		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 " + (userData.online === true ? "border-success bg-success" : "border-danger bg-danger")}>
 			<div className="row text-light fs-5 ">
 				<div className="col-2 text-center">
 					<img className="rounded-circle"
 						width="24" height="24"
-						src={userInfo.avatar} />
+						src={userData.avatar} />
 				</div>
 				<div className="col-8">
 					<div className="dropdown" style="user-select: none; cursor: pointer;">
 						<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
-							{userInfo.name}
+							{userData.name}
 						</div>
 						<ul className="dropdown-menu" >
 							<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
@@ -126,7 +122,7 @@ function FriendInfo({ friendId, setFriends }) {
 				<div className="col-2 text-center">
 					<img className="rounded-circle"
 						width="24" height="24"
-						src={userInfo.online === true ? greenDotImage : redDotImage} />
+						src={userData.online === true ? greenDotImage : redDotImage} />
 				</div>
 			</div>
 		</div>
@@ -153,7 +149,7 @@ async function addNewFriend(newFriendName) {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
-				'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
 				name: newFriendName
@@ -214,8 +210,7 @@ function AddNewFriendModal({ title, setFriends }) {
 								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" />
 								<button className="btn btn-primary btn-md" onClick={event => { onClickAddNewFriendSubmit(event, setFriends) }}>Submit</button>
 							</form>
-							<div id="add-friend-status" className="container mt-2 text-success">
-							</div>
+							<div id="add-friend-status" className="container mt-2 text-success"></div>
 						</div>
 
 					</div>
