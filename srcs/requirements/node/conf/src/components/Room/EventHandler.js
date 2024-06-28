@@ -33,16 +33,15 @@ class EventHandler {
         this.#setRefreshEvent();
         window.addEventListener("beforeunload", this.#refreshEvent);
     }
-    addPageBackEvent(setGame) {
-        window.history.pushState(null, '', window.location.pathname);
-        this.#setPageBackEvent(setGame);
+    addPageBackEvent(game, setGame) {
+        // window.history.pushState(null, '', window.location.pathname);
+        this.#setPageBackEvent(game, setGame);
         window.addEventListener("popstate", this.#pageBackEvent);
     }
     addGameEndEvent(myResult, gameData) {
         this.#setGameEndEvent(myResult, gameData);
         document.addEventListener("click", this.#gameEndEvent);
         document.addEventListener("keydown", this.#gameEndEvent);
-        console.log("GameEndEvent is added!!");
     }
     removeKeyEvent() {
         document.removeEventListener("keydown", this.#keyDownEvent);
@@ -76,10 +75,8 @@ class EventHandler {
     }
     #setGameEndEvent(myResult, game) {
         this.#gameEndEvent = (event) => { 
-            console.log("GameEndEvent occured!!");
             if (event.type !== "click" && event.key !== "Esc" && event.key !== "Enter")
                 return ;
-            console.log("Let's go to next page!!");
             if (game.type === GAME.TYPE.PONG || 
                 myResult === GAME.RESULT.LOSE || game.round > 1)
                 navigate("/home");
@@ -100,8 +97,9 @@ class EventHandler {
             event.returnValue = '';
         };
     }
-    #setPageBackEvent(setGame) {
+    #setPageBackEvent(game, setGame) {
         this.#pageBackEvent = (event) => {
+            game.socket.sendRoomLeaveMessage();
             navigate("/home");
             // event.preventDefault();
             // window.history.pushState(null, '', window.location.pathname);

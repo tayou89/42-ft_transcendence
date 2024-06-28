@@ -9,7 +9,7 @@ import EventHandler from "../Room/EventHandler.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
-function Game({ data }) {
+function RemoteGame({ data }) {
     if (!data) 
         return (navigate("/home"));
     const [ game, setGame ] = useState(getInitialGameData(data));
@@ -46,7 +46,6 @@ function getInitialGameData(data) {
         score: { p1: 0, p2: 0},
         result: {},
         players: [{}, {}],
-        isQuitClicked: false,
         eventHandler: new EventHandler(),
     });
 }
@@ -54,7 +53,7 @@ function getInitialGameData(data) {
 function addEvents(game, setGame) {
     game.eventHandler.addKeyEvent(game.socket);
     game.eventHandler.addRefreshEvent();
-    game.eventHandler.addPageBackEvent(setGame);
+    game.eventHandler.addPageBackEvent(game, setGame);
 }
 
 function removeEvents(game) {
@@ -77,4 +76,4 @@ function turnOffSocketChannels(game) {
     }
 }
 
-export default Game;
+export default RemoteGame;

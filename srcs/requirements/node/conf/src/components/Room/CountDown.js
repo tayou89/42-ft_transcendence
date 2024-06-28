@@ -8,7 +8,7 @@ function CountDown({ room }) {
     if (!isAllReady(room.players))
         return (null);
     if (count <= 0)
-        navigate("/game", { data: getDeliveryDataToGame(room) } );
+        navigate("/remote_game", { data: getDeliveryDataToGame(room) } );
     useEffect(() => {
         if (isAllReady(room.players))
             countDown(count, setCount);
