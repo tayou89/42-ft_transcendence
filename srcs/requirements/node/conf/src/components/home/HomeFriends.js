@@ -20,13 +20,16 @@ const defaultFriendData = {
 
 function HomeFriends() {
 	const [friends, setFriends] = useState([]);
-	useEffect(async () => {
-		try {
-			const myData = await getMyData();
-			setFriends(() => myData.friends);
-		} catch (error) {
-			logout();
-		}
+	useEffect(() => {
+		const a = async () => {
+			try {
+				const myData = await getMyData();
+				setFriends(() => myData.friends);
+			} catch (error) {
+				logout();
+			}
+		};
+		a();
 	}, [])
 	return (
 		<div>
@@ -90,14 +93,17 @@ function FriendInfo({ friendId, setFriends }) {
 	const greenDotImage = "greendot.png";
 	const redDotImage = "reddot.png";
 
-	useEffect(async () => {
-		try {
-			const _userData = await getUserData(friendId);
-			setUserData(() => _userData);
-		} catch (error) {
-			console.log("FriendInfo Error: ", error);
-			logout();
-		}
+	useEffect(() => {
+		const a = async () => {
+			try {
+				const _userData = await getUserData(friendId);
+				setUserData(() => _userData);
+			} catch (error) {
+				console.log("FriendInfo Error: ", error);
+				logout();
+			}
+		};
+		a();
 	}, [])
 
 	return (

@@ -18,15 +18,18 @@ const defaultMyData = {
 }
 
 function Home() {
-	const [myData, setMyData] = MyReact.useState(defaultMyData);
+	const [myData, setMyData] = useState(defaultMyData);
 
-	MyReact.useEffect(async () => {
-		try {
-			const _myData = await getMyData();
-			setMyData(() => _myData);
-		} catch (error) {
-			logout();
+	useEffect(() => {
+		const a = async () => {
+			try {
+				const _myData = await getMyData();
+				setMyData(() => _myData);
+			} catch (error) {
+				logout();
+			}
 		}
+		a();
 	}, []);
 
 	return (
