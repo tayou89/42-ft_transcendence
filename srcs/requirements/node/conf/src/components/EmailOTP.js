@@ -10,7 +10,7 @@ async function onClickSubmit(event) {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
-				'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
 				code: input.value

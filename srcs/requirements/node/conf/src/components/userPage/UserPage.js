@@ -40,24 +40,30 @@ function UserPage() {
 	const [myData, setMyData] = useState(defaultData1);
 	const [userData, setUserData] = useState(defaultData2);
 
-	useEffect(async () => {
-		try {
-			const _myData = await getMyData();
-			setMyData(() => _myData);
-		} catch (error) {
-			console.log("UserPage Error: ", error);
-			logout();
-		}
+	useEffect(() => {
+		const a = async () => {
+			try {
+				const _myData = await getMyData();
+				setMyData(() => _myData);
+			} catch (error) {
+				console.log("UserPage Error: ", error);
+				logout();
+			}
+		};
+		a();
 	}, []);
 
-	useEffect(async () => {
-		try {
-			const _userData = await getUserData(userId);
-			setUserData(() => _userData);
-		} catch (error) {
-			console.log("UserPage Error: ", error);
-			logout();
-		}
+	useEffect(() => {
+		const a = async () => {
+			try {
+				const _userData = await getUserData(userId);
+				setUserData(() => _userData);
+			} catch (error) {
+				console.log("UserPage Error: ", error);
+				logout();
+			}
+		};
+		a();
 	}, [userId]);
 
 	return (

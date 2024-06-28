@@ -3,14 +3,17 @@ import { navigate } from "../MyReact/MyReactRouter.js";
 import getMyData from "./utility/getMyData.js";
 
 function Interchange() {
-	MyReact.useEffect(async () => {
-		try {
-			const data = await getMyData();
-			navigate("/home");
-		} catch (error) {
-			console.log("Interchange Error: ", error);
-			navigate("/login");
-		}
+	MyReact.useEffect(() => {
+		const a = async () => {
+			try {
+				const data = await getMyData();
+				navigate("/home");
+			} catch (error) {
+				console.log("Interchange Error: ", error);
+				navigate("/login");
+			}
+		};
+		a();
 	}, []);
 	return (
 		<div className="container text-light fs-1 text-center">

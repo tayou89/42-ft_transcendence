@@ -22,13 +22,16 @@ function onClickShowMyInfo(userId) {
 function Navbar() {
 	const [myData, setMyData] = useState(defaultMyData);
 
-	useEffect(async () => {
-		try {
-			const _myData = await getMyData();
-			setMyData(() => _myData);
-		} catch (error) {
-			logout();
-		}
+	useEffect(() => {
+		const a = async () => {
+			try {
+				const _myData = await getMyData();
+				setMyData(() => _myData);
+			} catch (error) {
+				logout();
+			}
+		};
+		a();
 	}, []);
 
 	return (
