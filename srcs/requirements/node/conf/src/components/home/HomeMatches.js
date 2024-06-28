@@ -104,7 +104,7 @@ async function createRoom(title, roomType) {
 				mtt: (roomType === "mtt" ? true : false)
 			})
 		});
-		if (response.status >= 200 || response.status === 201) {
+		if (response.status === 200 || response.status === 201) {
 			return;
 		} else if (response.status === 400) {//같은 이름의 방이 이미 있음
 			return Promise.reject({ reason: "same room" });
