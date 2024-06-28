@@ -1,5 +1,4 @@
 function notifyStatusById(msg, isSuccess, id, isErase = false) {
-	console.log(msg);
 	const comment = document.querySelector(`#${id}`);
 	if (comment) {
 		comment.classList.remove("text-success");
