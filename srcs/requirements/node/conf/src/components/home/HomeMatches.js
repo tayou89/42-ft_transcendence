@@ -2,6 +2,7 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import logout from "../utility/logout.js";
+
 async function getOpenRooms() {
 	try {
 		const response = await fetch("http://localhost:8001/api/rooms/", {
@@ -21,15 +22,22 @@ async function getOpenRooms() {
 	}
 }
 
-async function onClickRefreshRoomButton(event, setRooms) {
-	event.preventDefault();
-	try {
-		const _rooms = await getOpenRooms();
-		setRooms(() => _rooms);
-	} catch (error) {
-		console.log("HomeMatches Error: ", error);
-		logout();
+function RefreshRoomButton({ setRooms }) {
+	async function onClickRefreshRoomButton(event, setRooms) {
+		event.preventDefault();
+		try {
+			const _rooms = await getOpenRooms();
+			setRooms(() => _rooms);
+		} catch (error) {
+			console.log("HomeMatches Error: ", error);
+			logout();
+		}
 	}
+	return (
+		<button type="button" className="btn btn-sm btn-primary me-2" onClick={event => onClickRefreshRoomButton(event, setRooms)}>
+			Refresh
+		</button>
+	);
 }
 
 function HomeMatches({ myId }) {
@@ -58,9 +66,7 @@ function HomeMatches({ myId }) {
 				</div>
 				<div className="container col-6 text-end pe-4 d-flex flex-row-reverse">
 					<CreateRoomModal myId={myId} />
-					<button type="button" className="btn btn-sm btn-primary me-2" onClick={event => onClickRefreshRoomButton(event, setRooms)}>
-						Refresh
-					</button>
+					<RefreshRoomButton setRooms={setRooms} />
 				</div>
 			</div>
 			<div
@@ -83,34 +89,46 @@ function HomeMatches({ myId }) {
 	);
 }
 
-function onCreateNewRoomSubmit(event, myId) {
+async function createRoom(title, roomType) {
+	try {
+		const response = await fetch("http://localhost:8001/api/rooms/", {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				name: title,
+				mtt: (roomType === "mtt" ? true : false)
+			})
+		});
+		if (response.status >= 200 && response.status < 300) {
+			return await response.jeon();
+		} else if (response.status === 401 || response.status === 403) {//???!!! 백엔드에서 401로 바꿔주면 403은 지워야함
+			return await tokenRefresh(createRoom);
+		} else {
+			return Promise.reject({ reason: "unknown" });
+		}
+	} catch (error) {
+		console.log("createRoom Error: ", error);
+		return Promise.reject({ reason: "network" });
+	}
+}
+
+async function onCreateNewRoomSubmit(event, myId) {
 	event.preventDefault();
 	let title = event.target.parentNode.querySelector("#create-room-input").value;
 	const roomType = event.target.parentNode.querySelector("input[name='optradio']:checked").value;
 	if (title === "") {
 		title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament")
 	}
-
-	const createRoomApiUrl = "http://localhost:8001/api/rooms/";
-	fetch(createRoomApiUrl, {
-		method: 'POST',
-		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json' // 보낼 데이터의 형식 지정
-		},
-		body: JSON.stringify({
-			name: title,
-			mtt: (roomType === "mtt" ? true : false)
-		})
-	})
-		.then(response => response.json())
-		.then(data => {
-			console.log("well done", data);
-			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
-		})
-		.catch(error => {
-			console.log("error!", error);
-		});
+	try {
+		await createRoom(title, roomType);
+		navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+	} catch (error) {
+		console.log("onCreateNewRoomSubmit Error: ", error);
+		logout();
+	}
 }
 
 function CreateRoomModal({ myId }) {
@@ -143,7 +161,7 @@ function CreateRoomModal({ myId }) {
 										</div>
 										<input id="create-room-input" className="me-1" type="text" placeholder="Room name" />
 									</form>
-									<button className="btn btn-primary btn-md" data-bs-dismiss="modal" onClick={(event) => onCreateNewRoomSubmit(event, myId)}>Submit</button>
+									<button className="btn btn-primary btn-md" data-bs-dismiss="modal" onClick={event => onCreateNewRoomSubmit(event, myId)}>Submit</button>
 								</div>
 							</div>
 						</div>
