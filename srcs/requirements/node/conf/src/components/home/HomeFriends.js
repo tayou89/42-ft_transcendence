@@ -5,7 +5,7 @@ import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import modalClose from "../utility/modalClose.js"
 import getUserData from "../utility/getUserData.js";
-import setInnerTextById from "../utility/setInnerTextById.js"
+import notifyStatusById from "../utility/notifyStatusById.js"
 
 const defaultFriendData = {
 	"id": 0,
@@ -169,11 +169,11 @@ async function onClickAddNewFriendSubmit(event, setFriends) {
 		const data = await addNewFriend(newFriendName);
 		console.log(data);
 		if (data.result === "Successfully Added!") {
-			setInnerTextById("Successfully Added!", true, "add-friend-status")
+			notifyStatusById("Successfully Added!", true, "add-friend-status")
 			const myData = await getMyData();
 			setFriends(() => myData.friends);
 		} else {
-			setInnerTextById(data.result, false, "add-friend-status")
+			notifyStatusById(data.result, false, "add-friend-status")
 		}
 	} catch (error) {
 		console.log("onClickAddNewFriendSubmit Error: ", error);

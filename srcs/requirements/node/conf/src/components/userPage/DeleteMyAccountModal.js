@@ -2,7 +2,7 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Navbar from "../Navbar.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
-import setInnerTextById from "../utility/setInnerTextById.js"
+import notifyStatusById from "../utility/notifyStatusById.js"
 
 function onClickDeleteAccount(event, myId) {
 	event.preventDefault();
@@ -16,15 +16,15 @@ function onClickDeleteAccount(event, myId) {
 				if (response.status === 200) {
 					navigate("/");
 				} else {
-					setInnerTextById("delete failed!", false, "delete-account-status");
+					notifyStatusById("delete failed!", false, "delete-account-status");
 				}
 			})
 			.catch(error => {
-				setInnerTextById("Network Error!", false, "delete-account-status");
+				notifyStatusById("Network Error!", false, "delete-account-status");
 				console.log("in onClickDeleteAccount function", error);
 			});
 	} else {
-		setInnerTextById("input 'delete'", false, "delete-account-status");
+		notifyStatusById("input 'delete'", false, "delete-account-status");
 	}
 }
 

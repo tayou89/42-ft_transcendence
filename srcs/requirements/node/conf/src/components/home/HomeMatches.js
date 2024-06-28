@@ -3,7 +3,7 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import logout from "../utility/logout.js";
 import modalCloseById from "../utility/modalClose.js";
-import setInnerTextById from "../utility/setInnerTextById.js"
+import notifyStatusById from "../utility/notifyStatusById.js"
 
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
@@ -149,7 +149,7 @@ async function onCreateNewRoomSubmit(event, myId) {
 	} catch (error) {
 		console.log("onCreateNewRoomSubmit Error: ", error);
 		if (error.reason === "same room") {
-			setInnerTextById("Using Room name", false, "create-room-status");
+			notifyStatusById("Using Room name", false, "create-room-status");
 		} else {
 			modalCloseById("create-room-modal");
 			logout();

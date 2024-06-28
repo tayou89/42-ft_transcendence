@@ -1,4 +1,4 @@
-function setInnerTextById(msg, isSuccess, id, isErase = false) {
+function notifyStatusById(msg, isSuccess, id, isErase = false) {
 	console.log(msg);
 	const comment = document.querySelector(`#${id}`);
 	if (comment) {
@@ -12,8 +12,8 @@ function setInnerTextById(msg, isSuccess, id, isErase = false) {
 		}
 	}
 	if (!isErase) {
-		setTimeout(() => setInnerTextById("", true, id, true), 2500);
+		setTimeout(() => notifyStatusById("", true, id, true), 2500);
 	}
 }
 
-export default setInnerTextById;
+export default notifyStatusById;

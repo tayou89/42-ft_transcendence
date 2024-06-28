@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import refreshToken from "../utility/tokenRefresh.js"
-import setInnerTextById from "../utility/setInnerTextById.js"
+import notifyStatusById from "../utility/notifyStatusById.js"
 
 function ChangeMyNicknameModal({ title, myId }) {
 	return (
@@ -66,20 +66,20 @@ async function onClickChangeNickname(event, myId) {
 	event.preventDefault();
 	const newNickname = document.querySelector("#change-name-input").value;
 	if (newNickname.length < 2) {
-		setInnerTextById("name too short!", false, "change-name-status");
+		notifyStatusById("name too short!", false, "change-name-status");
 	} else if (newNickname.length > 16) {
-		setInnerTextById("name too long!", false, "change-name-status");
+		notifyStatusById("name too long!", false, "change-name-status");
 	} else if (isNonAlphanumeric(newNickname)) {
-		setInnerTextById("Only alphabets and numbers are available", false, "change-name-status");
+		notifyStatusById("Only alphabets and numbers are available", false, "change-name-status");
 	} else {
 		try {
 			await changeNickname(myId, newNickname);
 			let nicknameElement = document.querySelector("#userpage-statchart-nickname");
-			setInnerTextById("successfully changed!", true, "change-name-status");
+			notifyStatusById("successfully changed!", true, "change-name-status");
 			nicknameElement.innerText = newNickname;
 		} catch (error) {
 			console.log("onClickChangeNickname error:", error);
-			setInnerTextById("failed!", false, "change-name-status");
+			notifyStatusById("failed!", false, "change-name-status");
 		}
 	}
 }
