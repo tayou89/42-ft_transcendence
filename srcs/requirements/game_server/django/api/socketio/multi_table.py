@@ -155,7 +155,7 @@ class MttPong(Pong):
   
 		await self.emit(
       		'room',
-            self.rooms[room_name],
+            self.sub_games[room_name],
             room=room_name,
             namespace=self.namespace
         )
