@@ -1,27 +1,47 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-
-function HomeMatches({ myId }) {
-    console.log("HomeMatches : ", myId);
-	const [rooms, setRooms] = useState([]);
-	const roomsInfoApiUrl = "http://localhost:8001/api/rooms/";
-	useEffect(() => {
-		fetch(roomsInfoApiUrl, {
+import tokenRefresh from "../utility/tokenRefresh.js";
+import logout from "../utility/logout.js";
+async function getOpenRooms() {
+	try {
+		const response = await fetch("http://localhost:8001/api/rooms/", {
 			method: 'GET',
 			credentials: 'include'
-		})
-			.then(response => {
-				// console.log(response);
-				return response.json();
-			})
-			.then(data => {
-				// console.log("well done", data);
-				setRooms(() => data);
-			})
-			.catch(error => {
-				// console.log("error!", error);
-				setRooms(() => []);//api요청 에러시 방 안보임.
-			});
+		});
+		if (response.status === 200) {
+			return await response.json();
+		} else if (response.status === 401) {
+			return await tokenRefresh(getOpenRooms);
+		} else {
+			return Promise.reject({ reason: "unknown" });
+		}
+	} catch (error) {
+		console.log("getOpenRooms Error: ", error);
+		return Promise.reject({ reason: "network" });
+	}
+}
+
+async function onClickRefreshRoomButton(event, setRooms) {
+	event.preventDefault();
+	try {
+		const _rooms = await getOpenRooms();
+		setRooms(() => _rooms);
+	} catch (error) {
+		console.log("HomeMatches Error: ", error);
+		logout();
+	}
+}
+
+function HomeMatches({ myId }) {
+	const [rooms, setRooms] = useState([]);
+	useEffect(async () => {
+		try {
+			const _rooms = await getOpenRooms();
+			setRooms(() => _rooms);
+		} catch (error) {
+			console.log("HomeMatches Error: ", error);
+			logout();
+		}
 	}, []);
 	return (
 		<div>
@@ -36,8 +56,11 @@ function HomeMatches({ myId }) {
 						</div>
 					</div>
 				</div>
-				<div className="container col-6 text-end pe-4">
+				<div className="container col-6 text-end pe-4 d-flex flex-row-reverse">
 					<CreateRoomModal myId={myId} />
+					<button type="button" className="btn btn-sm btn-primary me-2" onClick={event => onClickRefreshRoomButton(event, setRooms)}>
+						Refresh
+					</button>
 				</div>
 			</div>
 			<div
@@ -82,7 +105,7 @@ function onCreateNewRoomSubmit(event, myId) {
 	})
 		.then(response => response.json())
 		.then(data => {
-			// console.log("well done", data);
+			console.log("well done", data);
 			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
 		})
 		.catch(error => {

@@ -1,12 +1,12 @@
 import { useState, MyReact } from "../MyReact/MyReact.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
 
-function EmailOTP() {
-	const apiUrl = "http://localhost:8000/api/otp";
-	function onClickSubmit(event) {
-		event.preventDefault();
-		const input = event.target.parentNode.querySelector("input");
-		fetch(apiUrl, {
+async function onClickSubmit(event) {
+	event.preventDefault();
+	const input = event.target.parentNode.querySelector("input");
+	const authStatusMessage = document.querySelector("#auth-status-message");
+	try {
+		const response = await fetch("http://localhost:8000/api/otp", {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -15,17 +15,20 @@ function EmailOTP() {
 			body: JSON.stringify({
 				code: input.value
 			})
-		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.result === "success") {
-					navigate("/");
-				} else {
-					alert(data.result);
-				}
-			})
-			.catch(error => console.log("in EmailOTP function", error));
+		});
+		const data = await response.json();
+		if (data.result === "success") {
+			navigate("/");
+		} else {
+			authStatusMessage.innerText = data.result;
+		}
+	} catch (error) {
+		authStatusMessage.innerText = "Network Error!";
+		setTimeout(() => { navigate("/") }, 800);
 	}
+}
+
+function EmailOTP() {
 	return (
 		<div className="text-light text-center">
 			<div className="py-5"></div>
@@ -37,8 +40,9 @@ function EmailOTP() {
 			<div className="container">42Seoul에 연동된 이메일로 인증코드를 보냈습니다.</div>
 			<div className="container">6자리 인증코드를 입력하세요.</div>
 			<form className="container my-1 py-1">
-				<input className="" type="text" placeholder="message you received" maxLength={6} />
+				<input id="auth-code-input" type="text" placeholder="message you received" maxLength={6} />
 				<button className="btn btn-primary btn-sm" onClick={onClickSubmit}>Submit</button>
+				<div id="auth-status-message" className="text-danger"></div>
 			</form>
 		</div>
 	);

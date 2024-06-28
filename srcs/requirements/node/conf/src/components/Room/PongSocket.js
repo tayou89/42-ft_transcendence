@@ -15,6 +15,9 @@ class Socket {
     sendRoomLeaveMessage() {
         this.#socket.emit(SOCKET.EVENT.LEAVE_ROOM);
     }
+    sendNextGameMessage() {
+        this.#socket.emit(SOCKET.EVENT.NEXT_GAME);
+    }
     sendKeyValue(value) {
         this.#socket.emit(SOCKET.EVENT.KEY, value);
     }
@@ -23,7 +26,8 @@ class Socket {
     }
     turnOnRoomChannel(setPlayers) {
         this.#eventHandler.setRoomEvent(setPlayers);
-        this.#socket.off(SOCKET.EVENT.ROOM).on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
+        this.#socket.off(SOCKET.EVENT.ROOM);
+        this.#socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
     turnOffRoomChannel() {
         this.#socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);

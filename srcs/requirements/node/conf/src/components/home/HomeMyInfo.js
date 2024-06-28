@@ -1,5 +1,4 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { navigate } from "../../MyReact/MyReactRouter.js";
 
 function HomeMyInfo({ myData }) {
 	const expWidth = `width:${(myData.exp % 1000) / 10}%`;

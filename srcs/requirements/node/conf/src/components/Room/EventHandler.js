@@ -9,7 +9,6 @@ class EventHandler {
     }
     setRoomEvent(setPlayers) {
         this.#roomEvent = async (newPlayers) => {
-			console.log("Room Event Occured:", newPlayers);
             await this.#stateSetter.setPlayers(newPlayers, setPlayers);
         };
     }
@@ -29,30 +28,34 @@ class EventHandler {
         document.addEventListener("keydown", this.#keyDownEvent);
         document.addEventListener("keyup", this.#keyUpEvent);
     }
-    addRefreshEvent(setQuitClick) {
-        this.#setRefreshEvent(setQuitClick);
+    addRefreshEvent() {
+        this.#setRefreshEvent();
         window.addEventListener("beforeunload", this.#refreshEvent);
     }
-    addPageBackEvent(setQuitClick) {
-        this.#setPageBackEvent(setQuitClick);
+    addPageBackEvent(setGame) {
+        window.history.pushState(null, '', window.location.pathname);
+        this.#setPageBackEvent(setGame);
         window.addEventListener("popstate", this.#pageBackEvent);
     }
     addGameEndEvent(myResult, gameData) {
         this.#setGameEndEvent(myResult, gameData);
         document.addEventListener("click", this.#gameEndEvent);
         document.addEventListener("keydown", this.#gameEndEvent);
+        console.log("GameEndEvent is added!!");
     }
     removeKeyEvent() {
         document.removeEventListener("keydown", this.#keyDownEvent);
         document.removeEventListener("keyup", this.#keyUpEvent);
     }
     removeGameEndEvent() {
-        // console.log("removeGameEndEvent");
         document.removeEventListener("click", this.#gameEndEvent);
         document.removeEventListener("keydown", this.#gameEndEvent);
     }
     removeRefreshEvent() {
         window.removeEventListener("beforeunload", this.#refreshEvent);
+    }
+    removePageBackEvent() {
+        window.removeEventListener("popstate", this.#pageBackEvent);
     }
     #setKeyDownEvent(socket) {
         this.#keyDownEvent = (event) => {
@@ -70,32 +73,37 @@ class EventHandler {
                 socket.sendKeyValue(KEY.VALUE.NONE);
         };
     }
-    #setGameEndEvent(myResult, gameData) {
-        if (gameData.type === GAME.TYPE.PONG || 
-            myResult === GAME.RESULT.LOSE || gameData.gameRound >= 2) {
-            this.#gameEndEvent = (event) => { 
-                if (event.type === "click" || event.key === "Esc" || event.key === "Enter")
-                    navigate("/home");
+    #setGameEndEvent(myResult, game) {
+        this.#gameEndEvent = (event) => { 
+            console.log("GameEndEvent occured!!");
+            if (event.type !== "click" && event.key !== "Esc" && event.key !== "Enter")
+                return ;
+            console.log("Let's go to next page!!");
+            game.socket.sendNextGameMessage();
+            if (game.type === GAME.TYPE.PONG || 
+                myResult === GAME.RESULT.LOSE || game.round > 1)
+                navigate("/home");
+            else {
+                navigate("/game", { data: { 
+                    socket: game.socket,
+                    type: game.type,
+                    myId: game.myId,
+                    gameRound: game.round + 1
+                }});
             };
-        }
-        else {
-            this.#gameEndEvent = (event) => { 
-                if (event.type === "click" || event.key === "Esc" || event.key === "Enter")
-                    navigate("/game", { data: { ...gameData, gameRound: gameData.gameRound + 1 } });
-            };
-        }
+        };
     }
-    #setRefreshEvent(setQuitClick) {
+    #setRefreshEvent() {
         this.#refreshEvent = (event) => {
             event.preventDefault();
-            setQuitClick((_) => true);
             event.returnValue = '';
         };
     }
-    #setPageBackEvent(setQuitClick) {
+    #setPageBackEvent(setGame) {
         this.#pageBackEvent = (event) => {
             event.preventDefault();
-            setQuitClick(() => true);
+            window.history.pushState(null, '', window.location.pathname);
+            setGame((prev) => ({ ...prev, isQuitClicked: true }));
         };
     }
     get roomEvent() {

@@ -3,8 +3,8 @@ import ReadyButton from "./ReadyButton.js";
 import { GAME } from "../Game/constant.js";
 import "../../css/room/player-slot.css";
 
-function PlayerSlot({ socket, player, type, isMySlot }) {
-    const elementIds = getElementsIds(type);
+function PlayerSlot({ player, room, isMySlot }) {
+    const elementIds = getElementsIds(room.type);
 
     if (!player.id)
         return (<div className="col" id={ elementIds[0] }></div>);
@@ -15,7 +15,7 @@ function PlayerSlot({ socket, player, type, isMySlot }) {
             </div>
             <div id="name">{ player.display_name}</div>
             <div id="level">Level { Math.floor( player.exp / 1000) }</div>
-            <ReadyButton status={ player.ready } socket={ socket } isMySlot={ isMySlot } />
+            <ReadyButton status={ player.ready } socket={ room.socket } isMySlot={ isMySlot } />
         </div>
     );
 }

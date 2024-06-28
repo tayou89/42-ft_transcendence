@@ -3,21 +3,10 @@ import Fetch from "./Fetch.js";
 
 class StateSetter {
     async setPlayers(newPlayers, playerSetter) {
-        const players = Object.values(newPlayers);
-        const promises = [];
+        const newPlayersArray = Object.values(newPlayers);
 
-        players.forEach((newPlayer, index) => {
-                promises.push(Fetch.setUserData(playerSetter, newPlayer.pid, index));
-        });
-        await Promise.all(promises);
-        players.forEach((newPlayer, index) => {
-            if (newPlayer.pid) {
-                playerSetter((prev) => {
-                    const ret = this.#getNewPlayers(prev, index, newPlayer.ready);
-                    return (ret);
-                });
-            }
-        });
+        await updatePlayers(newPlayersArray, playerSetter);
+        updateReadyStatus(newPlayersArray, playerSetter);;;
     }
     setGameData(newGameData, setGameData) {
          setGameData((prev) => ({ 
@@ -28,17 +17,29 @@ class StateSetter {
          }));
     }
     setGameResult(newGameResult, setGameResult) {
-        setGameResult((prev) => ({ ...prev, ...newGameResult }));
+        setGameResult((prev) => ({ ...prev, result: newGameResult }));
     }
-    #getNewPlayers(prev, index, readyStatus) {
-       const newArray = prev.map((player, i) => {
-           if (i === index)
-               return ({ ...player, ready: readyStatus });
-           else
-               return (player);
-       });
-        return (newArray);
-    }
+}
+
+async function updatePlayers(newPlayers, playerSetter) {
+    const promises = newPlayers.map(newPlayer => Fetch.userData(newPlayer.pid));
+    const updatedPlayers = await Promise.all(promises);
+
+    playerSetter((prev) => {
+        return ({...prev, players: updatedPlayers});
+    });
+} 
+
+function updateReadyStatus(newPlayers, playerSetter) {
+    newPlayers.forEach((newPlayer, index) => {
+        if (newPlayer.pid) {
+            playerSetter((prev) => ({ 
+                ...prev, 
+                players: prev.players.map((player, i) => (
+                    i === index ? { ...player, ready: newPlayer.ready } : player))
+            }));
+        }
+    });
 }
 
 export default StateSetter;

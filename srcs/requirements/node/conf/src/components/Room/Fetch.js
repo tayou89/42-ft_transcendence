@@ -3,15 +3,6 @@ import { URL_PATH } from "../Game/constant.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo.js";
 
 class Fetch {
-    static async setUserData(setFunction, userId = 0, index = -1) {
-        const userData = await Fetch.userData(userId);
-
-		// console.log(userData, index);
-        if (index >= 0) 
-            setFunction((prev) => (setArray(prev, userData, index)));
-        else
-            setFunction((prev) => (setObject(prev, userData)));
-    }
     static async userData(id) {
         try {
 			if (!id)
@@ -30,8 +21,7 @@ class Fetch {
             return (data);
         }
         catch (error) {
-            console.error("Error", error);
-			return (null);
+			return ({});
         }
     }
     static async #photoURL(path) {
@@ -50,24 +40,6 @@ class Fetch {
             console.error("Error", error);
         }
     }
-}
-
-function setArray(prev, data, index) {
-    const newArray = [...prev];
-    
-    if (!data)
-        newArray[index] = {};
-    else
-        newArray[index] = data;
-	// console.log("newArray:", newArray);
-    return (newArray);
-}
-
-function setObject (prev, data) {
-    if (!data)
-        return ({});
-    else
-        return ({...prev, ...data});
 }
 
 export default Fetch;
