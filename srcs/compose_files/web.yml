@@ -46,8 +46,8 @@ services:
       CLIENT_SECRET: ${CLIENT_SECRET}
       VAULT_USER_NAME: ${VAULT_USER_NAME}
       VAULT_PASSWORD: ${VAULT_PASSWORD}
-    ports:
-      - 8000:8000
+    # ports:
+    #   - 8000:8000
     networks:
       - my_net
     build:
@@ -107,8 +107,8 @@ services:
       - ${PROJECT_DIR}/requirements/game_server/${DJANGO_PROJECT_NAME}:/app/${DJANGO_PROJECT_NAME}
       - certs_volume:/certs
       - django_log_volume:/logs
-    ports:
-      - 8001:8001
+    # ports:
+    #   - 8001:8001
     environment:
       GAMEDATA_DB_NAME: ${GAMEDATA_DB_NAME}
       GAMEDATA_DB_USER: ${USERDATA_DB_USER}
