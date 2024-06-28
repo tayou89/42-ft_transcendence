@@ -97,6 +97,7 @@ export const SOCKET = {
         GAME: "game",
         READY: "ready",
         RESULT: "result",
+        NEXT_GAME: "next_game",
     },
     VALUE: {
         KEY: {

@@ -2,16 +2,16 @@ import { MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import "../../css/room/quit-popup.css";
 
-function QuitPopUp({ socket, isClicked, set }) {
+function QuitPopUp({ data, setFunction }) {
     const handleClickYes = () => {
-        socket.sendRoomLeaveMessage();
+        data.socket.sendRoomLeaveMessage();
         navigate("/home");
     }
     const handleClickNo = () => {
-        set((prev) => (!prev));
+        setFunction((prev) => ({ ...prev, isQuitClicked: false }));
     }
 
-    if (!isClicked)
+    if (!data.isQuitClicked)
         return (null);
     return (
         <div className="container-fluid" id="quit-popup">
