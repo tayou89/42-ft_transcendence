@@ -3,6 +3,7 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import logout from "../utility/logout.js";
 import modalCloseById from "../utility/modalClose.js";
+import notifyStatusById from "../utility/notifyStatusById.js"
 
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
@@ -16,7 +17,7 @@ function HomeMatches({ myId }) {
 				logout();
 			}
 		};
-
+		a();
 	}, []);
 
 	return (
@@ -148,25 +149,10 @@ async function onCreateNewRoomSubmit(event, myId) {
 	} catch (error) {
 		console.log("onCreateNewRoomSubmit Error: ", error);
 		if (error.reason === "same room") {
-			modifyCommentMsg("Using Room name", false)
-			setTimeout(() => modifyCommentMsg("", true), 3000);
+			notifyStatusById("Using Room name", false, "create-room-status");
 		} else {
 			modalCloseById("create-room-modal");
 			logout();
-		}
-	}
-}
-
-function modifyCommentMsg(msg, isSuccess) {
-	const comment = document.querySelector("#create-room-status");
-	if (comment) {
-		comment.classList.remove("text-success");
-		comment.classList.remove("text-danger");
-		comment.innerText = msg;
-		if (isSuccess === true) {
-			comment.classList.add("text-success");
-		} else {
-			comment.classList.add("text-danger");
 		}
 	}
 }
