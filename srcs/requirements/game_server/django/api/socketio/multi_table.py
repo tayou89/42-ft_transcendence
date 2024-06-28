@@ -137,7 +137,7 @@ class MttPong(Pong):
 
 	async def on_next_game(self, sid):
 		info = await self.get_session(sid)
-		room_name = info.get('room')
+		room_name: str = info.get('room')
 		final_room = self.sub_games[room_name]
      
 		await self.emit(
@@ -150,7 +150,7 @@ class MttPong(Pong):
 		if len(final_room) != 2:
 			return
   
-		await self.make_room_and_play(final_room['p1']['before'], final_room['p2']['before'], room_name, '_final')
+		await self.make_room_and_play(final_room['p1']['before'], final_room['p2']['before'], room_name.removesuffix('_final'), '_final')
 		room = await sync_to_async(Room.objects.get)(name=room_name)
 		await sync_to_async(room.delete)()
 		self.rooms.pop(room_name)
