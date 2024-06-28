@@ -8,9 +8,6 @@ export function Player({ room }) {
     const elementId = getElementId(room.type);
     const playerSlots = getPlayerSlots(room);
 
-    useEffect(() => {
-    	socket.turnOnRoomChannel(setPlayers);
-    }, []);
     return (
         <div className="row" id={ elementId }>
             { playerSlots }
