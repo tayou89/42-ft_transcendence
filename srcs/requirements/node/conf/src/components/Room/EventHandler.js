@@ -41,6 +41,7 @@ class EventHandler {
         this.#setGameEndEvent(myResult, gameData);
         document.addEventListener("click", this.#gameEndEvent);
         document.addEventListener("keydown", this.#gameEndEvent);
+        console.log("GameEndEvent is added!!");
     }
     removeKeyEvent() {
         document.removeEventListener("keydown", this.#keyDownEvent);
@@ -54,7 +55,6 @@ class EventHandler {
         window.removeEventListener("beforeunload", this.#refreshEvent);
     }
     removePageBackEvent() {
-        window.history.go(-1);
         window.removeEventListener("popstate", this.#pageBackEvent);
     }
     #setKeyDownEvent(socket) {
@@ -75,8 +75,10 @@ class EventHandler {
     }
     #setGameEndEvent(myResult, game) {
         this.#gameEndEvent = (event) => { 
+            console.log("GameEndEvent occured!!");
             if (event.type !== "click" && event.key !== "Esc" && event.key !== "Enter")
                 return ;
+            console.log("Let's go to next page!!");
             game.socket.sendNextGameMessage();
             if (game.type === GAME.TYPE.PONG || 
                 myResult === GAME.RESULT.LOSE || game.round > 1)
@@ -122,9 +124,6 @@ class EventHandler {
     get gameEndEvent() {
         return (this.#gameEndEvent);
     }
-    get gamePlayerEvent() {
-        return (this.#gamePlayerEvent);
-    }
     #roomEvent;
     #gameEvent;
     #resultEvent;
@@ -133,7 +132,6 @@ class EventHandler {
     #gameEndEvent;
     #refreshEvent;
     #pageBackEvent;
-    #gamePlayerEvent;
     #stateSetter;
 }
 
