@@ -41,12 +41,12 @@ function HomeMatches({ myId }) {
 					{rooms
 						.filter(room => room.cur_users !== room.max_users && room.in_game === false)
 						.map((room) => (
-							<HomeMatchInfo myId={myId} room={room} active={true} />
+							<HomeMatchInfo myId={myId} room={room} active={true} setRooms={setRooms} />
 						))}
 					{rooms
 						.filter(room => room.cur_users === room.max_users || room.in_game === true)
 						.map((room) => (
-							<HomeMatchInfo myId={myId} room={room} active={false} />
+							<HomeMatchInfo myId={myId} room={room} active={false} setRooms={setRooms} />
 						))}
 				</div>
 			</div>
@@ -131,7 +131,7 @@ async function onCreateNewRoomSubmit(event, myId) {
 	let title = document.querySelector("#create-room-input").value;
 	const roomType = document.querySelector("input[name='optradio']:checked").value;
 	if (title === "") {
-		title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament")
+		title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament");
 	}
 	try {
 		await createRoom(title, roomType);
@@ -143,6 +143,7 @@ async function onCreateNewRoomSubmit(event, myId) {
 			modifyCommentMsg("Using Room name", false)
 			setTimeout(() => modifyCommentMsg("", true), 3000);
 		} else {
+			modalCloseById("create-room-modal");
 			logout();
 		}
 	}
@@ -207,11 +208,51 @@ function CreateRoomModal({ myId }) {
 	);
 }
 
-function onClickEnterCreatedRoom(title, myId, type) {
-	navigate(`/room?title=${title}&myId=${myId}&type=${type}`);
+function isRoomFull(room) {
+	if (room.max_users <= room.cur_users) return true;
+	return false;
 }
 
-function HomeMatchInfo({ room, myId, active }) {
+function isAlreadyEnteredRoom(room, myId) {
+	if (room.p1 === myId || room.p2 === myId || room.p3 === myId || room.p4 === myId) return true;
+	return false;
+}
+
+function isStartedRoom(room) {
+	if (room.in_game === true) return true;
+	return false;
+}
+
+async function onClickEnterRoom(event, room, myId, setRooms) {
+	const roomId = room.id;
+	const title = room.name;
+	const roomType = room.mtt ? "mtt" : "pong";
+	event.preventDefault();
+	try {
+		const currentRooms = await getOpenRooms();
+		const currentRoom = currentRooms.find(room => room.id === roomId);
+		if (currentRoom === undefined) {
+			alert("This room disappeared");
+			setRooms(() => currentRooms);
+		} else if (isRoomFull(currentRoom)) {
+			alert("This room is full");
+			setRooms(() => currentRooms);
+		} else if (isAlreadyEnteredRoom(currentRoom, myId)) {
+			alert("you've already entered");
+			setRooms(() => currentRooms);
+		} else if (isStartedRoom(currentRoom)) {
+			alert("game has already started");
+			setRooms(() => currentRooms);
+		} else {
+			console.log("asdqwezxc");
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+		}
+	} catch (error) {
+		console.log("onClickEnterRoom Error: ", error);
+	}
+}
+
+function HomeMatchInfo({ room, myId, active, setRooms }) {
 	const opt1 = "container rounded text-center my-2 py-3 text-light border bg-primary";
 	const opt2 = "container rounded text-center my-2 py-3 text-light border bg-secondary";
 	const [mouseEntered, setMouseEntered] = useState(false);
@@ -240,7 +281,7 @@ function HomeMatchInfo({ room, myId, active }) {
 			<div className="my-2 py-4 fs-4 text-center bg-primary rounded border"
 				style="height: 82px; user-select: none; cursor: pointer;"
 				onMouseEnter={MouseEnter} onMouseLeave={MouseLeave}
-				onClick={() => onClickEnterCreatedRoom(room.name, myId, (room.mtt ? "mtt" : "pong"))}
+				onClick={event => onClickEnterRoom(event, room, myId, setRooms)}
 			>
 				<div>
 					Enter Room
