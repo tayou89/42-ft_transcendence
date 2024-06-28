@@ -3,9 +3,9 @@ import "../../css/game/game-board.css";
 import "../../css/game/player-slot.css";
 
 function PlayerSlot({ id, player }) {
-    if (!player.id)
+    if (!player)
         return (<div className="col" id={id}></div>);
-    const level = player.exp ? player.exp / 1000 : 0;
+    const level = player.exp === 0 ? 0 : Math.floor(player.exp / 1000);
 
     return (
         <div className="col" id={id}>

@@ -14,7 +14,6 @@ function Room() {
     useEffect(() => {
         room.socket.sendRoomJoinMessage(room.myId, room.title);
     	room.socket.turnOnRoomChannel(setRoom);
-        return (() => room.socket.turnOffRoomChannel());
     }, []);
     return (
         <div className="container-fluid" id="room-page">

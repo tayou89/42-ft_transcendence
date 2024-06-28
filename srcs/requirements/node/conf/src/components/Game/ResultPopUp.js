@@ -2,16 +2,18 @@ import { useEffect, MyReact } from "../../MyReact/MyReact.js";
 import { GAME } from "./constant.js";
 import "../../css/game/result-popup.css";
 
-
 function ResultPopUp({ game }) {
     const myResult = getMyResult(game);
     const resultText = getResultText(myResult);
 
+    console.log("game:", game);
+    console.log("myResult:", myResult);
+    console.log("resultText:", resultText);
     if (isGameResultEmpty(game.result))
         return (null);
     useEffect(() => {
         game.eventHandler.addGameEndEvent(myResult, game);
-        return (() => gameeventHandler.removeGameEndEvent());
+        return (() => game.eventHandler.removeGameEndEvent());
     }, []);
     return (
         <div id="result-text-box">
@@ -22,6 +24,7 @@ function ResultPopUp({ game }) {
 
 function getMyResult(game) {
     const myPosition = getMyPosition(game.myId, game.players);
+    console.log("myPosition:", myPosition);
 
     return (myPosition === GAME.POSITION.LEFT ? game.result.p1 : game.result.p2);
 }

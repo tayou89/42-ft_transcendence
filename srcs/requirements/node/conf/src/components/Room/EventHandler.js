@@ -9,7 +9,6 @@ class EventHandler {
     }
     setRoomEvent(setPlayers) {
         this.#roomEvent = async (newPlayers) => {
-            console.log("Room event occured!", newPlayers);
             await this.#stateSetter.setPlayers(newPlayers, setPlayers);
         };
     }
@@ -33,8 +32,8 @@ class EventHandler {
         this.#setRefreshEvent();
         window.addEventListener("beforeunload", this.#refreshEvent);
     }
-    addPageBackEvent(setQuitClick) {
-        this.#setPageBackEvent(setQuitClick);
+    addPageBackEvent() {
+        this.#setPageBackEvent();
         window.addEventListener("popstate", this.#pageBackEvent);
     }
     addGameEndEvent(myResult, gameData) {
@@ -47,12 +46,14 @@ class EventHandler {
         document.removeEventListener("keyup", this.#keyUpEvent);
     }
     removeGameEndEvent() {
-        console.log("removeGameEndEvent");
         document.removeEventListener("click", this.#gameEndEvent);
         document.removeEventListener("keydown", this.#gameEndEvent);
     }
     removeRefreshEvent() {
         window.removeEventListener("beforeunload", this.#refreshEvent);
+    }
+    removePageBackEvent() {
+        window.removeEventListener("popstate", this.#pageBackEvent);
     }
     #setKeyDownEvent(socket) {
         this.#keyDownEvent = (event) => {
@@ -73,8 +74,12 @@ class EventHandler {
     }
     #setGameEndEvent(myResult, game) {
         this.#gameEndEvent = (event) => { 
+            console.log("Game end event occured!!");
+            console.log("myResult", myResult);
+            console.log("game:", game);
             if (event.type !== "click" && event.key !== "Esc" && event.key !== "Enter")
                 return ;
+            game.socket.sendNextGameMessage();
             if (game.type === GAME.TYPE.PONG || 
                 myResult === GAME.RESULT.LOSE || game.round > 1)
                 navigate("/home");
@@ -94,10 +99,9 @@ class EventHandler {
             event.returnValue = '';
         };
     }
-    #setPageBackEvent(setQuitClick) {
+    #setPageBackEvent() {
         this.#pageBackEvent = (event) => {
-            event.preventDefault();
-            setQuitClick(() => true);
+            navigate("/home");
         };
     }
     get roomEvent() {
@@ -118,6 +122,9 @@ class EventHandler {
     get gameEndEvent() {
         return (this.#gameEndEvent);
     }
+    get gamePlayerEvent() {
+        return (this.#gamePlayerEvent);
+    }
     #roomEvent;
     #gameEvent;
     #resultEvent;
@@ -126,6 +133,7 @@ class EventHandler {
     #gameEndEvent;
     #refreshEvent;
     #pageBackEvent;
+    #gamePlayerEvent;
     #stateSetter;
 }
 

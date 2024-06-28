@@ -17,7 +17,7 @@ class StateSetter {
          }));
     }
     setGameResult(newGameResult, setGameResult) {
-        setGameResult((prev) => ({ ...prev, ...newGameResult }));
+        setGameResult((prev) => ({ ...prev, result: newGameResult }));
     }
 }
 
@@ -25,7 +25,9 @@ async function updatePlayers(newPlayers, playerSetter) {
     const promises = newPlayers.map(newPlayer => Fetch.userData(newPlayer.pid));
     const updatedPlayers = await Promise.all(promises);
 
-    playerSetter((prev) => ({...prev, players: updatedPlayers}));
+    playerSetter((prev) => {
+        return ({...prev, players: updatedPlayers});
+    });
 } 
 
 function updateReadyStatus(newPlayers, playerSetter) {

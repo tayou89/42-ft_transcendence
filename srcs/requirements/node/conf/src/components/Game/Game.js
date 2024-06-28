@@ -1,4 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { navigate } from "../../MyReact/MyReactRouter.js";
 import TopLine from "../Room/TopLine.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
@@ -10,9 +11,13 @@ import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
 function Game({ data }) {
+    if (!data) 
+        return (navigate("/home"));
     const [ game, setGame ] = useState(getInitialGameData(data));
 
     useEffect(() => {
+        console.log("=====================Game Page=======================");
+        console.log("game:", game);
         addEvents(game); 
         turnOnSocketChannels(game, setGame);
         return (() => {
@@ -34,10 +39,10 @@ function Game({ data }) {
 
 function getInitialGameData(data) {
     return ({
-        socket: data.socket,
-        type: data.type,
-        myId: data.myId,
-        round: data.gameRound,
+        socket: data?.socket,
+        type: data?.type,
+        myId: data?.myId,
+        round: data?.gameRound,
         ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
         paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
         score: { p1: 0, p2: 0},
@@ -51,6 +56,7 @@ function getInitialGameData(data) {
 function addEvents(game) {
     game.eventHandler.addKeyEvent(game.socket);
     game.eventHandler.addRefreshEvent();
+    game.eventHandler.addPageBackEvent();
 }
 
 function removeEvents(game) {
@@ -65,7 +71,8 @@ function turnOnSocketChannels(game, setGame) {
 }
 
 function turnOffSocketChannels(game) {
-    game.socket.turnOffRoomChannel();
+    if (game.round > 1)
+        game.socket.turnOffRoomChannel();
     game.socket.turnOffGameChannel();
     game.socket.turnOffResultChannel();
 }
