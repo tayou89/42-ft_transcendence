@@ -79,16 +79,16 @@ class EventHandler {
             if (event.type !== "click" && event.key !== "Esc" && event.key !== "Enter")
                 return ;
             console.log("Let's go to next page!!");
-            game.socket.sendNextGameMessage();
             if (game.type === GAME.TYPE.PONG || 
                 myResult === GAME.RESULT.LOSE || game.round > 1)
                 navigate("/home");
             else {
-                navigate("/game", { data: { 
+                game.socket.sendNextGameMessage();
+                navigate("/next_game", { data: { 
                     socket: game.socket,
                     type: game.type,
                     myId: game.myId,
-                    gameRound: game.round + 1
+                    gameRound: 2,
                 }});
             };
         };

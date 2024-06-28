@@ -62,6 +62,7 @@ function addEvents(game, setGame) {
 function removeEvents(game) {
     game.eventHandler.removeKeyEvent();
     game.eventHandler.removeRefreshEvent();
+    game.eventHandler.removePageBackEvent();
 }
 
 function turnOnSocketChannels(game, setGame) {

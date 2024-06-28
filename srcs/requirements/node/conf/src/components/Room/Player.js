@@ -8,8 +8,6 @@ export function Player({ room }) {
     const elementId = getElementId(room.type);
     const playerSlots = getPlayerSlots(room);
 
-    useEffect(() => {
-    }, []);
     return (
         <div className="row" id={ elementId }>
             { playerSlots }
