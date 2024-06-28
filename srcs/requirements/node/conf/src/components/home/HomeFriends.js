@@ -6,15 +6,16 @@ import tokenRefresh from "../utility/tokenRefresh.js";
 import modalClose from "../utility/modalClose.js"
 import getUserData from "../utility/getUserData.js";
 
-const defaultUserData = {
+const defaultFriendData = {
 	"id": 0,
-	"name": "default",
-	"email": "default@student.42seoul.kr",
+	"name": "",
+	"email": "",
 	"avatar": "https://www.studiopeople.kr/common/img/default_profile.png",
 	"exp": 0,
 	"wins": 0,
 	"losses": 0,
-	"friends": []
+	"friends": [],
+	"online": true
 }
 
 function HomeFriends() {
@@ -85,7 +86,7 @@ function onClickShowFriendsInfo(friendId) {
 
 //!!!??? 빨간점, 초록점 이미지
 function FriendInfo({ friendId, setFriends }) {
-	const [userData, setUserData] = useState(defaultUserData);
+	const [userData, setUserData] = useState(defaultFriendData);
 	const greenDotImage = "greendot.png";
 	const redDotImage = "reddot.png";
 
@@ -209,8 +210,7 @@ function AddNewFriendModal({ title, setFriends }) {
 								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" />
 								<button className="btn btn-primary btn-md" onClick={event => { onClickAddNewFriendSubmit(event, setFriends) }}>Submit</button>
 							</form>
-							<div id="add-friend-status" className="container mt-2 text-success">
-							</div>
+							<div id="add-friend-status" className="container mt-2 text-success"></div>
 						</div>
 
 					</div>
