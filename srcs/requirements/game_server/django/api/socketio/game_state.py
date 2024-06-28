@@ -1,6 +1,6 @@
 import math
 
-END_SCORE = 7
+END_SCORE = 3
 
 WIDTH = 1300
 HEIGHT = 800
@@ -75,7 +75,6 @@ class GameState:
 		self.score = [0, 0]
 		self.status = 'play'
 
-		self.bounce_time = 0
 		self.pause = 15
 
 	def set_player_dy(self, pid, direction):
