@@ -4,6 +4,7 @@ import getMyData from "../utility/getMyData.js";
 import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import modalClose from "../utility/modalClose.js"
+import getUserData from "../utility/getUserData.js";
 
 const defaultUserData = {
 	"id": 0,
@@ -84,38 +85,32 @@ function onClickShowFriendsInfo(friendId) {
 
 //!!!??? 빨간점, 초록점 이미지
 function FriendInfo({ friendId, setFriends }) {
-	const [userInfo, setUserInfo] = useState(defaultUserData);
-	const userInfoApiUrl = `http://localhost:8000/api/users/${friendId}`;
-	useEffect(() => {
-		fetch(userInfoApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => response.json())
-			.then(data => {
-				console.log(data);
-				setUserInfo(() => data);
-			})
-			.catch(error => {
-				console.log(error);
-			});
-	}, [])
-
+	const [userData, setUserData] = useState(defaultUserData);
 	const greenDotImage = "greendot.png";
 	const redDotImage = "reddot.png";
 
+	useEffect(async () => {
+		try {
+			const _userData = await getUserData(friendId);
+			setUserData(() => _userData);
+		} catch (error) {
+			console.log("FriendInfo Error: ", error);
+			logout();
+		}
+	}, [])
+
 	return (
-		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 " + (userInfo.online === true ? "border-success bg-success" : "border-danger bg-danger")}>
+		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 " + (userData.online === true ? "border-success bg-success" : "border-danger bg-danger")}>
 			<div className="row text-light fs-5 ">
 				<div className="col-2 text-center">
 					<img className="rounded-circle"
 						width="24" height="24"
-						src={userInfo.avatar} />
+						src={userData.avatar} />
 				</div>
 				<div className="col-8">
 					<div className="dropdown" style="user-select: none; cursor: pointer;">
 						<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
-							{userInfo.name}
+							{userData.name}
 						</div>
 						<ul className="dropdown-menu" >
 							<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
@@ -126,7 +121,7 @@ function FriendInfo({ friendId, setFriends }) {
 				<div className="col-2 text-center">
 					<img className="rounded-circle"
 						width="24" height="24"
-						src={userInfo.online === true ? greenDotImage : redDotImage} />
+						src={userData.online === true ? greenDotImage : redDotImage} />
 				</div>
 			</div>
 		</div>
