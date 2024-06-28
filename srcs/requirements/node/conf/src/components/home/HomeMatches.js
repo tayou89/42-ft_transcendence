@@ -103,7 +103,7 @@ async function createRoom(title, roomType) {
 			})
 		});
 		if (response.status >= 200 && response.status < 300) {
-			return await response.jeon();
+			return await response.json();
 		} else if (response.status === 401 || response.status === 403) {//???!!! 백엔드에서 401로 바꿔주면 403은 지워야함
 			return await tokenRefresh(createRoom);
 		} else {
