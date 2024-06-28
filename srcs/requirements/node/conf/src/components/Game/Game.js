@@ -70,10 +70,11 @@ function turnOnSocketChannels(game, setGame) {
 }
 
 function turnOffSocketChannels(game) {
-    if (game.round > 1)
+    if (game.round > 1) {
         game.socket.turnOffRoomChannel();
-    game.socket.turnOffGameChannel();
-    game.socket.turnOffResultChannel();
+        game.socket.turnOffGameChannel();
+        game.socket.turnOffResultChannel();
+    }
 }
 
 export default Game;
