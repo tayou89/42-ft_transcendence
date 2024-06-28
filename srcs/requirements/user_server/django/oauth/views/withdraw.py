@@ -25,8 +25,10 @@ class withdraw(APIView):
 
 class log_out(APIView):
 	def post(self, request):
-
-		jwt_token = AccessToken(request.COOKIES.get('jwt'))
+		jwt_token = request.COOKIES.get('jwt')
+		if not jwt_token:
+			return Response(status=status.HTTP_401_UNAUTHORIZED)
+		jwt_token = AccessToken(jwt_token)
 		user = User.objects.get(id=jwt_token.payload.get('user_id'))
 		user.online = False
 		user.save()

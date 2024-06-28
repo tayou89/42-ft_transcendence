@@ -4,9 +4,12 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import MatchRecords from "./MatchRecords.js";
 import StatChart from "./StatChart.js";
+import getMyData from "../utility/getMyData.js";
+import getUserData from "../utility/getUserData.js";
+import logout from "../utility/logout.js";
 
 const defaultData1 = {
-	"id": 0,
+	"id": -1234,
 	"name": "default",
 	"display_name": "display_default",
 	"email": "default@student.42seoul.kr",
@@ -19,7 +22,7 @@ const defaultData1 = {
 }
 
 const defaultData2 = {
-	"id": -1,
+	"id": -1235,
 	"name": "default",
 	"display_name": "display_default",
 	"email": "default@student.42seoul.kr",
@@ -34,52 +37,27 @@ const defaultData2 = {
 function UserPage() {
 	const queryParams = new URLSearchParams(location.search);
 	const userId = queryParams.get('userId');
-	const [myData, setMyData] = MyReact.useState(defaultData1);
-	const myDataApiUrl = "http://localhost:8000/api/me";
+	const [myData, setMyData] = useState(defaultData1);
+	const [userData, setUserData] = useState(defaultData2);
 
-	const [userData, setUserData] = MyReact.useState(defaultData2);
-	const userDataApiUrl = `http://localhost:8000/api/users/${userId}`;
+	useEffect(async () => {
+		try {
+			const _myData = await getMyData();
+			setMyData(() => _myData);
+		} catch (error) {
+			console.log("UserPage Error: ", error);
+			logout();
+		}
+	}, []);
 
-	MyReact.useEffect(() => {
-		fetch(myDataApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => {
-				return response.json();
-			})
-			.then(data => {
-				if (data.detail) {
-					tokenRefreshAndGoTo(`/userpage?userId=${userId}`);
-				} else {
-					setMyData(() => data);
-				}
-			})
-			.catch(error => {
-				console.log("in UserPage function", error);
-				navigate("/");
-			});
-
-		fetch(userDataApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => {
-				return response.json();
-			})
-			.then(data => {
-				console.log(userDataApiUrl);
-				console.log("GET userData", data);
-				if (data.detail) {
-					tokenRefreshAndGoTo(`/userpage?userId=${userId}`);
-				} else {
-					setUserData(() => data);
-				}
-			})
-			.catch(error => {
-				console.log("in UserPage function", error);
-				navigate("/");
-			});
+	useEffect(async () => {
+		try {
+			const _userData = await getUserData(userId);
+			setUserData(() => _userData);
+		} catch (error) {
+			console.log("UserPage Error: ", error);
+			logout();
+		}
 	}, [userId]);
 
 	return (

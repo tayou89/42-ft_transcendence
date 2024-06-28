@@ -128,6 +128,9 @@ class Pong(socketio.AsyncNamespace):
 		room_name = info.get('room')
   
 		room = await sync_to_async(Room.objects.get)(name=room_name)
+		if room.in_game:
+			self.rooms[room_name].pop(me)
+			return
 		
 		for field in self.field_list:
 			if field == me:
@@ -172,6 +175,7 @@ class Pong(socketio.AsyncNamespace):
   
 		if flag:
 			await asyncio.create_task(self.play_pong(room_name))
+			self.rooms.pop(room_name)
 
 
 
@@ -185,7 +189,12 @@ class Pong(socketio.AsyncNamespace):
 		await sync_to_async(room_db.save)()
   
 		await sio.sleep(6)
-		await self.emit('room', self.rooms[room_name], room=room_name, namespace=self.namespace)
+		await self.emit(
+      		'room',
+            self.rooms[room_name],
+            room=room_name,
+            namespace=self.namespace
+        )
 		
 		while game.status != 'end':
 			
@@ -224,21 +233,26 @@ class Pong(socketio.AsyncNamespace):
 			"p2_score": game.score[1],
 		}
   
-		await sync_to_async(room.delete)()
   
 		async with httpx.AsyncClient() as client:
-			try:
-				response = await client.post("http://localhost:8000/api/matches/", json=body)
-				response.raise_for_status()  # 이를 통해 HTTP 에러 발생 시 예외를 발생시킵니다
-				logging.debug(f'------------------ {response.status_code} ------------------------')
-			except httpx.HTTPStatusError as exc:
-				logging.error(f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}")
-			except httpx.RequestError as exc:
-				logging.error(f"Request failed: {exc}")
-			except Exception as exc:
-				logging.error(f"An error occurred: {exc}")
-		
+			await client.post("http://userserver:8000/api/matches/", json=body)
+			json = {}
 
+			if game.score[0] > game.score[1]:
+				json = {
+					"winner": room.p1,
+					"loser": room.p2,
+				}
+			else:
+				json = {
+					"winner": room.p2,
+					"loser": room.p1,
+				}
+    
+			await client.patch('http://userserver:8000/api/match-result', json=json)
+
+
+		await sync_to_async(room.delete)()
 
 	async def on_key(self, sid, message):
 		info = await self.get_session(sid)

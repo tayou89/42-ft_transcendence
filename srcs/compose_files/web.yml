@@ -180,10 +180,10 @@ services:
       - logs_volume:/logs
       - avatars_volume:/django/avatars/:ro
     ports:
-      - 443:443
+      - 8000:8000
+      - 8001:8001
       - 9090:9090
       - 4242:4242
-      - 8484:8484
     networks:
       - my_net
     healthcheck:

@@ -1,10 +1,10 @@
 import MyReact from "../MyReact/MyReact.js";
 import { Route } from "../MyReact/MyReactRouter.js";
-import Home from "./home/home.js";
+import Home from "./home/Home.js";
 import UserPage from "./userPage/UserPage.js";
-import Login from "./login.js";
-import Interchange from "./interchange.js";
-import EmailOTP from "./emailOTP.js";
+import Login from "./LoginPage.js";
+import Interchange from "./Interchange.js";
+import EmailOTP from "./EmailOTP.js";
 import Game from "./Game/Game.js";
 import Room from "./Room/Room.js";
 
@@ -19,6 +19,10 @@ function App() {
 			<Route path="/game" component={Game} />
 			<Route path="/room" component={Room} />
 		</div>
+		// <div>
+		// 	<Route path="/" component={HomeTest} />
+		// 	<Route path="/login" component={LoginTest} />
+		// </div>
 	);
 }
 

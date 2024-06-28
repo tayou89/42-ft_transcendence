@@ -1,31 +1,51 @@
-
+import os
+	
 from ..models import User
 from ..serializer import UserSerializer
 from match.serializer import MatchSerializer
 from match.models import MatchHistory
 from django.db.models import Q
 
+from rest_framework.views import APIView
 from django.http import FileResponse
 from rest_framework.decorators import action
 
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
 
+from rest_framework.permissions import IsAuthenticated
 from user_manage.authentication import CustomJWTAuthentication
+from rest_framework.permissions import AllowAny
 
-import os
+ 
+class GameResultView(APIView):
+	permission_classes = [AllowAny]
+	def patch(self, request):
+     
+		winner = User.objects.get(id=request.data['winner'])
+		winner.wins += 1
+		winner.exp += 1000
+		winner.save()
+		
+		loser = User.objects.get(id=request.data['loser'])
+		loser.losses += 1
+		loser.exp += 300
+		loser.save()
+
+		return Response(status=status.HTTP_200_OK)
+
 
 class UserVeiwSet(viewsets.ModelViewSet):
 
-	# authentication_classes = [CustomJWTAuthentication]
-	# permission_classes = [IsAuthenticated]
+	authentication_classes = [CustomJWTAuthentication]
+	permission_classes = [IsAuthenticated]
 	
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
 	http_method_names = ['get', 'post', 'patch', 'delete']
+ 
 
 	def list(self, request, *args, **kwargs):
 
@@ -46,7 +66,7 @@ class UserVeiwSet(viewsets.ModelViewSet):
 	def matches(self, request, pk=True):
 		user = self.get_object()
 
-		matches = MatchHistory.objects.filter(Q(p1=user) | Q(p2=user))
+		matches = MatchHistory.objects.filter(Q(p1=user) | Q(p2=user)).order_by('-date')
 		serializer = MatchSerializer(matches, many=True)
 
 		return Response(serializer.data)
