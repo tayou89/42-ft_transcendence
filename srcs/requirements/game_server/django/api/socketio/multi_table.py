@@ -85,13 +85,6 @@ class MttPong(Pong):
 				self.make_room_and_play('p3', 'p4', room_name, '_sub2')
 			)
 
-			await asyncio.create_task(self.make_room_and_play(sub1_winner, sub2_winner, room_name, '_final'))
-   
-			await sync_to_async(room.delete)()
-			self.rooms.pop(room_name)
-			self.player_sessions.pop(room_name)
-
-
 
 	async def make_room_and_play(self, p1, p2, room_name, room_num):
 		session = self.player_sessions[room_name]
@@ -101,8 +94,8 @@ class MttPong(Pong):
 
 		await self.enter_room(session[p2], room_name + room_num)
 		await self.save_session(session[p2], {'me': 'p2', 'room': room_name + room_num})
-  
-		self.sub_games[room_name + room_num ] = {
+
+		self.sub_games[room_name + room_num] = {
 	  		'p1': self.rooms[room_name][p1], 
 			'p2': self.rooms[room_name][p2],
 		}
@@ -133,18 +126,35 @@ class MttPong(Pong):
 	
 			for pnum in ['p1', 'p2']:
 				if not final_room.get(pnum, None):
+					winner_data['before'] = winner
 					final_room[pnum] = winner_data
+					await self.save_session(session[winner], {'me': pnum, 'room': room_name + room_num})
 					break
-		
-			await sio.emit(
-				'room',
-				final_room,
-				room=room_name,
-				namespace=self.namespace
-			)
 	
 		return winner
 
+	async def on_next_game(self, sid):
+		info = await self.get_session(sid)
+		room_name = info.get('room')
+		final_room = self.sub_games[room_name]
+     
+		await self.emit(
+      		'room',
+            final_room,
+            room=room_name,
+            namespace=self.namespace
+        )
+  
+		if len(final_room) != 2:
+			return
+  
+		await asyncio.create_task(self.make_room_and_play(final_room['p1']['before'], final_room['p2']['before'], room_name, '_final'))
+		room = await sync_to_async(Room.objects.get)(name=room_name)
+		await sync_to_async(room.delete)()
+		self.rooms.pop(room_name)
+		self.player_sessions.pop(room_name)
+
+  
 
 	async def play_pong(self, room_name, p1_pid, p2_pid):
 		game = self.games[room_name] = GameState()
@@ -155,7 +165,7 @@ class MttPong(Pong):
   
 		await self.emit(
       		'room',
-            self.rooms[room_name],
+            self.sub_games[room_name],
             room=room_name,
             namespace=self.namespace
         )
