@@ -23,31 +23,40 @@ class MttPong(Pong):
 		self.MAX_USER = 4
 
 	async def on_disconnect(self, sid):
-     
+	 
 		info = await self.get_session(sid)
+
 		if not info:
 			return
 
-		await super().on_disconnect(sid)
-		
-		room_name = info.get('room')
 		me = info.get('me')
-		origin = info.get('origin')
-  
-		if me == 'p1' or me == 'p2':
-			sub_game  = self.sub_games.get(room_name + "_sub1", None)
-			if sub_game:
-				sub_game.pop(me)
-		else:
-			sub_game  = self.sub_games.get(room_name + "_sub2", None)
-			if sub_game:
-				sub_game.pop(me)
+		room_name = info.get('room')
+		room_db = await sync_to_async(Room.objects.get)(name=room_name)
 
-		sub_game  = self.sub_games.get(room_name + "_final", None)
-		if sub_game and me in sub_game:
-			sub_game.pop(me)
-   
-		self.player_sessions[room_name].pop(origin)
+		if room_db.in_game:
+			self.sub_games[info.get('sub_room')].pop(me)
+			self.player_sessions[room_name].pop(info.get('origin'))
+			return
+
+		self.rooms[room_name][me] = {}
+		await self.save_session(sid, {})
+		
+		for field in self.field_list:
+			if field == me:
+				setattr(room_db, field, None)
+				break
+		room_db.cur_users -= 1
+		if room_db.cur_users == 0:
+			await sync_to_async(room_db.delete)()
+			self.rooms.pop(room_name)
+		else:
+			await sync_to_async(room_db.save)()
+			await self.emit(
+				'message',
+				self.rooms[room_name],
+				room=room_name,
+				namespace=self.namespace
+			)
 
 
 	async def on_join_room(self, sid, message):
@@ -96,52 +105,53 @@ class MttPong(Pong):
 		session = self.player_sessions[room_name]
 		sub_room = room_name + room_num
 
-		if room_num != '_final':
-			await self.enter_room(session[p1], sub_room)
-			await self.enter_room(session[p2], sub_room)
-	
-			await self.save_session(session[p1], {'me': 'p1', 'room': room_name, 'sub_room': sub_room})
-			await self.save_session(session[p2], {'me': 'p2', 'room': room_name, 'sub_room': sub_room})
+		await self.enter_room(session[p1], sub_room)
+		await self.enter_room(session[p2], sub_room)
 
-			self.sub_games[sub_room] = {
-				'p1': self.rooms[room_name][p1], 
-				'p2': self.rooms[room_name][p2],
-			}
+		await self.save_session(session[p1], {'me': 'p1', 'room': room_name, 'sub_room': sub_room})
+		await self.save_session(session[p2], {'me': 'p2', 'room': room_name, 'sub_room': sub_room})
+
+		self.sub_games[sub_room] = {
+			'p1': self.rooms[room_name][p1], 
+			'p2': self.rooms[room_name][p2],
+		}
 
 		winner = await self.play_pong(sub_room, session[p1], session[p2])
   
 		await self.leave_room(session[p1], sub_room)
 		await self.leave_room(session[p2], sub_room)
-		self.sub_games.pop(sub_room)
   
 		winner_data = {}
   
 		if winner == 'p1':
 			winner_data = self.rooms[room_name][p1]
-			await self.save_session(session[p2], {})
+			if 'p2' in self.sub_games[sub_room]:
+				await self.save_session(session[p2], {})
 			await self.save_result(room_name, self.games[sub_room], p1, p2)
 			winner = p1
 			loser = p2
 		else:
 			winner_data = self.rooms[room_name][p2]
-			await self.save_session(session[p1], {})
+			if 'p1' in self.sub_games[sub_room]:
+				await self.save_session(session[p1], {})
 			await self.save_result(room_name, self.games[sub_room], p2, p1)
 			winner = p2
 			loser = p1
    
-		if room_num != 'final':
-			final_room = self.sub_games.get(room_name + '_final', None)
-			if not final_room:
-				final_room = self.sub_games[room_name + '_final'] = {} 
-	
-			for pnum in ['p1', 'p2']:
-				if not final_room.get(pnum, None):
-					winner_data['before'] = winner
-					winner_data['ready'] = False
-					final_room[pnum] = winner_data
-					await self.save_session(session[winner], {'me': pnum, 'room': room_name, 'sub_room': room_name + '_final'})
-					await self.enter_room(session[winner], room_name + '_final')
-					break
+		self.sub_games.pop(sub_room)
+   
+		final_room = self.sub_games.get(room_name + '_final', None)
+		if not final_room:
+			final_room = self.sub_games[room_name + '_final'] = {} 
+
+		for pnum in ['p1', 'p2']:
+			if not final_room.get(pnum, None):
+				winner_data['before'] = winner
+				winner_data['ready'] = False
+				final_room[pnum] = winner_data
+				await self.save_session(session[winner], {'me': pnum, 'room': room_name, 'sub_room': room_name + '_final'})
+				await self.enter_room(session[winner], room_name + '_final')
+				break
 	
 		return (winner, loser)
 
@@ -149,30 +159,48 @@ class MttPong(Pong):
 		info = await self.get_session(sid)
 		room_name = info.get('sub_room')
 		me = info.get('me')
+
 		final_room = self.sub_games[room_name]
+		session = self.player_sessions[info.get('room')]
+
 		final_room[info['me']]['ready'] = True
-     
+  
+		await sio.sleep(1/2)
+	 
 		await self.emit(
-      		'room',
-            final_room,
-            room=room_name,
-            namespace=self.namespace
-        )
+	  		'room',
+			final_room,
+			room=room_name,
+			namespace=self.namespace
+		)
   
-		if len(final_room) == 2 and final_room['p1']['ready'] and final_room['p2']['ready']:
+		if len(final_room) != 2 or not final_room['p1']['ready'] or not final_room['p2']['ready']:
 			return
+	
+		p1 = final_room['p1']['before']
+		p2 = final_room['p2']['before']
   
-		winner, loser = await self.make_room_and_play(
-      		final_room['p1']['before'],
-        	final_room['p2']['before'],
-         	room_name.removesuffix('_final'), '_final'
-        )
+		await self.play_pong(
+	  		room_name,
+			session[p1],
+		 	session[p2]
+		)
   
-		await self.save_result(info.get('room'), self.games[room_name], winner, loser)
+		final_game: GameState = self.games[room_name]
   
-		room = await sync_to_async(Room.objects.get)(name=room_name)
+		if final_game.score[0] > final_game.score[1]:
+			winner = p1
+			loser = p2
+		else:
+			loser = p1
+			winner = p2
+  
+		await self.save_result(info.get('room'), final_game, winner, loser)
+  
+		room = await sync_to_async(Room.objects.get)(name=info.get('room'))
 		await sync_to_async(room.delete)()
 		self.rooms.pop(info.get('room'))
+		self.sub_games.pop(room_name)
 		self.player_sessions.pop(info.get('room'))
 
 
@@ -184,11 +212,11 @@ class MttPong(Pong):
 		await sio.sleep(6)
   
 		await self.emit(
-      		'room',
-            self.sub_games[room_name],
-            room=room_name,
-            namespace=self.namespace
-        )
+	  		'room',
+			self.sub_games[room_name],
+			room=room_name,
+			namespace=self.namespace
+		)
 		
 		while game.status != 'end':
 	  
@@ -237,7 +265,7 @@ class MttPong(Pong):
 			body["p2"] = getattr(room, winner)
 
 		async with httpx.AsyncClient() as client:
-      
+	  
 			await client.post("http://userserver:8000/api/matches/", json=body)
 
 			json = {
