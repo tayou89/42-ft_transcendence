@@ -6,14 +6,17 @@ import modalCloseById from "../utility/modalClose.js";
 
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
-	useEffect(async () => {
-		try {
-			const _rooms = await getOpenRooms();
-			setRooms(() => _rooms);
-		} catch (error) {
-			console.log("HomeMatches Error: ", error);
-			logout();
-		}
+	useEffect(() => {
+		const a = async () => {
+			try {
+				const _rooms = await getOpenRooms();
+				setRooms(() => _rooms);
+			} catch (error) {
+				console.log("HomeMatches Error: ", error);
+				logout();
+			}
+		};
+
 	}, []);
 
 	return (
