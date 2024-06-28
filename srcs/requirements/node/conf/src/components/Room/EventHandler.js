@@ -14,6 +14,7 @@ class EventHandler {
     }
     setGameEvent(setGameData) {
         this.#gameEvent = (newGameData)  => {
+            console.log("New Game Data:", newGameData);
             this.#stateSetter.setGameData(newGameData, setGameData);
         };
     }
@@ -101,9 +102,10 @@ class EventHandler {
     }
     #setPageBackEvent(setGame) {
         this.#pageBackEvent = (event) => {
-            event.preventDefault();
-            window.history.pushState(null, '', window.location.pathname);
-            setGame((prev) => ({ ...prev, isQuitClicked: true }));
+            navigate("/home");
+            // event.preventDefault();
+            // window.history.pushState(null, '', window.location.pathname);
+            // setGame((prev) => ({ ...prev, isQuitClicked: true }));
         };
     }
     get roomEvent() {
