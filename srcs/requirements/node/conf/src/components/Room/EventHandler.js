@@ -32,8 +32,9 @@ class EventHandler {
         this.#setRefreshEvent();
         window.addEventListener("beforeunload", this.#refreshEvent);
     }
-    addPageBackEvent() {
-        this.#setPageBackEvent();
+    addPageBackEvent(setGame) {
+        window.history.pushState(null, '', window.location.pathname);
+        this.#setPageBackEvent(setGame);
         window.addEventListener("popstate", this.#pageBackEvent);
     }
     addGameEndEvent(myResult, gameData) {
@@ -53,13 +54,13 @@ class EventHandler {
         window.removeEventListener("beforeunload", this.#refreshEvent);
     }
     removePageBackEvent() {
+        window.history.go(-1);
         window.removeEventListener("popstate", this.#pageBackEvent);
     }
     #setKeyDownEvent(socket) {
         this.#keyDownEvent = (event) => {
             if (event.repeat)
                 return ;
-            event.preventDefault();
             if (KEY.UP.includes(event.key))
                 socket.sendKeyValue(KEY.VALUE.UP);
             else if (KEY.DOWN.includes(event.key))
@@ -74,9 +75,6 @@ class EventHandler {
     }
     #setGameEndEvent(myResult, game) {
         this.#gameEndEvent = (event) => { 
-            console.log("Game end event occured!!");
-            console.log("myResult", myResult);
-            console.log("game:", game);
             if (event.type !== "click" && event.key !== "Esc" && event.key !== "Enter")
                 return ;
             game.socket.sendNextGameMessage();
@@ -99,9 +97,11 @@ class EventHandler {
             event.returnValue = '';
         };
     }
-    #setPageBackEvent() {
+    #setPageBackEvent(setGame) {
         this.#pageBackEvent = (event) => {
-            navigate("/home");
+            event.preventDefault();
+            window.history.pushState(null, '', window.location.pathname);
+            setGame((prev) => ({ ...prev, isQuitClicked: true }));
         };
     }
     get roomEvent() {

@@ -18,7 +18,7 @@ function Game({ data }) {
     useEffect(() => {
         console.log("=====================Game Page=======================");
         console.log("game:", game);
-        addEvents(game); 
+        addEvents(game, setGame); 
         turnOnSocketChannels(game, setGame);
         return (() => {
             removeEvents(game);
@@ -53,10 +53,10 @@ function getInitialGameData(data) {
     });
 }
 
-function addEvents(game) {
+function addEvents(game, setGame) {
     game.eventHandler.addKeyEvent(game.socket);
     game.eventHandler.addRefreshEvent();
-    game.eventHandler.addPageBackEvent();
+    game.eventHandler.addPageBackEvent(setGame);
 }
 
 function removeEvents(game) {
