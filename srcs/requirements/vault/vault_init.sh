@@ -11,6 +11,7 @@ CA_KEY="${CA_PATH}/ca.key"
 CA_NAME="42_cert"
 JSON_PATH="/vault/settings"
 POLICY_PATH="/vault/policies"
+JWT_SECRET=$(openssl rand -base64 32)
 
 #init vault
 echo "initializing vault."
@@ -132,7 +133,8 @@ curl --cacert ${CA_CERT} -s -XPOST \
     --data "{
         \"data\": {
             \"USER_SERVER_SECRET_KEY\": \"${USER_SERVER_SECRET_KEY}\",
-            \"GAME_SERVER_SECRET_KEY\": \"${GAME_SERVER_SECRET_KEY}\"
+            \"GAME_SERVER_SECRET_KEY\": \"${GAME_SERVER_SECRET_KEY}\",
+            \"JWT_SECRET\": \"${JWT_SECRET}\"
         }
     }"
 
