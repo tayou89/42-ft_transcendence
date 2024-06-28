@@ -2,6 +2,7 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Navbar from "../Navbar.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
+import setInnerTextById from "../utility/setInnerTextById.js"
 
 function onClickDeleteAccount(event, myId) {
 	event.preventDefault();
@@ -15,29 +16,15 @@ function onClickDeleteAccount(event, myId) {
 				if (response.status === 200) {
 					navigate("/");
 				} else {
-					modifyCommentMsg("delete failed!", false);
+					setInnerTextById("delete failed!", false, "delete-account-status");
 				}
 			})
 			.catch(error => {
-				modifyCommentMsg("Network Error!", false);
+				setInnerTextById("Network Error!", false, "delete-account-status");
 				console.log("in onClickDeleteAccount function", error);
 			});
 	} else {
-		modifyCommentMsg("input 'delete'", false);
-	}
-}
-
-function modifyCommentMsg(msg, isSuccess) {
-	const comment = document.querySelector("#delete-account-status");
-	if (comment) {
-		comment.classList.remove("text-success");
-		comment.classList.remove("text-danger");
-		comment.innerText = msg;
-		if (isSuccess === true) {
-			comment.classList.add("text-success");
-		} else {
-			comment.classList.add("text-danger");
-		}
+		setInnerTextById("input 'delete'", false, "delete-account-status");
 	}
 }
 

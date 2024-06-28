@@ -1,7 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Navbar from "../Navbar.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import MatchRecords from "./MatchRecords.js";
 import StatChart from "./StatChart.js";
 import getMyData from "../utility/getMyData.js";
@@ -10,9 +9,9 @@ import logout from "../utility/logout.js";
 
 const defaultData1 = {
 	"id": -1234,
-	"name": "default",
-	"display_name": "display_default",
-	"email": "default@student.42seoul.kr",
+	"name": "",
+	"display_name": "",
+	"email": "",
 	"avatar": "https://www.studiopeople.kr/common/img/default_profile.png",
 	"exp": 0,
 	"wins": 0,
@@ -23,9 +22,9 @@ const defaultData1 = {
 
 const defaultData2 = {
 	"id": -1235,
-	"name": "default",
-	"display_name": "display_default",
-	"email": "default@student.42seoul.kr",
+	"name": "",
+	"display_name": "",
+	"email": "",
 	"avatar": "https://www.studiopeople.kr/common/img/default_profile.png",
 	"exp": 0,
 	"wins": 0,
@@ -39,7 +38,6 @@ function UserPage() {
 	const userId = queryParams.get('userId');
 	const [myData, setMyData] = useState(defaultData1);
 	const [userData, setUserData] = useState(defaultData2);
-
 	useEffect(() => {
 		const a = async () => {
 			try {
@@ -70,7 +68,7 @@ function UserPage() {
 		<div>
 			<Navbar position="/userpage" />
 			<div className="container text-light">
-				<StatChart isMyInfo={myData.id === userData.id} myId={myData.id} userData={userData} />
+				<StatChart isMyInfo={myData.id === userData.id} myId={myData.id} userData={userData} setMyData={setMyData} />
 				<div className="mt-3">
 					<MatchRecords userId={userId} />
 				</div>

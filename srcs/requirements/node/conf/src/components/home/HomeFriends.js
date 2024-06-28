@@ -5,6 +5,7 @@ import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import modalClose from "../utility/modalClose.js"
 import getUserData from "../utility/getUserData.js";
+import setInnerTextById from "../utility/setInnerTextById.js"
 
 const defaultFriendData = {
 	"id": 0,
@@ -135,20 +136,6 @@ function FriendInfo({ friendId, setFriends }) {
 	);
 }
 
-function modifyCommentMsg(msg, isSuccess) {
-	const comment = document.querySelector("#add-friend-status");
-	if (comment) {
-		comment.classList.remove("text-success");
-		comment.classList.remove("text-danger");
-		comment.innerText = msg;
-		if (isSuccess === true) {
-			comment.classList.add("text-success");
-		} else {
-			comment.classList.add("text-danger");
-		}
-	}
-}
-
 async function addNewFriend(newFriendName) {
 	try {
 		const response = await fetch("http://localhost:8000/api/me/friend", {
@@ -182,18 +169,17 @@ async function onClickAddNewFriendSubmit(event, setFriends) {
 		const data = await addNewFriend(newFriendName);
 		console.log(data);
 		if (data.result === "Successfully Added!") {
-			modifyCommentMsg("Successfully Added!", true);
+			setInnerTextById("Successfully Added!", true, "add-friend-status")
 			const myData = await getMyData();
 			setFriends(() => myData.friends);
 		} else {
-			modifyCommentMsg(data.result, false);
+			setInnerTextById(data.result, false, "add-friend-status")
 		}
 	} catch (error) {
 		console.log("onClickAddNewFriendSubmit Error: ", error);
 		modalClose("add-friend-modal");
 		logout();
 	}
-	setTimeout(() => { modifyCommentMsg("", true); }, 2000);
 }
 
 function AddNewFriendModal({ title, setFriends }) {
