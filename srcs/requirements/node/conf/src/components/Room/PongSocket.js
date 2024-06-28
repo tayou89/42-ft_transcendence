@@ -34,14 +34,14 @@ class Socket {
     }
     turnOnGameChannel(setGameData) {
         this.#eventHandler.setGameEvent(setGameData);
-        this.#socket.on(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
+        this.#socket.off(SOCKET.EVENT.GAME).on(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
     }
     turnOffGameChannel() {
         this.#socket.off(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
     }
     turnOnResultChannel(setGameResult) {
         this.#eventHandler.setResultEvent(setGameResult);
-        this.#socket.on(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
+        this.#socket.off(SOCKET.EVENT.RESULT).on(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
     }
     turnOffResultChannel() {
         this.#socket.off(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
