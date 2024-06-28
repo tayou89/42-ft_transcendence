@@ -21,6 +21,17 @@ async function getOpenRooms() {
 	}
 }
 
+async function onClickRefreshRoomButton(event, setRooms) {
+	event.preventDefault();
+	try {
+		const _rooms = await getOpenRooms();
+		setRooms(() => _rooms);
+	} catch (error) {
+		console.log("HomeMatches Error: ", error);
+		logout();
+	}
+}
+
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
 	useEffect(async () => {
@@ -45,8 +56,11 @@ function HomeMatches({ myId }) {
 						</div>
 					</div>
 				</div>
-				<div className="container col-6 text-end pe-4">
+				<div className="container col-6 text-end pe-4 d-flex flex-row-reverse">
 					<CreateRoomModal myId={myId} />
+					<button type="button" className="btn btn-sm btn-primary me-2" onClick={event => onClickRefreshRoomButton(event, setRooms)}>
+						Refresh
+					</button>
 				</div>
 			</div>
 			<div
