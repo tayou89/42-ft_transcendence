@@ -71,19 +71,19 @@ async function getOpenRooms() {
 			if (data.detail === "Authentication credentials were not provided.") {
 				return await tokenRefresh(getOpenRooms);
 			} else {
-				return Promise.reject({ reason: "unknown" });
+				return Promise.reject("unknown");
 			}
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
 		console.log("getOpenRooms Error: ", error);
-		return Promise.reject({ reason: "network" });
+		return Promise.reject(error);
 	}
 }
 
 function RefreshRoomButton({ setRooms }) {
-	async function onClickRefreshRoomButton(event, setRooms) {
+	async function onClickRefreshRoomButton(event) {
 		event.preventDefault();
 		try {
 			const _rooms = await getOpenRooms();
@@ -94,7 +94,7 @@ function RefreshRoomButton({ setRooms }) {
 		}
 	}
 	return (
-		<button type="button" className="btn btn-sm btn-primary me-2" onClick={event => onClickRefreshRoomButton(event, setRooms)}>
+		<button type="button" className="btn btn-sm btn-primary me-2" onClick={onClickRefreshRoomButton}>
 			Refresh
 		</button>
 	);
@@ -116,7 +116,7 @@ async function createRoom(title, roomType) {
 		if (response.status === 200 || response.status === 201) {
 			return;
 		} else if (response.status === 400) {//같은 이름의 방이 이미 있음
-			return Promise.reject({ reason: "same room" });
+			return Promise.reject("same room");
 		} else if (response.status === 401) {//???!!! 백엔드에서 401로 바꿔주면 403은 지워야함
 			return await tokenRefresh(() => createRoom(title, roomType));
 		} else if (response.status === 403) {
@@ -124,14 +124,14 @@ async function createRoom(title, roomType) {
 			if (data.detail === "Authentication credentials were not provided.") {
 				return await tokenRefresh(() => createRoom(title, roomType));
 			} else {
-				return Promise.reject({ reason: "unknown" });
+				return Promise.reject("unknown");
 			}
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
 		console.log("createRoom Error: ", error);
-		return Promise.reject({ reason: "network" });
+		return Promise.reject(error);
 	}
 }
 
@@ -218,10 +218,10 @@ function isStartedRoom(room) {
 }
 
 async function onClickEnterRoom(event, room, myId, setRooms) {
+	event.preventDefault();
 	const roomId = room.id;
 	const title = room.name;
 	const roomType = room.mtt ? "mtt" : "pong";
-	event.preventDefault();
 	try {
 		const currentRooms = await getOpenRooms();
 		const currentRoom = currentRooms.find(room => room.id === roomId);
@@ -238,7 +238,6 @@ async function onClickEnterRoom(event, room, myId, setRooms) {
 			alert("game has already started");
 			setRooms(() => currentRooms);
 		} else {
-			console.log("asdqwezxc");
 			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
 		}
 	} catch (error) {

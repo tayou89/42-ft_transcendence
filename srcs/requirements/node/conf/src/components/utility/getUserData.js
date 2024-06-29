@@ -13,10 +13,10 @@ async function getUserData(userId) {
 		} else if (response.status === 401) {
 			return await tokenRefresh(() => getUserData(userId));
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
-		return Promise.reject({ reason: "network" });
+		return Promise.reject(error);
 	}
 }
 

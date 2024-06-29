@@ -55,10 +55,10 @@ async function changeNickname(myId, newNickname) {
 		} else if (response.status === 401) {
 			return await refreshToken(() => changeNickname(myId, newNickname));
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
-		return Promise.reject({ reason: "network" });
+		return Promise.reject("network");
 	}
 }
 

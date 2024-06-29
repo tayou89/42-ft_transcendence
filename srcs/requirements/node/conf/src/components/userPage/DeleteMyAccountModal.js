@@ -1,28 +1,52 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Navbar from "../Navbar.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo";
 import notifyStatusById from "../utility/notifyStatusById.js"
+import tokenRefresh from "../utility/tokenRefresh";
+import modalClose from "../utility/modalClose.js"
 
-function onClickDeleteAccount(event, myId) {
-	event.preventDefault();
-	const input = event.target.parentNode.querySelector("#delete-account-input");
-	if (input.value === "delete") {
-		fetch(`http://localhost:8000/api/withdraw`, {
+async function deleteAccount() {
+	try {
+		const response = await fetch(`http://localhost:8000/api/withdraw`, {
 			method: 'POST',
 			credentials: 'include'
-		})
-			.then(response => {
-				if (response.status === 200) {
-					navigate("/");
-				} else {
-					notifyStatusById("delete failed!", false, "delete-account-status");
-				}
-			})
-			.catch(error => {
-				notifyStatusById("Network Error!", false, "delete-account-status");
-				console.log("in onClickDeleteAccount function", error);
-			});
+		});
+		if (response.status === 200) {
+			return "success";
+		} else if (response.status === 401) {
+			return await tokenRefresh(deleteAccount);
+		} else {
+			return Promise.reject("unknown");
+		}
+	} catch (error) {
+		return Promise.reject(error);
+	}
+}
+
+async function onClickDeleteAccount(event) {
+	event.preventDefault();
+	const input = document.querySelector("#delete-account-input");
+	if (input.value === "delete") {
+		try {
+			await deleteAccount();
+		} catch (error) {
+			console.log("onClickDeleteAccount Error: ", error);
+		}
+		// fetch(`http://localhost:8000/api/withdraw`, {
+		// 	method: 'POST',
+		// 	credentials: 'include'
+		// })
+		// 	.then(response => {
+		// 		if (response.status === 200) {
+		// 			navigate("/");
+		// 		} else {
+		// 			notifyStatusById("delete failed!", false, "delete-account-status");
+		// 		}
+		// 	})
+		// 	.catch(error => {
+		// 		notifyStatusById("Network Error!", false, "delete-account-status");
+		// 		console.log("in onClickDeleteAccount function", error);
+		// 	});
 	} else {
 		notifyStatusById("input 'delete'", false, "delete-account-status");
 	}
@@ -49,7 +73,7 @@ function DeleteMyAccountModal({ title, myId }) {
 							</div>
 							<form className="container my-1 py-1">
 								<input id="delete-account-input" className="me-1" type="text" />
-								<button type="button" className="btn btn-danger btn-md" data-bs-dismiss="modal" onClick={(event) => onClickDeleteAccount(event, myId)}>
+								<button type="button" className="btn btn-danger btn-md" onClick={onClickDeleteAccount}>
 									delete Account
 								</button>
 							</form>

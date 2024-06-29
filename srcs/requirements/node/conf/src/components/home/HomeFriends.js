@@ -27,6 +27,7 @@ function HomeFriends() {
 				const myData = await getMyData();
 				setFriends(() => myData.friends);
 			} catch (error) {
+				console.log("HomeFriends Error: ", error);
 				logout();
 			}
 		};
@@ -64,7 +65,7 @@ async function unFriend(friendId) {
 		} else if (response.status === 401) {
 			return await tokenRefresh(() => unFriend(friendId));
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
 		return Promise.reject(error);
@@ -78,7 +79,7 @@ async function onClickUnFriend(event, friendId, setFriends) {
 		const _myData = await getMyData();
 		setFriends(() => _myData.friends);
 	} catch (error) {
-		console.log("onClickUnFriend Error: ", error.reason);
+		console.log("onClickUnFriend Error: ", error);
 		logout();
 	}
 }
@@ -153,7 +154,7 @@ async function addNewFriend(newFriendName) {
 		} else if (response.status === 401) {
 			return await tokenRefresh(() => addNewFriend(newFriendName));
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
 		return Promise.reject(error);
@@ -164,10 +165,9 @@ async function addNewFriend(newFriendName) {
 //!!!??? 성공/실패 메세지 뜨고 잠시뒤에 or 창 닫으면 사라지게 하고싶음. settimeout 쓰면 1초에 한번씩 눌렀을 때 처음 누른 settimeout 때문에 3번째에 나온 메세지가 1초만에 사라짐.
 async function onClickAddNewFriendSubmit(event, setFriends) {
 	event.preventDefault();
-	const newFriendName = event.target.parentNode.querySelector("#add-friend-input").value;
+	const newFriendName = document.querySelector("#add-friend-input").value;
 	try {
 		const data = await addNewFriend(newFriendName);
-		console.log(data);
 		if (data.result === "Successfully Added!") {
 			notifyStatusById("Successfully Added!", true, "add-friend-status")
 			const myData = await getMyData();

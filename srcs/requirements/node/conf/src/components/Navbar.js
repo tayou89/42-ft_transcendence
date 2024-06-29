@@ -28,6 +28,7 @@ function Navbar() {
 				const _myData = await getMyData();
 				setMyData(() => _myData);
 			} catch (error) {
+				console.log("Navbar Error: ", error);
 				logout();
 			}
 		};

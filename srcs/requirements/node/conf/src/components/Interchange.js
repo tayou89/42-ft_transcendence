@@ -6,7 +6,7 @@ function Interchange() {
 	MyReact.useEffect(() => {
 		const a = async () => {
 			try {
-				const data = await getMyData();
+				await getMyData();
 				navigate("/home");
 			} catch (error) {
 				console.log("Interchange Error: ", error);
