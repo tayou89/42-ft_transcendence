@@ -75,8 +75,10 @@ async function onClickChangeNickname(event, myId) {
 		try {
 			await changeNickname(myId, newNickname);
 			let nicknameElement = document.querySelector("#userpage-statchart-nickname");
+			console.log("nickname : ", nicknameElement.innerText);
 			notifyStatusById("successfully changed!", true, "change-name-status");
 			nicknameElement.innerText = newNickname;
+
 		} catch (error) {
 			console.log("onClickChangeNickname error:", error);
 			notifyStatusById(error, false, "change-name-status");
