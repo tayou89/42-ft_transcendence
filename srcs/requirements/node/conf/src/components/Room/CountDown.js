@@ -27,7 +27,6 @@ function isAllReady(players) {
 
 function getDeliveryDataToGame(room) {
     return {
-        socket: room.socket,
         type: room.type,
         myId: room.myId,
         gameRound: 1,

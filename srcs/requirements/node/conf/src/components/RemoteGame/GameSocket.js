@@ -1,12 +1,12 @@
 import {io} from "socket.io-client";
 import { GAME, SOCKET } from "./constant.js";
-import { GameEventHandler } from "./EventHandler.js";
-import RoomSocket from "../Room/PongSocket.js";
+import { GameSocketEventHandler } from "./EventHandler.js";
+import RoomSocket from "../Room/RoomSocket.js";
 
 class GameSocket extends RoomSocket {
     constructor (gameType) {
         super(gameType);
-        this.#eventHandler = new GameEventHandler;
+        this.#eventHandler = new GameSocketEventHandler;
     }
     sendKeyValue(value) {
         this.socket.emit(SOCKET.EVENT.KEY, value);
@@ -22,7 +22,7 @@ class GameSocket extends RoomSocket {
     turnOnResultChannel(setGameResult) {
         this.#eventHandler.setResultEvent(setGameResult);
         this.socket.off(SOCKET.EVENT.RESULT);
-        this.socket.off(SOCKET.EVENT.RESULT).on(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
+        this.socket.on(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
     }
     turnOffResultChannel() {
         this.socket.off(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);

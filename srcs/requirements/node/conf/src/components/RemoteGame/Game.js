@@ -5,8 +5,9 @@ import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
 import ResultPopUp from "./ResultPopUp.js";
+import { pongSocket, mttSocket } from "./GameSocket.js";
 import { GameEventHandler } from "./EventHandler.js";
-import { INIT } from "./constant.js";
+import { INIT, GAME } from "./constant.js";
 import "../../css/game/game-page.css";
 
 function RemoteGame({ data }) {
@@ -36,17 +37,19 @@ function RemoteGame({ data }) {
 }
 
 function getInitialGameData(data) {
+    const socket = data.type === GAME.TYPE.PONG ? pongSocket : mttSocket;
+
     return ({
-        socket: data?.socket,
-        type: data?.type,
-        myId: data?.myId,
-        round: data?.gameRound,
+        socket: socket,
+        type: data.type,
+        myId: data.myId,
+        round: data.gameRound,
         ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
         paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
         score: { p1: 0, p2: 0},
         result: {},
         players: [{}, {}],
-        eventHandler: new GameEventHandler(data?.socket),
+        eventHandler: new GameEventHandler(socket),
     });
 }
 
