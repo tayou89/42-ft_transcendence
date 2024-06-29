@@ -3,7 +3,7 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import getMyData from "../utility/getMyData.js";
 import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
-import modalClose from "../utility/modalClose.js"
+import closeModalById from "../utility/closeModalById.js"
 import getUserData from "../utility/getUserData.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 
@@ -177,7 +177,7 @@ async function onClickAddNewFriendSubmit(event, setFriends) {
 		}
 	} catch (error) {
 		console.log("onClickAddNewFriendSubmit Error: ", error);
-		modalClose("add-friend-modal");
+		closeModalById("add-friend-modal");
 		logout();
 	}
 }

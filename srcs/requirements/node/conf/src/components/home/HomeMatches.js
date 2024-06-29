@@ -2,7 +2,7 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import logout from "../utility/logout.js";
-import modalCloseById from "../utility/modalClose.js";
+import closeModalById from "../utility/closeModalById.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 
 function HomeMatches({ myId }) {
@@ -144,14 +144,14 @@ async function onCreateNewRoomSubmit(event, myId) {
 	}
 	try {
 		await createRoom(title, roomType);
-		modalCloseById("create-room-modal");
+		closeModalById("create-room-modal");
 		navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
 	} catch (error) {
 		console.log("onCreateNewRoomSubmit Error: ", error);
 		if (error.reason === "same room") {
 			notifyStatusById("Using Room name", false, "create-room-status");
 		} else {
-			modalCloseById("create-room-modal");
+			closeModalById("create-room-modal");
 			logout();
 		}
 	}

@@ -3,7 +3,7 @@ import Navbar from "../Navbar.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 import tokenRefresh from "../utility/tokenRefresh";
-import modalClose from "../utility/modalClose.js"
+import closeModalById from "../utility/closeModalById.js"
 
 async function deleteAccount() {
 	try {
@@ -27,6 +27,7 @@ async function onClickDeleteAccount(event) {
 	event.preventDefault();
 	const input = document.querySelector("#delete-account-input");
 	if (input.value === "delete") {
+		closeModalById("delete-account-modal");
 		try {
 			await deleteAccount();
 		} catch (error) {
