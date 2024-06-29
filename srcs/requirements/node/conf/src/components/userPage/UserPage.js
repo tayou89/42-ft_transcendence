@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Navbar from "../Navbar.js";
-import { navigate } from "../../MyReact/MyReactRouter.js";
+import { Link, navigate } from "../../MyReact/MyReactRouter.js";
 import MatchRecords from "./MatchRecords.js";
 import StatChart from "./StatChart.js";
 import getMyData from "../utility/getMyData.js";
@@ -44,9 +44,7 @@ function UserPage() {
 		const a = async () => {
 			try {
 				const _myData = await getMyData();
-				console.log("getmydata")
 				const _userData = await getUserData(userId);
-				console.log("getuserdata")
 				setMyData(() => _myData);
 				setUserData(() => _userData);
 			} catch (error) {
