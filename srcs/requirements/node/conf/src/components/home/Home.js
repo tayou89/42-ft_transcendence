@@ -26,6 +26,7 @@ function Home() {
 				const _myData = await getMyData();
 				setMyData(() => _myData);
 			} catch (error) {
+				console.log("Home Error: ", error);
 				logout();
 			}
 		}

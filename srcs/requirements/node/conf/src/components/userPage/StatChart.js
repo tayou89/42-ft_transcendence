@@ -1,8 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import ChangeMyNicknameModal from "./ChangeMyNicknameModal.js";
-import DeleteMyAccountModal from "./DeleteMyAccountModal.js";
 
-function StatChart({ myId, userData, setMyData }) {
+function StatChart({ userData }) {
 	const level = Math.floor(userData.exp / 1000);
 	const nextexp = Math.floor((userData.exp + 1000) / 1000) * 1000;
 	const win = userData.wins;
@@ -11,17 +9,6 @@ function StatChart({ myId, userData, setMyData }) {
 	const winRateWidth = win + loss === 0 ? "width:0%" : `width:${winRate}%`;
 	return (
 		<div>
-			<div className="container">
-				<div className="d-inline-flex">
-					<div className="p-1 fs-3">{userData.name} Info</div>
-					<div className="p-1 my-1">
-						{myId === userData.id ? <ChangeMyNicknameModal title="Change nickname" myId={myId} setMyData={setMyData} /> : null}
-					</div>
-					<div className="p-1 mt-1">
-						{myId === userData.id ? <DeleteMyAccountModal title="delete Account" myId={myId} /> : null}
-					</div>
-				</div>
-			</div>
 			<div className="container">
 				<div className="row border-top border-bottom rounded bg-secondary bg-opacity-25">
 					<div className="col-md-5 text-center">

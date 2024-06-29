@@ -1,6 +1,6 @@
 import { Modal } from 'bootstrap';
 
-function modalCloseById(modalId) {
+function closeModalById(modalId) {
 	const modalElement = document.getElementById(modalId);
 	if (modalElement) {
 		const modalInstance = Modal.getInstance(modalElement);
@@ -8,4 +8,4 @@ function modalCloseById(modalId) {
 	}
 }
 
-export default modalCloseById;
+export default closeModalById;
