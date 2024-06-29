@@ -42,9 +42,7 @@ async function getUserMatchRecords(userId) {
 }
 
 function MatchRecords({ userId }) {
-	console.log("match records", userId);
 	const [userMatchRecords, setUserMatchRecords] = useState([]);
-	console.log(userId);
 	useEffect(() => {
 		const a = async () => {
 			try {

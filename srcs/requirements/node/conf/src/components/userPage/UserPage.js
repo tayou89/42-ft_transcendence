@@ -44,19 +44,10 @@ function UserPage() {
 		const a = async () => {
 			try {
 				const _myData = await getMyData();
-				setMyData(() => _myData);
-			} catch (error) {
-				console.log("UserPage Error: ", error);
-				logout();
-			}
-		};
-		a();
-	}, []);
-
-	useEffect(() => {
-		const a = async () => {
-			try {
+				console.log("getmydata")
 				const _userData = await getUserData(userId);
+				console.log("getuserdata")
+				setMyData(() => _myData);
 				setUserData(() => _userData);
 			} catch (error) {
 				console.log("UserPage Error: ", error);
@@ -65,7 +56,6 @@ function UserPage() {
 		};
 		a();
 	}, [userId]);
-
 	return (
 		<div>
 			<Navbar position="/userpage" />
