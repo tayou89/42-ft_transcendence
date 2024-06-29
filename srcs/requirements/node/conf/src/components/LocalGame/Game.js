@@ -1,17 +1,18 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import TopLine from "../Room/TopLine.js";
-import ScoreBoard from "./ScoreBoard.js";
-import GameBoard from "./GameBoard.js";
-import BottomLine from "./BottomLine.js";
-import ResultPopUp from "./ResultPopUp.js";
-import EventHandler from "../Room/EventHandler.js";
-import { INIT } from "./constant.js";
+import ScoreBoard from "../RemoteGame/ScoreBoard.js";
+import GameBoard from "../RemoteGame/GameBoard.js";
+import BottomLine from "../RemoteGame/BottomLine.js";
+import ResultPopUp from "../RemoteGame/ResultPopUp.js";
+import { LocalEventHandler }from "../Room/EventHandler.js";
+import { INIT } from "../RemoteGame/constant.js";
 import "../../css/game/game-page.css";
 
 function LocalGame() {
-    const [ game, setGame ] = useState(getInitialGameData(data));
+    const [ game, setGame ] = useState(getInitialGameData());
 
+    console.log("game:", game);
     useEffect(() => {
         addEvents(game, setGame); 
         return (() => {
@@ -29,24 +30,23 @@ function LocalGame() {
     );
 }
 
-function getInitialGameData(data) {
+function getInitialGameData() {
     return ({
         ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
-        paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
+        paddle: [ INIT.PADDLE1.Y, INIT.PADDLE2.Y ],
         score: { p1: 0, p2: 0},
         isQuitClicked: false,
         eventHandler: new EventHandler(),
+        isOver: false,
     });
 }
 
-function addEvents(game) {
-    game.eventHandler.addKeyEvent(game.socket);
-    game.eventHandler.addRefreshEvent();
+function addEvents(game, setGame) {
+    game.eventHandler.addLocalKeyEvent(setGame);
 }
 
 function removeEvents(game) {
-    game.eventHandler.removeKeyEvent();
-    game.eventHandler.removeRefreshEvent();
+    game.eventHandler.removeLocalKeyEvent();
 }
 
 export default LocalGame;

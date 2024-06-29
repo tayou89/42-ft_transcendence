@@ -1,52 +1,30 @@
 import {io} from "socket.io-client";
-import { GAME, SOCKET, URL_PATH } from "../Game/constant.js";
-import EventHandler from "./EventHandler.js";
+import { GAME, SOCKET, URL_PATH } from "../RemoteGame/constant.js";
+import RoomSocketEventHandler from "./EventHandler.js";
 
-class Socket {
+class RoomSocket {
     constructor (gameType) {
         const socketOption = this.#getSocketOption(true, true, ['websocket']);
 
         this.#setSocket(gameType, socketOption);
-        this.#eventHandler = new EventHandler;
+        this.#eventHandler = new RoomSocketEventHandler;
     }
     sendRoomJoinMessage(id, title) {
-        this.#socket.emit(SOCKET.EVENT.JOIN_ROOM, { pid: id, room: title });
+        this.socket.emit(SOCKET.EVENT.JOIN_ROOM, { pid: id, room: title });
     }
     sendRoomLeaveMessage() {
-        this.#socket.emit(SOCKET.EVENT.LEAVE_ROOM);
-    }
-    sendNextGameMessage() {
-        this.#socket.emit(SOCKET.EVENT.NEXT_GAME);
-    }
-    sendKeyValue(value) {
-        this.#socket.emit(SOCKET.EVENT.KEY, value);
+        this.socket.emit(SOCKET.EVENT.LEAVE_ROOM);
     }
     sendReadyStatus(readyStatus) {
-        this.#socket.emit(SOCKET.EVENT.READY, readyStatus);
+        this.socket.emit(SOCKET.EVENT.READY, readyStatus);
     }
     turnOnRoomChannel(setPlayers) {
         this.#eventHandler.setRoomEvent(setPlayers);
-        this.#socket.off(SOCKET.EVENT.ROOM);
-        this.#socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
+        this.socket.off(SOCKET.EVENT.ROOM);
+        this.socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
     turnOffRoomChannel() {
-        this.#socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
-    }
-    turnOnGameChannel(setGameData) {
-        this.#eventHandler.setGameEvent(setGameData);
-        this.#socket.off(SOCKET.EVENT.GAME);
-        this.#socket.on(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
-    }
-    turnOffGameChannel() {
-        this.#socket.off(SOCKET.EVENT.GAME, this.#eventHandler.gameEvent);
-    }
-    turnOnResultChannel(setGameResult) {
-        this.#eventHandler.setResultEvent(setGameResult);
-        this.#socket.off(SOCKET.EVENT.RESULT);
-        this.#socket.off(SOCKET.EVENT.RESULT).on(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
-    }
-    turnOffResultChannel() {
-        this.#socket.off(SOCKET.EVENT.RESULT, this.#eventHandler.resultEvent);
+        this.socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
     #getSocketOption(reconnection, autoConnect, transports) {
         const socketOption = { reconnection, autoConnect, transports };
@@ -55,15 +33,12 @@ class Socket {
     }
     #setSocket(gameType, socketOption) {
         if (gameType === GAME.TYPE.PONG)
-            this.#socket = io(URL_PATH.SOCKET.PONG, socketOption);
+            this.socket = io(URL_PATH.SOCKET.PONG, socketOption);
         else
-            this.#socket = io(URL_PATH.SOCKET.MTT, socketOption);
+            this.socket = io(URL_PATH.SOCKET.MTT, socketOption);
     }
-    #socket;
+    socket;
     #eventHandler;
 }
 
-export const pongSocket = new Socket(GAME.TYPE.PONG);
-export const mttSocket = new Socket(GAME.TYPE.MTT);
-
-export default Socket;
+export default RoomSocket;

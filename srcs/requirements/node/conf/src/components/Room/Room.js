@@ -4,8 +4,8 @@ import Title from "./Title.js";
 import Player from "./Player.js";
 import BottomLine from "./BottomLine.js";
 import QuitPopUp from "./QuitPopUp.js";
-import { pongSocket, mttSocket } from "./PongSocket.js";
-import { GAME } from "../Game/constant.js";
+import { pongSocket, mttSocket } from "../RemoteGame/PongSocket.js";
+import { GAME } from "../RemoteGame/constant.js";
 import "../../css/room/room.css";
 
 function Room() {

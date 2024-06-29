@@ -7,17 +7,24 @@ export const PADDLE = {
     WIDTH: 20,
     HEIGHT: 120,
     OFFSET_X: 50,
-    BORDER_RADIUS: 3,
+    BORDER_RADIUS: 10,
     COLOR: "white",
-	MIN_Y: 0,
-	MAX_Y: BOARD.HEIGHT - 60,
     DIRECTION: {
         UP: -1,
         DOWN: 1,
         NONE: 0,
     },
     TRANSITION: "top 0.05s linear",
+    SPEED: 20,
+    COUNT: 2,
 };
+
+export const LIMIT = {
+    PADDLE: {
+	    MAX: { Y: BOARD.HEIGHT - PADDLE.HEIGHT, },
+        MIN: { Y: 0, },
+    },
+}
 
 export const BALL = {
     RADIUS: 15,
@@ -34,15 +41,17 @@ export const INIT = {
     },
     PADDLE1: {
         X: PADDLE.OFFSET_X - (PADDLE.WIDTH / 2),
-        Y:  (BOARD.HEIGHT / 2) - (60 / 2),
+        Y:  (BOARD.HEIGHT / 2) - (PADDLE.HEIGHT / 2),
     },
     PADDLE2: {
         X: BOARD.WIDTH - (PADDLE.OFFSET_X + (PADDLE.WIDTH / 2)),
-        Y:  (BOARD.HEIGHT / 2) - (60 / 2),
+        Y:  (BOARD.HEIGHT / 2) - (PADDLE.HEIGHT / 2),
     }
 };
 
 export const KEY = {
+    P1: ['w', 's'],
+    P2: ['ArrowUp', 'ArrowDown'],
     UP: ['w', 'ArrowUp'],
     DOWN: ['s', 'ArrowDown'],
     VALUE: {

@@ -1,6 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import ReadyButton from "./ReadyButton.js";
-import { GAME } from "../Game/constant.js";
+import { GAME } from "../RemoteGame/constant.js";
 import "../../css/room/player-slot.css";
 
 function PlayerSlot({ player, room, isMySlot }) {

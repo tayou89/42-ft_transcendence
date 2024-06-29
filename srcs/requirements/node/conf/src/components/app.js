@@ -5,8 +5,8 @@ import UserPage from "./userPage/UserPage.js";
 import Login from "./LoginPage.js";
 import Interchange from "./Interchange.js";
 import EmailOTP from "./EmailOTP.js";
-import LocalGame from "./Game/LocalGame.js";
-import RemoteGame from "./Game/RemoteGame.js";
+import LocalGame from "./LocalGame/Game.js";
+import RemoteGame from "./RemoteGame/Game.js";
 import Room from "./Room/Room.js";
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
 			<Route path="/home" component={Home} />
 			<Route path="/userpage" component={UserPage} />
 			<Route path="/login" component={Login} />
-			<Route path="/local_game" component={LocalGame} />
+			{/* <Route path="/home" component={LocalGame} /> */}
 			<Route path="/remote_game" component={RemoteGame} />
 			<Route path="/next_game" component={RemoteGame} />
 			<Route path="/room" component={Room} />

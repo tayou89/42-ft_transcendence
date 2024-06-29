@@ -5,7 +5,7 @@ import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
 import ResultPopUp from "./ResultPopUp.js";
-import EventHandler from "../Room/EventHandler.js";
+import { GameEventHandler } from "./EventHandler.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
@@ -46,18 +46,20 @@ function getInitialGameData(data) {
         score: { p1: 0, p2: 0},
         result: {},
         players: [{}, {}],
-        eventHandler: new EventHandler(),
+        eventHandler: new GameEventHandler(data?.socket),
     });
 }
 
 function addEvents(game, setGame) {
-    game.eventHandler.addKeyEvent(game.socket);
+    game.eventHandler.addKeyDownEvent(game.socket);
+    game.eventHandler.addKeyUpEvent(game.socket);
     game.eventHandler.addRefreshEvent();
     game.eventHandler.addPageBackEvent(game, setGame);
 }
 
 function removeEvents(game) {
-    game.eventHandler.removeKeyEvent();
+    game.eventHandler.removeKeyDownEvent();
+    game.eventHandler.removeKeyUpEvent();
     game.eventHandler.removeRefreshEvent();
     game.eventHandler.removePageBackEvent();
 }
