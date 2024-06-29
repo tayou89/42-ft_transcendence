@@ -27,3 +27,10 @@
     background: rgba(250, 250, 250, 0.2);
     backdrop-filter: blur(2px);
 }
+
+#game-board {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { PADDLE, INIT } from "./constant.js";
+import { PADDLE, INIT } from "../RemoteGame/constant.js";
 
 function Paddle({ id, paddle }) {
     const paddleY = (id === "paddle1") ? paddle[0] : paddle[1];

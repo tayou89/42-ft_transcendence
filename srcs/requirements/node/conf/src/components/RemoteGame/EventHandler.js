@@ -40,7 +40,7 @@ class GameEventHandler {
         this.#setkeyUpEvent();
         document.addEventListener("keyup", this.#keyUpEvent);
     }
-    removeKeyEvent() {
+    removeKeyUpEvent() {
         document.removeEventListener("keyup", this.#keyUpEvent);
     }
     addRefreshEvent() {
@@ -104,7 +104,6 @@ class GameEventHandler {
             else {
                 this.#socket.sendNextGameMessage();
                 navigate("/next_game", { data: { 
-                    socket: game.socket,
                     type: game.type,
                     myId: game.myId,
                     gameRound: 2,
