@@ -22,6 +22,8 @@ class OTPCheckView(APIView):
 
 		# if form_data['code'] == otp.code:
 		# 	user_instance = User.objects.get(pk=pk)
+		#	user_instance.online = True
+		#	user_instance.save()
 		# 	response = Response({'result': 'success'})
 		# 	token = RefreshToken.for_user(user_instance)
 		# 	response.set_cookie('jwt', str(token.access_token), httponly=True)
@@ -35,6 +37,8 @@ class OTPCheckView(APIView):
 		pk = request.COOKIES.get('pk')
 		otp = OTPModel.objects.get(user=pk)
 		user_instance = User.objects.get(pk=pk)
+		user_instance.online = True
+		user_instance.save()
 		response = Response({'result': 'success'})
 		token = RefreshToken.for_user(user_instance)
 		response.set_cookie('jwt', str(token.access_token), httponly=True)

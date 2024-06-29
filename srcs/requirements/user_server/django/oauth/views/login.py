@@ -66,7 +66,6 @@ def save_user_info(data):
 		avatar = response.content
 		user.avatar.save(f"{name}.jpg", ContentFile(avatar))
 		
-	user.online = True
 	user.save()
 
 	return user

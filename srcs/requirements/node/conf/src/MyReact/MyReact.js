@@ -286,15 +286,16 @@ export function useEffect(callback, deps) {
     }
     newCleanUp = callback();
   }
+  const newEffect = {
+    deps: deps,
+    cleanUp: newCleanUp,
+  };
   if (!oldEffect) {
-    const newEffect = {
-      deps: deps,
-      cleanUp: newCleanUp,
-    };
     wipFiber.effects.push(newEffect);
   }
   else if (oldEffect && hasChanged) {
-    oldEffect.cleanUp = newCleanUp;
+    oldEffect.deps = newEffect.deps;
+    oldEffect.cleanUp = newEffect.cleanUp;
   }
   ++effectIndex;
 }

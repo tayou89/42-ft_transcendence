@@ -104,6 +104,15 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8080',
 ]
 
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'user_manage.urls'
