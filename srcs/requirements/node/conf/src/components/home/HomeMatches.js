@@ -7,6 +7,7 @@ import notifyStatusById from "../utility/notifyStatusById.js"
 
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
+	const [loading, setLoading] = useState(true);
 	useEffect(() => {
 		const a = async () => {
 			try {
@@ -15,6 +16,8 @@ function HomeMatches({ myId }) {
 			} catch (error) {
 				console.log("HomeMatches Error: ", error);
 				logout();
+			} finally {
+				setLoading(() => false);
 			}
 		};
 		a();
@@ -41,20 +44,28 @@ function HomeMatches({ myId }) {
 			<div
 				className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
 				style="height: 574px; overflow-y: auto;">
-				<div>
-					{rooms
-						.filter(room => room.cur_users !== room.max_users && room.in_game === false)
-						.map((room) => (
-							<HomeMatchInfo myId={myId} room={room} active={true} setRooms={setRooms} />
-						))}
-					{rooms
-						.filter(room => room.cur_users === room.max_users || room.in_game === true)
-						.map((room) => (
-							<HomeMatchInfo myId={myId} room={room} active={false} setRooms={setRooms} />
-						))}
-				</div>
+				{loading ? (
+					<div className="d-flex justify-content-center" style="height:100%">
+						<div className="d-flex align-items-center">
+							<div className="spinner-border text-primary"></div>
+						</div>
+					</div>
+				) : (
+					<div>
+						{rooms
+							.filter(room => room.cur_users !== room.max_users && room.in_game === false)
+							.map((room) => (
+								<HomeMatchInfo key={room.id} myId={myId} room={room} active={true} setRooms={setRooms} />
+							))}
+						{rooms
+							.filter(room => room.cur_users === room.max_users || room.in_game === true)
+							.map((room) => (
+								<HomeMatchInfo key={room.id} myId={myId} room={room} active={false} setRooms={setRooms} />
+							))}
+					</div>
+				)}
 			</div>
-		</div>
+		</div >
 	);
 }
 
