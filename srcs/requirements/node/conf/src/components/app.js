@@ -17,6 +17,7 @@ function App() {
 			<Route path="/userpage" component={UserPage} />
 			<Route path="/login" component={Login} />
 			<Route path="/game" component={Game} />
+			<Route path="/next_game" component={Game} />
 			<Route path="/room" component={Room} />
 		</div>
 		// <div>

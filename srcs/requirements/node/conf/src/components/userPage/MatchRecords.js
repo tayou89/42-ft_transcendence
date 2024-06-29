@@ -1,5 +1,8 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
+import logout from "../utility/logout.js";
+import tokenRefresh from "../utility/tokenRefresh.js";
+import getUserData from "../utility/getUserData.js"
 
 const sampleMatches = [
 	{
@@ -20,27 +23,37 @@ const sampleMatches = [
 	}
 ]
 
-function MatchRecords({ userId }) {
-	const [userMatchRecords, setUserMatchRecords] = useState([]);
-	const userMatchRecordsApiUrl = `http://localhost:8000/api/users/${userId}/matches`;
-
-	useEffect(() => {
-		fetch(userMatchRecordsApiUrl, {
+async function getUserMatchRecords(userId) {
+	try {
+		const response = await fetch(`http://localhost:8000/api/users/${userId}/matches`, {
 			method: 'GET',
 			credentials: 'include'
-		})
-			.then(response => response.json())
-			.then(data => {
-				if (userId !== null) {
-					setUserMatchRecords(() => data);
-				} else {
-					setUserMatchRecords(() => []);
-				}
-			})
-			.catch(error => {
-				console.log("in MatchRecords function", error);
-				setUserMatchRecords([]);
-			});
+		});
+		if (response.status === 200) {
+			return await response.json();
+		} else if (response.status === 401) {
+			return await tokenRefresh(() => getUserMatchRecords(userId));
+		} else {
+			return Promise.reject("unknown");
+		}
+	} catch (error) {
+		return Promise.reject(error);
+	}
+}
+
+function MatchRecords({ userId }) {
+	const [userMatchRecords, setUserMatchRecords] = useState([]);
+	useEffect(() => {
+		const a = async () => {
+			try {
+				const _userMatchRecords = await getUserMatchRecords(userId);
+				setUserMatchRecords(() => _userMatchRecords);
+			} catch (error) {
+				console.log("MatchRecords Error: ", error);
+				logout();
+			}
+		}
+		a();
 	}, [])
 
 	return (
@@ -64,30 +77,29 @@ function MatchRecord({ match, userId }) {
 	const isUserP1 = match.p1 == userId;
 	const isUserWin = (isUserP1 ? isP1Win : !isP1Win);
 
-	const p1DataApiUrl = `http://localhost:8000/api/users/${match.p1}`;
-	const p2DataApiUrl = `http://localhost:8000/api/users/${match.p2}`;
 	const [p1NickName, setP1NickName] = useState("Player 1");
 	const [p2NickName, setP2NickName] = useState("Player 2");
-
 	useEffect(() => {
-		fetch(p1DataApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => response.json())
-			.catch(console.log)
-			.then(data => setP1NickName(() => data.name ? data.name : "unknown"))
-			.catch(console.log);
-
-		fetch(p2DataApiUrl, {
-			method: 'GET',
-			credentials: 'include'
-		})
-			.then(response => response.json())
-			.catch(console.log)
-			.then(data => setP2NickName(() => data.name ? data.name : "unknown"))
-			.catch(console.log);
-	}, [])
+		const a = async () => {
+			try {
+				if (match.p1) {
+					const p1Data = await getUserData(match.p1);
+					setP1NickName(() => p1Data.display_name)
+				} else {
+					setP1NickName(() => "unknown")
+				}
+				if (match.p2) {
+					const p2Data = await getUserData(match.p2);
+					setP2NickName(() => p2Data.display_name)
+				} else {
+					setP2NickName(() => "unknown")
+				}
+			} catch (error) {
+				console.log("MatchRecord Error: ", error);
+			}
+		}
+		a();
+	}, [match.p1, match.p2])
 	return (
 		<div
 			className={"my-1 py-1 text-light text-center container bg-dark border-start rounded" + (isUserWin ? " border-success" : " border-danger")}
@@ -100,15 +112,16 @@ function MatchRecord({ match, userId }) {
 				</div>
 				<div className="col-10 mt-1 py-1">
 					<div className="row">
-						<div className={"col-4 text-end " + (p1NickName === "unknown" ? "text-secondary" : "text-info")}
+						<div id={``}
+							className={"col-4 text-end " + (p1NickName === "unknown" ? "text-secondary" : "text-info")}
 							style={p1NickName === "unknown" ? "" : "cursor: pointer;"}
-							onClick={(p1NickName === "unknown" ? null : () => onClickNameInMatchRecord(match.p1))}>
+							onClick={(p1NickName === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p1))}>
 							{p1NickName}
 						</div>
 						<div className="col-4">{match.p1_score} vs {match.p2_score}</div>
 						<div className={"col-4 text-start " + (p2NickName === "unknown" ? "text-secondary" : "text-info")}
 							style={p2NickName === "unknown" ? "" : "cursor: pointer;"}
-							onClick={(p2NickName === "unknown" ? null : () => onClickNameInMatchRecord(match.p2))}>
+							onClick={(p2NickName === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p2))}>
 							{p2NickName}
 						</div>
 					</div>
@@ -121,7 +134,8 @@ function MatchRecord({ match, userId }) {
 	);
 }
 
-function onClickNameInMatchRecord(userId) {
+function onClickNameInMatchRecord(event, userId) {
+	event.preventDefault();
 	navigate(`/userpage?userId=${userId}`);
 }
 

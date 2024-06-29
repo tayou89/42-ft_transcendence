@@ -4,7 +4,7 @@ import tokenRefresh from "./tokenRefresh.js";
 
 async function getUserData(userId) {
 	try {
-		const response = await fetch(`http://localhost:8000/api/users/${userId}`, {
+		const response = await fetch(`http://localhost:8000/api/users/${userId}/`, {
 			method: 'GET',
 			credentials: 'include'
 		});
@@ -13,10 +13,10 @@ async function getUserData(userId) {
 		} else if (response.status === 401) {
 			return await tokenRefresh(() => getUserData(userId));
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
-		return Promise.reject({ reason: "network" });
+		return Promise.reject(error);
 	}
 }
 

@@ -3,8 +3,7 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import TopLine from "../Room/TopLine.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
-import BottomLine from "../Room/BottomLine.js";
-import QuitPopUp from "../Room/QuitPopUp.js";
+import BottomLine from "./BottomLine.js";
 import ResultPopUp from "./ResultPopUp.js";
 import EventHandler from "../Room/EventHandler.js";
 import { INIT } from "./constant.js";
@@ -30,8 +29,7 @@ function Game({ data }) {
             <TopLine />
             <ScoreBoard game={ game } />
             <GameBoard game={ game } />
-            <BottomLine setFunction={ setGame } />
-            <QuitPopUp data={ game } setFunction={ setGame } /> 
+            <BottomLine />
             <ResultPopUp game={ game } />
         </div>
     );
@@ -62,6 +60,7 @@ function addEvents(game, setGame) {
 function removeEvents(game) {
     game.eventHandler.removeKeyEvent();
     game.eventHandler.removeRefreshEvent();
+    game.eventHandler.removePageBackEvent();
 }
 
 function turnOnSocketChannels(game, setGame) {
@@ -71,10 +70,11 @@ function turnOnSocketChannels(game, setGame) {
 }
 
 function turnOffSocketChannels(game) {
-    if (game.round > 1)
+    if (game.round > 1) {
         game.socket.turnOffRoomChannel();
-    game.socket.turnOffGameChannel();
-    game.socket.turnOffResultChannel();
+        game.socket.turnOffGameChannel();
+        game.socket.turnOffResultChannel();
+    }
 }
 
 export default Game;

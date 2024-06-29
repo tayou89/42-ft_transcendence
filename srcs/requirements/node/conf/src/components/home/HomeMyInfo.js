@@ -10,43 +10,36 @@ function HomeMyInfo({ myData }) {
 				My Info
 			</div>
 			<div className="container mb-3 pt-2 pb-2 border-top border-bottom text-center rounded bg-secondary bg-opacity-25">
-				<div className="row mt-1 mb-1">
-					<div className="col-2">Nickname</div>
-					<div className="col-1">:</div>
+				<div className="row mt-1 mb-1 bg-dark bg-opacity-75">
+					<div className="col-4 text-center">Nickname</div>
 					<div className="col-8">{myData.display_name}</div>
 				</div>
-				<div className="row mt-1 mb-1">
-					<div className="col-2">Level</div>
-					<div className="col-1">:</div>
+				<div className="row mt-1 mb-1 bg-dark bg-opacity-75">
+					<div className="col-4 text-center">Level</div>
 					<div className="col-8">{Math.round(myData.exp / 1000)}</div>
 				</div>
-				<div className="row mt-1 mb-1">
-					<div className="col-2">Exp</div>
-					<div className="col-1">:</div>
+				<div className="row mt-1 mb-1 bg-dark bg-opacity-75">
+					<div className="col-4 text-center">Exp</div>
 					<div className="col-8 pt-1">
 						<div className="progress" style="height:20px">
 							<div className="progress-bar" style={expWidth}>{(myData.exp % 1000) / 10}%</div>
 						</div>
 					</div>
 				</div>
-				<div className="row mt-1 mb-1">
-					<div className="col-2">Total</div>
-					<div className="col-1">:</div>
+				<div className="row mt-1 mb-1 bg-dark bg-opacity-75">
+					<div className="col-4 text-center">Total</div>
 					<div className="col-8">{myData.wins + myData.losses}</div>
 				</div>
-				<div className="row mt-1 mb-1">
-					<div className="col-2">Win</div>
-					<div className="col-1">:</div>
+				<div className="row mt-1 mb-1 bg-dark bg-opacity-75">
+					<div className="col-4 text-center">Win</div>
 					<div className="col-8">{myData.wins}</div>
 				</div>
-				<div className="row mt-1 mb-1">
-					<div className="col-2">Lose</div>
-					<div className="col-1">:</div>
+				<div className="row mt-1 mb-1 bg-dark bg-opacity-75">
+					<div className="col-4 text-center">Lose</div>
 					<div className="col-8">{myData.losses}</div>
 				</div>
-				<div className="row mt-1 mb-1">
-					<div className="col-2">WR</div>
-					<div className="col-1">:</div>
+				<div className="row mt-1 mb-1 bg-dark bg-opacity-75">
+					<div className="col-4 text-center">WR</div>
 					<div className="col-8 pt-1">
 						<div className="progress" style="height:20px">
 							<div className="progress-bar" style={winRateWidth}>

@@ -3,8 +3,9 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import getMyData from "../utility/getMyData.js";
 import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
-import modalClose from "../utility/modalClose.js"
+import closeModalById from "../utility/closeModalById.js"
 import getUserData from "../utility/getUserData.js";
+import notifyStatusById from "../utility/notifyStatusById.js"
 
 const defaultFriendData = {
 	"id": 0,
@@ -18,31 +19,46 @@ const defaultFriendData = {
 	"online": true
 }
 
+function RefreshFriendsButton({ setRefresh }) {
+	function onClickrefreshFriends(event) {
+		event.preventDefault();
+		setRefresh(current => !current);
+	}
+	return (
+		<button type="button" className="btn btn-sm btn-primary me-2" onClick={onClickrefreshFriends}>
+			Refresh
+		</button>
+	);
+}
+
 function HomeFriends() {
 	const [friends, setFriends] = useState([]);
+	const [refresh, setRefresh] = useState(true);
 	useEffect(() => {
 		const a = async () => {
 			try {
-				const myData = await getMyData();
-				setFriends(() => myData.friends);
+				const _myData = await getMyData();
+				setFriends(() => _myData.friends);
 			} catch (error) {
+				console.log("HomeFriends Error: ", error);
 				logout();
 			}
 		};
 		a();
-	}, [])
+	}, [refresh])
 	return (
 		<div>
 			<div className="fs-4 row">
-				<div className="container col-6">
+				<div className="container col-4">
 					Friends
 				</div>
-				<div className="container col-6 text-end pe-4">
+				<div className="container col-8 text-end pe-4 d-flex flex-row-reverse">
 					<AddNewFriendModal title="add Friend" setFriends={setFriends} />
+					<RefreshFriendsButton setRefresh={setRefresh} />
 				</div>
 			</div>
 			<div
-				className="container mt-1 mb-3 pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
+				className="container mt-1 py-2 px-3 border-top border-bottom rounded bg-secondary bg-opacity-25"
 				style="height: 300px; overflow-y: auto;">
 				{friends.map(id => (
 					<FriendInfo friendId={id} setFriends={setFriends} />
@@ -63,7 +79,7 @@ async function unFriend(friendId) {
 		} else if (response.status === 401) {
 			return await tokenRefresh(() => unFriend(friendId));
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
 		return Promise.reject(error);
@@ -77,7 +93,7 @@ async function onClickUnFriend(event, friendId, setFriends) {
 		const _myData = await getMyData();
 		setFriends(() => _myData.friends);
 	} catch (error) {
-		console.log("onClickUnFriend Error: ", error.reason);
+		console.log("onClickUnFriend Error: ", error);
 		logout();
 	}
 }
@@ -107,46 +123,25 @@ function FriendInfo({ friendId, setFriends }) {
 	}, [])
 
 	return (
-		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 " + (userData.online === true ? "border-success bg-success" : "border-danger bg-danger")}>
-			<div className="row text-light fs-5 ">
-				<div className="col-2 text-center">
-					<img className="rounded-circle"
-						width="24" height="24"
-						src={userData.avatar} />
+		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 d-flex justify-content-around text-light fs-5 "
+			+ (userData.online === true ? "border-success bg-success" : "border-danger bg-danger")}>
+			<img className="rounded-circle"
+				width="24" height="24"
+				src={userData.avatar} />
+			<div className="dropdown" style="user-select: none; cursor: pointer;">
+				<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
+					{userData.name}
 				</div>
-				<div className="col-8">
-					<div className="dropdown" style="user-select: none; cursor: pointer;">
-						<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
-							{userData.name}
-						</div>
-						<ul className="dropdown-menu" >
-							<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
-							<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setFriends)}>Unfriended</li>
-						</ul>
-					</div>
-				</div>
-				<div className="col-2 text-center">
-					<img className="rounded-circle"
-						width="24" height="24"
-						src={userData.online === true ? greenDotImage : redDotImage} />
-				</div>
+				<ul className="dropdown-menu" >
+					<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
+					<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setFriends)}>Unfriended</li>
+				</ul>
 			</div>
+			<img className="rounded-circle"
+				width="24" height="24"
+				src={userData.online === true ? greenDotImage : redDotImage} />
 		</div>
 	);
-}
-
-function modifyCommentMsg(msg, isSuccess) {
-	const comment = document.querySelector("#add-friend-status");
-	if (comment) {
-		comment.classList.remove("text-success");
-		comment.classList.remove("text-danger");
-		comment.innerText = msg;
-		if (isSuccess === true) {
-			comment.classList.add("text-success");
-		} else {
-			comment.classList.add("text-danger");
-		}
-	}
 }
 
 async function addNewFriend(newFriendName) {
@@ -166,7 +161,7 @@ async function addNewFriend(newFriendName) {
 		} else if (response.status === 401) {
 			return await tokenRefresh(() => addNewFriend(newFriendName));
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
 		return Promise.reject(error);
@@ -177,23 +172,21 @@ async function addNewFriend(newFriendName) {
 //!!!??? 성공/실패 메세지 뜨고 잠시뒤에 or 창 닫으면 사라지게 하고싶음. settimeout 쓰면 1초에 한번씩 눌렀을 때 처음 누른 settimeout 때문에 3번째에 나온 메세지가 1초만에 사라짐.
 async function onClickAddNewFriendSubmit(event, setFriends) {
 	event.preventDefault();
-	const newFriendName = event.target.parentNode.querySelector("#add-friend-input").value;
+	const newFriendName = document.querySelector("#add-friend-input").value;
 	try {
 		const data = await addNewFriend(newFriendName);
-		console.log(data);
 		if (data.result === "Successfully Added!") {
-			modifyCommentMsg("Successfully Added!", true);
+			notifyStatusById("Successfully Added!", true, "add-friend-status")
 			const myData = await getMyData();
 			setFriends(() => myData.friends);
 		} else {
-			modifyCommentMsg(data.result, false);
+			notifyStatusById(data.result, false, "add-friend-status")
 		}
 	} catch (error) {
 		console.log("onClickAddNewFriendSubmit Error: ", error);
-		modalClose("add-friend-modal");
+		closeModalById("add-friend-modal");
 		logout();
 	}
-	setTimeout(() => { modifyCommentMsg("", true); }, 2000);
 }
 
 function AddNewFriendModal({ title, setFriends }) {

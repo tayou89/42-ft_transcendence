@@ -1,4 +1,6 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import refreshToken from "../utility/tokenRefresh.js"
+import notifyStatusById from "../utility/notifyStatusById.js"
 
 function ChangeMyNicknameModal({ title, myId }) {
 	return (
@@ -18,7 +20,7 @@ function ChangeMyNicknameModal({ title, myId }) {
 						<div className="modal-body">
 							<form className="container my-1 py-1">
 								<input id="change-name-input" className="me-1" type="text" placeholder="Your new nickname" />
-								<button className="btn btn-primary btn-md" onClick={(event) => onClickSubmit(event, myId)}>Submit</button>
+								<button className="btn btn-primary btn-md" onClick={event => onClickChangeNickname(event, myId)}>Submit</button>
 							</form>
 							<div id="change-name-status" className="container mt-2 text-success">
 							</div>
@@ -31,55 +33,54 @@ function ChangeMyNicknameModal({ title, myId }) {
 	);
 }
 
-function isNonAlphanumeric(input) {
+function isNonAlphanumeric(newNickname) {
 	const alphanumericRegex = /^[a-zA-Z0-9]*$/;
-	return !alphanumericRegex.test(input.value);
+	return !alphanumericRegex.test(newNickname);
 }
 
-function onClickSubmit(event, myId) {
-	event.preventDefault();
-	const input = event.target.parentNode.querySelector("#change-name-input");
-	if (input.value.length < 2) {
-		modifyCommentMsg("name too short!", false);
-	} else if (input.value.length > 16) {
-		modifyCommentMsg("name too long!", false);
-	} else if (isNonAlphanumeric(input)) {
-		modifyCommentMsg("Only alphabets and numbers are available", false);
-	} else {
-		fetch(`http://localhost:8000/api/users/${myId}/`, {
+async function changeNickname(myId, newNickname) {
+	try {
+		const response = await fetch(`http://localhost:8000/api/users/${myId}/`, {
 			method: 'PATCH',
 			credentials: 'include',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				display_name: input.value
+				display_name: newNickname
 			})
-		})
-			.then(response => {
-				if (response.status === 200) {
-					modifyCommentMsg("successfully changed!", true);
-				} else {
-					modifyCommentMsg("failed!", false);
-				}
-			})
-			.catch(error => {
-				modifyCommentMsg("Network Error!", false);
-				console.log("in ChangeMyNicknameModal file onClickSubmit function", error);
-			});
+		});
+		if (response.status === 200) {
+			return await response.json();
+		} else if (response.status === 401) {
+			return await refreshToken(() => changeNickname(myId, newNickname));
+		} else {
+			return Promise.reject("unknown");
+		}
+	} catch (error) {
+		return Promise.reject("network");
 	}
 }
 
-function modifyCommentMsg(msg, isSuccess) {
-	const comment = document.querySelector("#change-name-status");
-	if (comment) {
-		comment.classList.remove("text-success");
-		comment.classList.remove("text-danger");
-		comment.innerText = msg;
-		if (isSuccess === true) {
-			comment.classList.add("text-success");
-		} else {
-			comment.classList.add("text-danger");
+async function onClickChangeNickname(event, myId) {
+	event.preventDefault();
+	const newNickname = document.querySelector("#change-name-input").value;
+	if (newNickname.length < 2) {
+		notifyStatusById("name too short!", false, "change-name-status");
+	} else if (newNickname.length > 16) {
+		notifyStatusById("name too long!", false, "change-name-status");
+	} else if (isNonAlphanumeric(newNickname)) {
+		notifyStatusById("Only alphabets and numbers are available", false, "change-name-status");
+	} else {
+		try {
+			await changeNickname(myId, newNickname);
+			let nicknameElement = document.querySelector("#userpage-statchart-nickname");
+			notifyStatusById("successfully changed!", true, "change-name-status");
+			nicknameElement.innerText = newNickname;
+
+		} catch (error) {
+			console.log("onClickChangeNickname error:", error);
+			notifyStatusById(error, false, "change-name-status");
 		}
 	}
 }

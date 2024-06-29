@@ -14,6 +14,7 @@ class EventHandler {
     }
     setGameEvent(setGameData) {
         this.#gameEvent = (newGameData)  => {
+            console.log("New Game Data:", newGameData);
             this.#stateSetter.setGameData(newGameData, setGameData);
         };
     }
@@ -79,16 +80,16 @@ class EventHandler {
             if (event.type !== "click" && event.key !== "Esc" && event.key !== "Enter")
                 return ;
             console.log("Let's go to next page!!");
-            game.socket.sendNextGameMessage();
             if (game.type === GAME.TYPE.PONG || 
                 myResult === GAME.RESULT.LOSE || game.round > 1)
                 navigate("/home");
             else {
-                navigate("/game", { data: { 
+                game.socket.sendNextGameMessage();
+                navigate("/next_game", { data: { 
                     socket: game.socket,
                     type: game.type,
                     myId: game.myId,
-                    gameRound: game.round + 1
+                    gameRound: 2,
                 }});
             };
         };
@@ -101,9 +102,10 @@ class EventHandler {
     }
     #setPageBackEvent(setGame) {
         this.#pageBackEvent = (event) => {
-            event.preventDefault();
-            window.history.pushState(null, '', window.location.pathname);
-            setGame((prev) => ({ ...prev, isQuitClicked: true }));
+            navigate("/home");
+            // event.preventDefault();
+            // window.history.pushState(null, '', window.location.pathname);
+            // setGame((prev) => ({ ...prev, isQuitClicked: true }));
         };
     }
     get roomEvent() {

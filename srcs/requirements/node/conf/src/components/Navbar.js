@@ -28,6 +28,7 @@ function Navbar() {
 				const _myData = await getMyData();
 				setMyData(() => _myData);
 			} catch (error) {
+				console.log("Navbar Error: ", error);
 				logout();
 			}
 		};
@@ -48,7 +49,7 @@ function Navbar() {
 							</div>
 							<div className="dropdown col">
 								<div className=" btn-primary btn-sm text-center text-light fs-4" style="cursor: pointer;" data-bs-toggle="dropdown">
-									{myData.display_name}
+									{myData.name}
 								</div>
 								<ul className="dropdown-menu" style="cursor: pointer;">
 									<li className="dropdown-item" onClick={() => onClickShowMyInfo(myData.id)}>Show Info</li>

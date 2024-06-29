@@ -9,12 +9,12 @@ async function tokenRefresh(workingFunction) {
 		if (response.status === 200) {
 			return await workingFunction();
 		} else if (response.status === 401) {
-			return Promise.reject({ reason: "refresh failed" });
+			return Promise.reject("refresh failed");
 		} else {
-			return Promise.reject({ reason: "unknown" });
+			return Promise.reject("unknown");
 		}
 	} catch (error) {
-		return Promise.reject({ reason: "network" });
+		return Promise.reject("network");
 	}
 }
 
