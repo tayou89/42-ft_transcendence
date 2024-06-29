@@ -79,7 +79,7 @@ async function onClickChangeNickname(event, myId) {
 			nicknameElement.innerText = newNickname;
 		} catch (error) {
 			console.log("onClickChangeNickname error:", error);
-			notifyStatusById("failed!", false, "change-name-status");
+			notifyStatusById(error, false, "change-name-status");
 		}
 	}
 }

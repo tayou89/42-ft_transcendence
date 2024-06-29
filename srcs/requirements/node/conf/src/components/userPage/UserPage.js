@@ -6,6 +6,8 @@ import StatChart from "./StatChart.js";
 import getMyData from "../utility/getMyData.js";
 import getUserData from "../utility/getUserData.js";
 import logout from "../utility/logout.js";
+import ChangeMyNicknameModal from "./ChangeMyNicknameModal.js";
+import DeleteMyAccountModal from "./DeleteMyAccountModal.js";
 
 const defaultData1 = {
 	"id": -1234,
@@ -68,7 +70,16 @@ function UserPage() {
 		<div>
 			<Navbar position="/userpage" />
 			<div className="container text-light">
-				<StatChart isMyInfo={myData.id === userData.id} myId={myData.id} userData={userData} setMyData={setMyData} />
+				<div className="d-flex">
+					<div className="p-1 fs-3">{userData.name} Info</div>
+					<div className="p-1 my-1">
+						{myData.id === userData.id ? <ChangeMyNicknameModal title="Change nickname" myId={myData.id} setMyData={setMyData} /> : null}
+					</div>
+					<div className="p-1 mt-1">
+						{myData.id === userData.id ? <DeleteMyAccountModal title="delete Account" myId={myData.id} /> : null}
+					</div>
+				</div>
+				<StatChart userData={userData} />
 				<div className="mt-3">
 					<MatchRecords userId={userId} />
 				</div>

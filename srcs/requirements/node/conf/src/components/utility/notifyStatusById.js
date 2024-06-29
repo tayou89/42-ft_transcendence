@@ -1,4 +1,4 @@
-function notifyStatusById(msg, isSuccess, id, isErase = false) {
+function notifyStatusById(msg, isSuccess, id, displayTime = 2500, isErase = false) {
 	const comment = document.querySelector(`#${id}`);
 	if (comment) {
 		comment.classList.remove("text-success");
@@ -11,7 +11,7 @@ function notifyStatusById(msg, isSuccess, id, isErase = false) {
 		}
 	}
 	if (!isErase) {
-		setTimeout(() => notifyStatusById("", true, id, true), 2500);
+		setTimeout(() => notifyStatusById("", true, id, displayTime, true), displayTime);
 	}
 }
 

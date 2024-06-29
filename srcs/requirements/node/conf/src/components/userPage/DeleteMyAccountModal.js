@@ -4,6 +4,7 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 import tokenRefresh from "../utility/tokenRefresh";
 import closeModalById from "../utility/closeModalById.js"
+import logout from "../utility/logout.js";
 
 async function deleteAccount() {
 	try {
@@ -27,33 +28,20 @@ async function onClickDeleteAccount(event) {
 	event.preventDefault();
 	const input = document.querySelector("#delete-account-input");
 	if (input.value === "delete") {
-		closeModalById("delete-account-modal");
 		try {
 			await deleteAccount();
+			closeModalById("delete-account-modal");
+			navigate("/login");
 		} catch (error) {
 			console.log("onClickDeleteAccount Error: ", error);
+			notifyStatusById(error, false, "delete-account-status");
 		}
-		// fetch(`http://localhost:8000/api/withdraw`, {
-		// 	method: 'POST',
-		// 	credentials: 'include'
-		// })
-		// 	.then(response => {
-		// 		if (response.status === 200) {
-		// 			navigate("/");
-		// 		} else {
-		// 			notifyStatusById("delete failed!", false, "delete-account-status");
-		// 		}
-		// 	})
-		// 	.catch(error => {
-		// 		notifyStatusById("Network Error!", false, "delete-account-status");
-		// 		console.log("in onClickDeleteAccount function", error);
-		// 	});
 	} else {
 		notifyStatusById("input 'delete'", false, "delete-account-status");
 	}
 }
 
-function DeleteMyAccountModal({ title, myId }) {
+function DeleteMyAccountModal({ title }) {
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#delete-account-modal">
