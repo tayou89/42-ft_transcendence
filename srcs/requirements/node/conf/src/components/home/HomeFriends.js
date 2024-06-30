@@ -206,7 +206,7 @@ function AddNewFriendModal({ title, setFriends }) {
 
 						<div className="modal-body">
 							<form className="container my-1 py-1">
-								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" />
+								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" autocomplete="off" />
 								<button className="btn btn-primary btn-md" onClick={event => { onClickAddNewFriendSubmit(event, setFriends) }}>Submit</button>
 							</form>
 							<div id="add-friend-status" className="container mt-2 text-success"></div>
