@@ -55,7 +55,7 @@ function UserPage() {
 		a();
 	}, [userId]);
 	return (
-		<div>
+		<div style="user-select: none;">
 			<Navbar position="/userpage" />
 			<div className="container text-light">
 				<div className="d-flex">

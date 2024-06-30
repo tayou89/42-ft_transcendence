@@ -30,7 +30,7 @@ async function onClickSubmit(event) {
 
 function EmailOTP() {
 	return (
-		<div className="text-light text-center">
+		<div className="text-light text-center" style="user-select: none;">
 			<div className="py-5"></div>
 			<div className="container fs-1 py-5">
 				42 Pong
