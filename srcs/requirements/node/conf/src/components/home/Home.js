@@ -34,7 +34,7 @@ function Home() {
 	}, []);
 
 	return (
-		<div>
+		<div style="user-select: none;">
 			<Navbar />
 			<div className="container text-light">
 				<div className="row mt-3">
