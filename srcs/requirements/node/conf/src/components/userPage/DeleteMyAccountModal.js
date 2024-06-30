@@ -61,8 +61,8 @@ function DeleteMyAccountModal({ title }) {
 								Enter '<b className="text-danger"><i>delete</i></b>' to delete the account.
 							</div>
 							<form className="container my-1 py-1">
-								<input id="delete-account-input" className="me-1" type="text" />
-								<button type="button" className="btn btn-danger btn-md" onClick={onClickDeleteAccount}>
+								<input id="delete-account-input" className="me-1" type="text" autocomplete="off" />
+								<button className="btn btn-danger btn-md" onClick={onClickDeleteAccount}>
 									delete Account
 								</button>
 							</form>

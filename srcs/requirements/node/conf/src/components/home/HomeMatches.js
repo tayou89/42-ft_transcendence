@@ -159,7 +159,7 @@ async function onCreateNewRoomSubmit(event, myId) {
 		navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
 	} catch (error) {
 		console.log("onCreateNewRoomSubmit Error: ", error);
-		if (error.reason === "same room") {
+		if (error === "same room") {
 			notifyStatusById("Using Room name", false, "create-room-status");
 		} else {
 			closeModalById("create-room-modal");
@@ -196,12 +196,12 @@ function CreateRoomModal({ myId }) {
 											<input type="radio" className="form-check-input" id="radio2" name="optradio" value="mtt" />
 											<label className="form-check-label text-dark" for="radio2">Tournerment(4P)</label>
 										</div>
-										<input id="create-room-input" className="me-1" type="text" placeholder="Room name" />
+										<input id="create-room-input" className="me-1" type="text" placeholder="Room name" autocomplete="off" />
+										<div className="d-flex">
+											<div id="create-room-status" className="container mt-2 text-success flex-fill text-center"></div>
+											<button className="btn btn-primary btn-md flex-fill" onClick={event => onCreateNewRoomSubmit(event, myId)}>Submit</button>
+										</div>
 									</form>
-									<div className="d-flex">
-										<div id="create-room-status" className="container mt-2 text-success flex-fill text-center"></div>
-										<button className="btn btn-primary btn-md flex-fill" onClick={event => onCreateNewRoomSubmit(event, myId)}>Submit</button>
-									</div>
 								</div>
 							</div>
 						</div>
