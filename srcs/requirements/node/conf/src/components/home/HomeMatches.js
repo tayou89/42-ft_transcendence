@@ -43,7 +43,7 @@ function HomeMatches({ myId }) {
 			</div>
 			<div
 				className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
-				style="height: 574px; overflow-y: auto;">
+				style="height: 674px; overflow-y: auto;">
 				{loading ?
 					<div className="d-flex justify-content-center" style="height:100%">
 						<div className="d-flex align-items-center">
