@@ -151,7 +151,7 @@ async function onCreateNewRoomSubmit(event, myId) {
 	const roomType = document.querySelector("input[name='optradio']:checked").value;
 	if (roomType === "local") {//로컬 방의 경우
 		closeModalById("create-room-modal");
-		navigate(`/room?type=${roomType}`);
+		navigate("/local_game");
 	} else {//온라인 방의 경우
 		let title = document.querySelector("#create-room-input").value;
 		if (title === "") {
@@ -209,8 +209,8 @@ function CreateRoomModal({ myId }) {
 											<label className="form-check-label text-dark" for="radio2">Tournerment (net)</label>
 										</div>
 										<div className="form-check">
-											<input type="radio" className="form-check-input" id="radio1" name="optradio" value="local" onClick={onClickLocalOn} />
-											<label className="form-check-label text-dark" for="radio1">1 vs 1 (Local)</label>
+											<input type="radio" className="form-check-input" id="radio3" name="optradio" value="local" onClick={onClickLocalOn} />
+											<label className="form-check-label text-dark" for="radio3">1 vs 1 (Local)</label>
 										</div>
 										<div className="row">
 											{local ? <div className="col-8"></div> : <div className="col-8"><input id="create-room-input" className="me-1" type="text" placeholder="Room name" autocomplete="off" /></div>}
