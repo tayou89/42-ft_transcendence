@@ -17,15 +17,16 @@ function ChangeProfileImageModal({ myId }) {
 		}
 	}
 	useEffect(() => {
-		try {
-			const a = async () => {
+		const a = async () => {
+			try {
 				const _imageUrl = await getUserProfileImage(myId);
 				setImageUrl(() => _imageUrl);
+			} catch (error) {
+				console.log("ChangeProfileImageModal Error: ", error);
+				logout();
 			}
-			a();
-		} catch (error) {
-
 		}
+		a();
 	}, []);
 	return (
 		<div className="fs-4">
