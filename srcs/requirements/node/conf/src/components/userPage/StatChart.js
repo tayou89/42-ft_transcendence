@@ -22,9 +22,9 @@ function StatChart({ userData }) {
 					<div className="col-md-7">
 						<div className="container m-1 text-center">
 							<div className="row my-1 py-1">
-								<div id="userpage-statchart-nickname" className="col-3">nickname</div>
+								<div className="col-3">nickname</div>
 								<div className="col-1">:</div>
-								<div className="col-8">{userData.display_name}</div>
+								<div id="userpage-statchart-nickname" className="col-8">{userData.display_name}</div>
 							</div>
 							<div className="row my-1 py-1">
 								<div className="col-3">Level</div>

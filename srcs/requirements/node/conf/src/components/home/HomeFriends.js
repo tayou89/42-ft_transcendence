@@ -61,7 +61,7 @@ function HomeFriends() {
 				className="container mt-1 py-2 px-3 border-top border-bottom rounded bg-secondary bg-opacity-25"
 				style="height: 300px; overflow-y: auto;">
 				{friends.map(id => (
-					<FriendInfo friendId={id} setFriends={setFriends} />
+					<FriendInfo friendId={id} setFriends={setFriends} refresh={refresh} />
 				))}
 			</div>
 		</div>
@@ -104,7 +104,7 @@ function onClickShowFriendsInfo(friendId) {
 }
 
 //!!!??? 빨간점, 초록점 이미지
-function FriendInfo({ friendId, setFriends }) {
+function FriendInfo({ friendId, setFriends, refresh }) {
 	const [userData, setUserData] = useState(defaultFriendData);
 	const greenDotImage = "greendot.png";
 	const redDotImage = "reddot.png";
@@ -120,7 +120,7 @@ function FriendInfo({ friendId, setFriends }) {
 			}
 		};
 		a();
-	}, [])
+	}, [refresh])
 
 	return (
 		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 d-flex justify-content-around text-light fs-5 "
@@ -206,7 +206,7 @@ function AddNewFriendModal({ title, setFriends }) {
 
 						<div className="modal-body">
 							<form className="container my-1 py-1">
-								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" />
+								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" autocomplete="off" />
 								<button className="btn btn-primary btn-md" onClick={event => { onClickAddNewFriendSubmit(event, setFriends) }}>Submit</button>
 							</form>
 							<div id="add-friend-status" className="container mt-2 text-success"></div>

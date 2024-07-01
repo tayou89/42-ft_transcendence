@@ -44,13 +44,13 @@ function HomeMatches({ myId }) {
 			<div
 				className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
 				style="height: 574px; overflow-y: auto;">
-				{loading ? (
+				{loading ?
 					<div className="d-flex justify-content-center" style="height:100%">
 						<div className="d-flex align-items-center">
 							<div className="spinner-border text-primary"></div>
 						</div>
 					</div>
-				) : (
+					:
 					<div>
 						{rooms
 							.filter(room => room.cur_users !== room.max_users && room.in_game === false)
@@ -63,7 +63,7 @@ function HomeMatches({ myId }) {
 								<HomeMatchInfo key={room.id} myId={myId} room={room} active={false} setRooms={setRooms} />
 							))}
 					</div>
-				)}
+				}
 			</div>
 		</div >
 	);
@@ -148,27 +148,39 @@ async function createRoom(title, roomType) {
 
 async function onCreateNewRoomSubmit(event, myId) {
 	event.preventDefault();
-	let title = document.querySelector("#create-room-input").value;
 	const roomType = document.querySelector("input[name='optradio']:checked").value;
-	if (title === "") {
-		title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament");
-	}
-	try {
-		await createRoom(title, roomType);
+	if (roomType === "local") {//로컬 방의 경우
 		closeModalById("create-room-modal");
-		navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
-	} catch (error) {
-		console.log("onCreateNewRoomSubmit Error: ", error);
-		if (error.reason === "same room") {
-			notifyStatusById("Using Room name", false, "create-room-status");
-		} else {
+		navigate("/local_game");
+	} else {//온라인 방의 경우
+		let title = document.querySelector("#create-room-input").value;
+		if (title === "") {
+			title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament");
+		}
+		try {
+			await createRoom(title, roomType);
 			closeModalById("create-room-modal");
-			logout();
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+		} catch (error) {
+			console.log("onCreateNewRoomSubmit Error: ", error);
+			if (error === "same room") {
+				notifyStatusById("Using Room name", false, "create-room-status");
+			} else {
+				closeModalById("create-room-modal");
+				logout();
+			}
 		}
 	}
 }
 
 function CreateRoomModal({ myId }) {
+	const [local, setLocal] = useState(false);
+	function onClickLocalOn() {
+		setLocal(() => true);
+	}
+	function onClickLocalOff() {
+		setLocal(() => false);
+	}
 	return (
 		<div>
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#create-room-modal">
@@ -189,19 +201,25 @@ function CreateRoomModal({ myId }) {
 								<div className="col-10">
 									<form className="text-start">
 										<div className="form-check">
-											<input type="radio" className="form-check-input" id="radio1" name="optradio" value="pong" checked />
-											<label className="form-check-label text-dark" for="radio1">1 vs 1</label>
+											<input type="radio" className="form-check-input" id="radio1" name="optradio" value="pong" checked onClick={onClickLocalOff} />
+											<label className="form-check-label text-dark" for="radio1">1 vs 1 (net)</label>
 										</div>
 										<div className="form-check">
-											<input type="radio" className="form-check-input" id="radio2" name="optradio" value="mtt" />
-											<label className="form-check-label text-dark" for="radio2">Tournerment(4P)</label>
+											<input type="radio" className="form-check-input" id="radio2" name="optradio" value="mtt" onClick={onClickLocalOff} />
+											<label className="form-check-label text-dark" for="radio2">Tournerment (net)</label>
 										</div>
-										<input id="create-room-input" className="me-1" type="text" placeholder="Room name" />
-									</form>
-									<div className="d-flex">
+										<div className="form-check">
+											<input type="radio" className="form-check-input" id="radio3" name="optradio" value="local" onClick={onClickLocalOn} />
+											<label className="form-check-label text-dark" for="radio3">1 vs 1 (Local)</label>
+										</div>
+										<div className="row">
+											{local ? <div className="col-8"></div> : <div className="col-8"><input id="create-room-input" className="me-1" type="text" placeholder="Room name" autocomplete="off" /></div>}
+											<div className="col-4 my-1">
+												<button className="btn btn-primary btn-md flex-fill" onClick={event => onCreateNewRoomSubmit(event, myId)}>Submit</button>
+											</div>
+										</div>
 										<div id="create-room-status" className="container mt-2 text-success flex-fill text-center"></div>
-										<button className="btn btn-primary btn-md flex-fill" onClick={event => onCreateNewRoomSubmit(event, myId)}>Submit</button>
-									</div>
+									</form>
 								</div>
 							</div>
 						</div>

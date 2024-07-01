@@ -19,7 +19,7 @@ function ChangeMyNicknameModal({ title, myId }) {
 
 						<div className="modal-body">
 							<form className="container my-1 py-1">
-								<input id="change-name-input" className="me-1" type="text" placeholder="Your new nickname" />
+								<input id="change-name-input" className="me-1" type="text" placeholder="Your new nickname" autocomplete="off" />
 								<button className="btn btn-primary btn-md" onClick={event => onClickChangeNickname(event, myId)}>Submit</button>
 							</form>
 							<div id="change-name-status" className="container mt-2 text-success">
@@ -77,6 +77,7 @@ async function onClickChangeNickname(event, myId) {
 			let nicknameElement = document.querySelector("#userpage-statchart-nickname");
 			notifyStatusById("successfully changed!", true, "change-name-status");
 			nicknameElement.innerText = newNickname;
+
 		} catch (error) {
 			console.log("onClickChangeNickname error:", error);
 			notifyStatusById(error, false, "change-name-status");
