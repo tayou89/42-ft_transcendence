@@ -7,6 +7,7 @@ import ResultPopUp from ".//ResultPopUp.js";
 import LocalEventHandler from "./EventHandler.js";
 import BallSetter from "./BallSetter.js";
 import HitChecker from "./HitChecker.js";
+import QuitPopUp from "./QuitPopUp.js";
 import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
@@ -70,7 +71,7 @@ function setNextGame(setGame) {
 }
 
 function getNewScore(game) {
-    if (game.ball.direction < 0)
+    if (game.ball.direction.x > 0)
         return ([ game.score[0] + 1, game.score[1] ]);
     else
         return ([ game.score[0], game.score[1] + 1]);

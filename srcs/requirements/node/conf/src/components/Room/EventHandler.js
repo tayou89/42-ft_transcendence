@@ -1,10 +1,10 @@
 import { MyReact } from "../../MyReact/MyReact.js";
-import StateSetter from "./StateSetter.js";
+import RoomStateSetter from "./StateSetter.js";
 
 class RoomSocketEventHandler {
     setRoomEvent(setPlayers) {
         this.#roomEvent = async (newPlayers) => {
-            await StateSetter.setPlayers(newPlayers, setPlayers);
+            await RoomStateSetter.setPlayers(newPlayers, setPlayers);
         };
     }
     get roomEvent() {

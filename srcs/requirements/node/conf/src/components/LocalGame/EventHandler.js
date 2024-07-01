@@ -22,12 +22,12 @@ class LocalEventHandler {
     removeKeyUpEvent() {
         document.removeEventListener("keyup", this.#keyUpEvent);
     }
-    addGameEndEvent() {
+    addGameEndEvents() {
         this.#setGameEndEvent();
         document.addEventListener("click", this.#gameEndEvent);
         document.addEventListener("keydown", this.#gameEndEvent);
     }
-    removeGameEndEvent() {
+    removeGameEndEvents() {
         document.removeEventListener("click", this.#gameEndEvent);
         document.removeEventListener("keydown", this.#gameEndEvent);
     }

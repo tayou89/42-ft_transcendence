@@ -60,4 +60,4 @@ export const KEY = {
     }
 }
 
-export const END_SCORE = 7;
+export const END_SCORE = 3;

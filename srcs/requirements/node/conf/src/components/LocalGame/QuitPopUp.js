@@ -4,7 +4,6 @@ import "../../css/room/quit-popup.css";
 
 function QuitPopUp({ data, setFunction }) {
     const handleClickYes = () => {
-        data.socket.sendRoomLeaveMessage();
         navigate("/home");
     }
     const handleClickNo = () => {
