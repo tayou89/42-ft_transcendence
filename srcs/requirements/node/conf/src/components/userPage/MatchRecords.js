@@ -96,6 +96,7 @@ function MatchRecord({ match, userId }) {
 				}
 			} catch (error) {
 				console.log("MatchRecord Error: ", error);
+				logout();
 			}
 		}
 		a();
