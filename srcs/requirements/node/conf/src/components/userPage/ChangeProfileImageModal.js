@@ -3,8 +3,9 @@ import getMyData from "../utility/getMyData.js";
 import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import getUserProfileImage from "../utility/getUserProfileImage.js";
+import notifyStatusById from "../utility/notifyStatusById.js"
 
-function ChangeProfileImage({ myId }) {
+function ChangeProfileImageModal({ myId }) {
 	const [imageUrl, setImageUrl] = useState();
 	const onchangeImageUpload = (e) => {
 		const { files } = e.target;
@@ -45,11 +46,11 @@ function ChangeProfileImage({ myId }) {
 								<img src={imageUrl} className="rounded-circle" img="img" style="object-fit: cover; width: 150px; height: 150px;" />
 							</div>
 							<div className="d-flex container px-4 mt-2">
-								<input className="form-control" type="file" id="formFile" onChange={onchangeImageUpload} />
-								<button className="btn btn-primary">Submit</button>
+								<input className="form-control" type="file" id="change-profile-image-input" onChange={onchangeImageUpload} />
+								<button className="btn btn-primary" onClick={event => onClickChangeProfileImageSubmit(event, myId)}>Submit</button>
 							</div>
 						</div>
-
+						<div id="change-profile-image-status" className="container mb-2 text-success"></div>
 					</div>
 				</div>
 			</div>
@@ -57,4 +58,44 @@ function ChangeProfileImage({ myId }) {
 	);
 }
 
-export default ChangeProfileImage;
+async function changeProfileImage(myId) {
+	try {
+		const input = document.querySelector("#change-profile-image-input");
+		const file = input.files[0];
+		if (!file) return "no file";
+		const formData = new FormData();
+		formData.append("avatar", file);
+		const response = await fetch(`http://localhost:8000/api/users/${myId}/`, {
+			method: 'PATCH',
+			credentials: 'include',
+			body: formData
+		});
+		if (response.status === 200) {
+			return "success";
+		} else if (response.status === 401) {
+			return tokenRefresh(() => changeProfileImage(myId));
+		} else {
+			return Promise.reject("unknown");
+		}
+	} catch (error) {
+		console.log("changeProfileImage Error: ");
+		return Promise.reject(error);
+	}
+}
+
+async function onClickChangeProfileImageSubmit(event, myId) {
+	event.preventDefault();
+	try {
+		const result = await changeProfileImage(myId);
+		if (result === "success") {
+			notifyStatusById("successfully changed!", true, "change-profile-image-status");
+		} else {
+			notifyStatusById("no file!", false, "change-profile-image-status");
+		}
+	} catch (error) {
+		console.log("onClickChangeProfileImageSubmit Error: ", error);
+		logout();
+	}
+}
+
+export default ChangeProfileImageModal;
