@@ -1,11 +1,52 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import getMyData from "../utility/getMyData.js";
+import logout from "../utility/logout.js";
+import tokenRefresh from "../utility/tokenRefresh.js";
 
 function onClickasd(event) {
 	event.preventDefault();
 	console.log("clicked!");
 }
 
+async function getUserProfileImage(id) {
+	try {
+		const response = await fetch(`http://localhost:8000/api/users/${id}/avatar/`, { method: 'GET', credentials: 'include' });
+		if (response.status === 200) {
+			const blob = await response.blob();
+			return await URL.createObjectURL(blob);
+		} else if (response.status === 401) {
+			return await tokenRefresh(() => getUserProfileImage(myId));
+		} else {
+			return Promise.reject("unknown");
+		}
+	} catch (error) {
+		console.log("getUserProfileImage Error: ", error);
+		return Promise.reject(error);
+	}
+}
+
 function ChangeProfileImage({ myId }) {
+	const [imageUrl, setImageUrl] = useState();
+	const onchangeImageUpload = (e) => {
+		const { files } = e.target;
+		const uploadFile = files[0];
+		const reader = new FileReader();
+		reader.readAsDataURL(uploadFile);
+		reader.onloadend = () => {
+			setImageUrl(() => reader.result);
+		}
+	}
+	useEffect(() => {
+		try {
+			const a = async () => {
+				const _imageUrl = await getUserProfileImage(myId);
+				setImageUrl(() => _imageUrl);
+			}
+			a();
+		} catch (error) {
+
+		}
+	}, []);
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#change-profile-image-modal">
@@ -21,13 +62,12 @@ function ChangeProfileImage({ myId }) {
 						</div>
 
 						<div className="modal-body">
-							<div className="mb-3">
-								<label for="formFile" className="form-label">Default file input example</label>
-								<input className="form-control" type="file" id="formFile" />
-								<div className="text-end">
-									<div id="change-name-status" className="container mt-2 text-success"></div>
-									<button className="btn btn-primary mt-3">Submit</button>
-								</div>
+							<div className="text-center">
+								<img src={imageUrl} className="rounded-circle" img="img" style="object-fit: cover; width: 150px; height: 150px;" />
+							</div>
+							<div className="d-flex container px-4 mt-2">
+								<input className="form-control" type="file" id="formFile" onChange={onchangeImageUpload} />
+								<button className="btn btn-primary">Submit</button>
 							</div>
 						</div>
 
