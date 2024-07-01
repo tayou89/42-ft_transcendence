@@ -77,25 +77,26 @@ function MatchRecord({ match, userId }) {
 	const isUserP1 = match.p1 == userId;
 	const isUserWin = (isUserP1 ? isP1Win : !isP1Win);
 
-	const [p1NickName, setP1NickName] = useState("Player 1");
-	const [p2NickName, setP2NickName] = useState("Player 2");
+	const [p1Name, setP1Name] = useState("Player 1");
+	const [p2Name, setP2Name] = useState("Player 2");
 	useEffect(() => {
 		const a = async () => {
 			try {
 				if (match.p1) {
 					const p1Data = await getUserData(match.p1);
-					setP1NickName(() => p1Data.display_name)
+					setP1Name(() => p1Data.name)
 				} else {
-					setP1NickName(() => "unknown")
+					setP1Name(() => "unknown")
 				}
 				if (match.p2) {
 					const p2Data = await getUserData(match.p2);
-					setP2NickName(() => p2Data.display_name)
+					setP2Name(() => p2Data.name)
 				} else {
-					setP2NickName(() => "unknown")
+					setP2Name(() => "unknown")
 				}
 			} catch (error) {
 				console.log("MatchRecord Error: ", error);
+				logout();
 			}
 		}
 		a();
@@ -113,16 +114,16 @@ function MatchRecord({ match, userId }) {
 				<div className="col-10 mt-1 py-1">
 					<div className="row">
 						<div id={``}
-							className={"col-4 text-end " + (p1NickName === "unknown" ? "text-secondary" : "text-info")}
-							style={p1NickName === "unknown" ? "" : "cursor: pointer;"}
-							onClick={(p1NickName === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p1))}>
-							{p1NickName}
+							className={"col-4 text-end " + (p1Name === "unknown" ? "text-secondary" : "text-info")}
+							style={p1Name === "unknown" ? "" : "cursor: pointer;"}
+							onClick={(p1Name === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p1))}>
+							{p1Name}
 						</div>
 						<div className="col-4">{match.p1_score} vs {match.p2_score}</div>
-						<div className={"col-4 text-start " + (p2NickName === "unknown" ? "text-secondary" : "text-info")}
-							style={p2NickName === "unknown" ? "" : "cursor: pointer;"}
-							onClick={(p2NickName === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p2))}>
-							{p2NickName}
+						<div className={"col-4 text-start " + (p2Name === "unknown" ? "text-secondary" : "text-info")}
+							style={p2Name === "unknown" ? "" : "cursor: pointer;"}
+							onClick={(p2Name === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p2))}>
+							{p2Name}
 						</div>
 					</div>
 					<div>
