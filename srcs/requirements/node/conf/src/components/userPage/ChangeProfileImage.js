@@ -2,28 +2,7 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import getMyData from "../utility/getMyData.js";
 import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
-
-function onClickasd(event) {
-	event.preventDefault();
-	console.log("clicked!");
-}
-
-async function getUserProfileImage(id) {
-	try {
-		const response = await fetch(`http://localhost:8000/api/users/${id}/avatar/`, { method: 'GET', credentials: 'include' });
-		if (response.status === 200) {
-			const blob = await response.blob();
-			return await URL.createObjectURL(blob);
-		} else if (response.status === 401) {
-			return await tokenRefresh(() => getUserProfileImage(myId));
-		} else {
-			return Promise.reject("unknown");
-		}
-	} catch (error) {
-		console.log("getUserProfileImage Error: ", error);
-		return Promise.reject(error);
-	}
-}
+import getUserProfileImage from "../utility/getUserProfileImage.js";
 
 function ChangeProfileImage({ myId }) {
 	const [imageUrl, setImageUrl] = useState();
