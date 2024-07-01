@@ -45,6 +45,7 @@ function UserPage() {
 			try {
 				const _myData = await getMyData();
 				const _userData = await getUserData(userId);
+				console.log(_myData);
 				setMyData(() => _myData);
 				setUserData(() => _userData);
 			} catch (error) {
@@ -67,7 +68,7 @@ function UserPage() {
 						{myData.id === userData.id ? <DeleteMyAccountModal myId={myData.id} /> : null}
 					</div>
 				</div>
-				<StatChart userData={userData} />
+				<StatChart userData={userData} myId={myData.id} />
 				<div className="mt-3">
 					<MatchRecords userId={userId} />
 				</div>
