@@ -1,6 +1,8 @@
 
 import requests
 import os
+import random
+import string
 
 from django.views.generic import RedirectView
 from django.core.files.base import ContentFile
@@ -8,6 +10,7 @@ from django.core.files.base import ContentFile
 from django.shortcuts import redirect
 
 from ..models import User, OTPModel
+from django.db import IntegrityError
 from user.serializer import UserSerializer
 
 from django.core.mail import send_mail
@@ -56,18 +59,22 @@ def save_user_info(data):
 	email = data['email']
 	img_url = data['image']['link']
 
-	user, is_created = User.objects.get_or_create(name=name)
+	user, is_created = User.objects.get_or_create(name=name, email=email)
 
 	if is_created:
-		user.email = email
 		user.display_name = name
-
+		try:
+			user.save()
+		except IntegrityError:
+			random_suffix = ''.join(random.sample(string.ascii_lowercase + string.digits, 2))
+			user.display_name = name + random_suffix
+			user.save()
 		response = requests.get(img_url)
 		avatar = response.content
 		user.avatar.save(f"{name}.jpg", ContentFile(avatar))
-		
+	
 	user.save()
-
+			
 	return user
 
 
