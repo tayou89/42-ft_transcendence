@@ -2,11 +2,11 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import refreshToken from "../utility/tokenRefresh.js"
 import notifyStatusById from "../utility/notifyStatusById.js"
 
-function ChangeMyNicknameModal({ title, myId }) {
+function ChangeMyNicknameModal({ myId }) {
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#change-name-modal">
-				{title}
+				Change nickname
 			</button>
 			<div className="modal text-center" id="change-name-modal">
 				<div className="modal-dialog">

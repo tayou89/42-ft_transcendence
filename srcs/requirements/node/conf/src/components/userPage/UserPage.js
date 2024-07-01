@@ -61,10 +61,10 @@ function UserPage() {
 				<div className="d-flex">
 					<div className="p-1 fs-3">{userData.name} Info</div>
 					<div className="p-1 my-1">
-						{myData.id === userData.id ? <ChangeMyNicknameModal title="Change nickname" myId={myData.id} setMyData={setMyData} /> : null}
+						{myData.id === userData.id ? <ChangeMyNicknameModal myId={myData.id} setMyData={setMyData} /> : null}
 					</div>
 					<div className="p-1 mt-1">
-						{myData.id === userData.id ? <DeleteMyAccountModal title="delete Account" myId={myData.id} /> : null}
+						{myData.id === userData.id ? <DeleteMyAccountModal myId={myData.id} /> : null}
 					</div>
 				</div>
 				<StatChart userData={userData} />
