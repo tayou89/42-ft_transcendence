@@ -106,9 +106,6 @@ function onClickShowFriendsInfo(friendId) {
 //!!!??? 빨간점, 초록점 이미지
 function FriendInfo({ friendId, setFriends, refresh }) {
 	const [userData, setUserData] = useState(defaultFriendData);
-	const greenDotImage = "greendot.png";
-	const redDotImage = "reddot.png";
-
 	useEffect(() => {
 		const a = async () => {
 			try {
@@ -123,9 +120,9 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 	}, [refresh])
 
 	return (
-		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 d-flex justify-content-around text-light fs-5 "
+		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 d-flex justify-content-between text-light fs-5 "
 			+ (userData.online === true ? "border-success bg-success" : "border-danger bg-danger")}>
-			<img className="rounded-circle"
+			<img className="rounded-circle mt-1"
 				width="24" height="24"
 				src={userData.avatar} />
 			<div className="dropdown" style="user-select: none; cursor: pointer;">
@@ -137,9 +134,11 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 					<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setFriends)}>Unfriended</li>
 				</ul>
 			</div>
-			<img className="rounded-circle"
-				width="24" height="24"
-				src={userData.online === true ? greenDotImage : redDotImage} />
+			<div className="mt-1">
+				{userData.online === true ?
+					<div style="width: 20px; height: 20px; background-color: green; border-radius: 50%;"></div>
+					: <div style="width: 20px; height: 20px; background-color: red; border-radius: 50%;"></div>}
+			</div>
 		</div>
 	);
 }
