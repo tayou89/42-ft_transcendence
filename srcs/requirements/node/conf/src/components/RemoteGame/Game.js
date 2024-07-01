@@ -4,7 +4,6 @@ import TopLine from "../Room/TopLine.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
-import ResultPopUp from "./ResultPopUp.js";
 import { pongSocket, mttSocket } from "./GameSocket.js";
 import { GameEventHandler } from "./EventHandler.js";
 import { INIT, GAME } from "./constant.js";
@@ -16,11 +15,11 @@ function RemoteGame({ data }) {
     const [ game, setGame ] = useState(getInitialGameData(data));
 
     useEffect(() => {
-        console.log("=====================Game Page=======================");
-        console.log("game:", game);
+        addScreenEffect();
         addEvents(game, setGame); 
         turnOnSocketChannels(game, setGame);
         return (() => {
+            removeScreenEffect();
             removeEvents(game);
             turnOffSocketChannels(game);
         });
@@ -31,7 +30,6 @@ function RemoteGame({ data }) {
             <ScoreBoard game={ game } />
             <GameBoard game={ game } />
             <BottomLine />
-            <ResultPopUp game={ game } />
         </div>
     );
 }
@@ -51,6 +49,14 @@ function getInitialGameData(data) {
         players: [{}, {}],
         eventHandler: new GameEventHandler(socket),
     });
+}
+
+export function addScreenEffect() {
+    document.body.id = "screen-effect";
+}
+
+export function removeScreenEffect() {
+    document.body.id = "";
 }
 
 function addEvents(game, setGame) {

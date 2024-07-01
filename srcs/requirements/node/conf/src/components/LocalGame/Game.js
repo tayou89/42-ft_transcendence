@@ -3,12 +3,12 @@ import TopLine from "../Room/TopLine.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
-import ResultPopUp from ".//ResultPopUp.js";
 import LocalEventHandler from "./EventHandler.js";
 import BallSetter from "./BallSetter.js";
 import HitChecker from "./HitChecker.js";
 import QuitPopUp from "./QuitPopUp.js";
 import { INIT } from "./constant.js";
+import { addScreenEffect, removeScreenEffect } from "../RemoteGame/Game.js";
 import "../../css/game/game-page.css";
 
 function LocalGame() {
@@ -17,9 +17,11 @@ function LocalGame() {
     if (HitChecker.isBallHitGoalLine(game.ball))
         setNextGame(setGame);
     useEffect(() => {
+        addScreenEffect();
         addGameEvents(game, setGame); 
         game.ballSetter.setBallMove(setGame);
         return (() => {
+            removeScreenEffect();
             removeGameEvents(game);
             game.ballSetter.setBallStop();
         });
@@ -31,7 +33,6 @@ function LocalGame() {
             <GameBoard game={ game } />
             <BottomLine setFunction={ setGame } />
             <QuitPopUp data={ game } setFunction={ setGame } /> 
-            <ResultPopUp game={ game } />
         </div>
     );
 }

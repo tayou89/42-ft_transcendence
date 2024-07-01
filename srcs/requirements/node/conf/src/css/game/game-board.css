@@ -2,8 +2,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding-right: 10px;
+    align-items: end;
+    padding-right: 70px;
     font-size: 40px;
 }
 
@@ -11,8 +11,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding-left: 10px;
+    align-items: start;
+    padding-left: 70px;
     font-size: 40px;
 }
 
@@ -30,6 +30,7 @@
 
 #game-board {
     display: flex;
+    position: relative;
     justify-content: center;
     align-items: center;
     margin-top: 10px;
