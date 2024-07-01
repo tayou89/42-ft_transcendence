@@ -19,13 +19,6 @@ export const PADDLE = {
     COUNT: 2,
 };
 
-export const LIMIT = {
-    PADDLE: {
-	    MAX: { Y: BOARD.HEIGHT - PADDLE.HEIGHT, },
-        MIN: { Y: 0, },
-    },
-}
-
 export const BALL = {
     RADIUS: 15,
     WIDTH: 30,
@@ -38,6 +31,8 @@ export const INIT = {
     BALL: {
         X: (BOARD.WIDTH / 2) - BALL.RADIUS,
         Y: (BOARD.HEIGHT / 2) - BALL.RADIUS,
+        SPEED: 5,
+        DIRECTION: { X: -1, Y: 0 },
     },
     PADDLE1: {
         X: PADDLE.OFFSET_X - (PADDLE.WIDTH / 2),
@@ -73,6 +68,10 @@ export const GAME = {
     RESULT: {
         WIN: "win",
         LOSE: "lose",
+    },
+    SCORE: {
+        START: 0,
+        END: 7,
     },
 };
 

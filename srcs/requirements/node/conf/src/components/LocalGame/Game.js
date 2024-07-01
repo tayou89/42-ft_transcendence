@@ -1,21 +1,26 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import TopLine from "../Room/TopLine.js";
-import ScoreBoard from "../RemoteGame/ScoreBoard.js";
+import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
-import BottomLine from "../RemoteGame/BottomLine.js";
+import BottomLine from "./BottomLine.js";
 import ResultPopUp from ".//ResultPopUp.js";
 import LocalEventHandler from "./EventHandler.js";
-import { INIT } from "../RemoteGame/constant.js";
+import BallSetter from "./BallSetter.js";
+import HitChecker from "./HitChecker.js";
+import { INIT } from "./constant.js";
 import "../../css/game/game-page.css";
 
 function LocalGame() {
     const [ game, setGame ] = useState(getInitialGameData());
 
-    console.log("game:", game);
+    if (HitChecker.isBallHitGoalLine(game.ball))
+        setNextGame(setGame);
     useEffect(() => {
-        addEvents(game, setGame); 
+        addGameEvents(game, setGame); 
+        game.ballSetter.setBallMove(setGame);
         return (() => {
-            removeEvents(game);
+            removeGameEvents(game);
+            game.ballSetter.setBallStop();
         });
     }, []);
     return (
@@ -23,7 +28,8 @@ function LocalGame() {
             <TopLine />
             <ScoreBoard game={ game } />
             <GameBoard game={ game } />
-            <BottomLine />
+            <BottomLine setFunction={ setGame } />
+            <QuitPopUp data={ game } setFunction={ setGame } /> 
             <ResultPopUp game={ game } />
         </div>
     );
@@ -31,23 +37,43 @@ function LocalGame() {
 
 function getInitialGameData() {
     return ({
-        ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
-        paddle: [ INIT.PADDLE1.Y, INIT.PADDLE2.Y ],
-        score: { p1: 0, p2: 0},
+        ball: INIT.BALL,
+        paddle: [ INIT.PADDLE1, INIT.PADDLE2 ],
+        score: [ 0, 0 ],
         isQuitClicked: false,
         eventHandler: new LocalEventHandler(),
-        isOver: false,
+        ballSetter: new BallSetter(),
     });
 }
 
-function addEvents(game, setGame) {
+function addGameEvents(game, setGame) {
     game.eventHandler.addKeyDownEvent(setGame);
     game.eventHandler.addKeyUpEvent(setGame);
 }
 
-function removeEvents(game) {
+export function removeGameEvents(game) {
     game.eventHandler.removeKeyDownEvent();
     game.eventHandler.removeKeyUpEvent();
+}
+
+function setNextGame(setGame) {
+    setGame((prev) => {
+        const newScore = getNewScore(prev);
+
+        return ({
+            ...prev,
+            ball: INIT.BALL,
+            paddle: [ INIT.PADDLE1, INIT.PADDLE2 ],
+            score: newScore,
+        });
+    });
+}
+
+function getNewScore(game) {
+    if (game.ball.direction < 0)
+        return ([ game.score[0] + 1, game.score[1] ]);
+    else
+        return ([ game.score[0], game.score[1] + 1]);
 }
 
 export default LocalGame;

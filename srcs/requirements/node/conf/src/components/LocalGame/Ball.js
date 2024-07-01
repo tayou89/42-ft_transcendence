@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { BALL } from "../RemoteGame/constant.js";
+import { BALL } from "./constant.js";
 
 function Ball({ id, ball }) {
     const style = getStyle(ball.x, ball.y);

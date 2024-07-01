@@ -1,7 +1,7 @@
 import { MyReact } from "../../MyReact/MyReact.js";
 import RoomStateSetter from "../Room/StateSetter.js";
 
-class RemoteGameStateSetter extends RoomStateSetter {
+class GameStateSetter extends RoomStateSetter {
     static setGameData(newGameData, setGameData) {
          setGameData((prev) => ({ 
              ...prev, 
@@ -15,4 +15,4 @@ class RemoteGameStateSetter extends RoomStateSetter {
     }
 }
 
-export default RemoteGameStateSetter;
+export default GameStateSetter;

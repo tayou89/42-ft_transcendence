@@ -15,8 +15,8 @@ function Board({ ball, paddle }) {
     return (
         <div className="col" id="board">
             <Ball id="ball" ball={ ball } />
-            <Paddle id="paddle1" paddle={ paddle } />
-            <Paddle id="paddle2" paddle={ paddle }/>
+            <Paddle id="paddle1" paddle={ paddle[0] } />
+            <Paddle id="paddle2" paddle={ paddle[1] }/>
         </div>
     );
 }

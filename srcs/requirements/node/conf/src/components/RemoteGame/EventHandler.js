@@ -2,17 +2,17 @@ import { MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import { KEY, GAME } from "./constant.js";
 import RoomSocketEventHandler from "../Room/EventHandler.js";
-import RemoteGameStateSetter from "./StateSetter.js";
+import GameStateSetter from "./StateSetter.js";
 
 class GameSocketEventHandler extends RoomSocketEventHandler {
     setGameEvent(setGameData) {
         this.#gameEvent = (newGameData)  => {
-            RemoteGameStateSetter.setGameData(newGameData, setGameData);
+            GameStateSetter.setGameData(newGameData, setGameData);
         };
     }
     setResultEvent(setGameResult) {
         this.#resultEvent = (newGameResult) => {
-            RemoteGameStateSetter.setGameResult(newGameResult, setGameResult);
+            GameStateSetter.setGameResult(newGameResult, setGameResult);
         };
     }
     get gameEvent() {

@@ -1,8 +1,8 @@
 import { MyReact } from "../../MyReact/MyReact.js";
-import { KEY, PADDLE } from "../RemoteGame/constant.js";
-import Limit from "../LocalGame/Limit.js";
+import { KEY, PADDLE } from "./constant.js";
+import HitChecker from "./HitChecker.js";
 
-class LocalGameStateSetter {
+class PaddleSetter {
     constructor () {
         this.#paddleLoop = [];
     }
@@ -12,13 +12,12 @@ class LocalGameStateSetter {
 
         this.#paddleLoop[paddleIndex] = setInterval(() => {
             setGame((prev) => {
-            if (!Limit.checkPaddle(prev.paddle[paddleIndex], direction)) {
-                return ({ ...prev, paddle: prev.paddle.map((valueY, index) => 
-                    index === paddleIndex ? valueY + direction : valueY )
-                });
-            }
-            else 
+            if (HitChecker.isPaddleHitWall(prev.paddle[paddleIndex], direction))
                 return ({ ...prev });
+            else 
+                return ({ ...prev, paddle: prev.paddle.map((paddle, index) => 
+                    index === paddleIndex ? { ...paddle, y: paddle.y + direction } : { ...paddle })
+                });
             });
         }, 30);
     }
@@ -34,10 +33,8 @@ class LocalGameStateSetter {
 }
 
 function getPaddleDirection(key) {
-    if (KEY.UP.includes(key)) {
-        console.log("This is keyup key:", key);
+    if (KEY.UP.includes(key))
         return (PADDLE.DIRECTION.UP);
-    }
     else if (KEY.DOWN.includes(key))    
         return (PADDLE.DIRECTION.DOWN);
     else
@@ -53,4 +50,4 @@ function getPaddleIndex(key) {
         return (-1);
 }
 
-export default LocalGameStateSetter;
+export default PaddleSetter;
