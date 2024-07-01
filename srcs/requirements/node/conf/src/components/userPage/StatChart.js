@@ -1,6 +1,9 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import ChangeProfileImage from "./ChangeProfileImage.js";
 
-function StatChart({ userData }) {
+
+
+function StatChart({ userData, myId }) {
 	const level = Math.floor(userData.exp / 1000);
 	const nextexp = Math.floor((userData.exp + 1000) / 1000) * 1000;
 	const win = userData.wins;
@@ -14,9 +17,11 @@ function StatChart({ userData }) {
 					<div className="col-md-5 text-center">
 						<div className="container m-3 pt-3">
 							<img className="rounded-circle"
-								width="150" height="150"
+								width="170" height="170"
 								src={userData.avatar}></img>
-							<div className="container mt-3 fs-4">{userData.name}</div>
+							<div className="container mt-3">
+								{myId === userData.id ? <ChangeProfileImage myId={userData.id} /> : null}
+							</div>
 						</div>
 					</div>
 					<div className="col-md-7">

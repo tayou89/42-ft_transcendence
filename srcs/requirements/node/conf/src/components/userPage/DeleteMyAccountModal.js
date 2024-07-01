@@ -41,11 +41,11 @@ async function onClickDeleteAccount(event) {
 	}
 }
 
-function DeleteMyAccountModal({ title }) {
+function DeleteMyAccountModal() {
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#delete-account-modal">
-				{title}
+				delete Account
 			</button>
 			<div className="modal text-center" id="delete-account-modal">
 				<div className="modal-dialog">

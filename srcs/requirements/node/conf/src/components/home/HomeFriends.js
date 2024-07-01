@@ -6,6 +6,7 @@ import tokenRefresh from "../utility/tokenRefresh.js";
 import closeModalById from "../utility/closeModalById.js"
 import getUserData from "../utility/getUserData.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
+import getUserProfileImage from "../utility/getUserProfileImage.js";
 
 const defaultFriendData = {
 	"id": 0,
@@ -59,7 +60,7 @@ function HomeFriends() {
 			</div>
 			<div
 				className="container mt-1 py-2 px-3 border-top border-bottom rounded bg-secondary bg-opacity-25"
-				style="height: 300px; overflow-y: auto;">
+				style="height: 400px; overflow-y: auto;">
 				{friends.map(id => (
 					<FriendInfo friendId={id} setFriends={setFriends} refresh={refresh} />
 				))}
@@ -106,14 +107,14 @@ function onClickShowFriendsInfo(friendId) {
 //!!!??? 빨간점, 초록점 이미지
 function FriendInfo({ friendId, setFriends, refresh }) {
 	const [userData, setUserData] = useState(defaultFriendData);
-	const greenDotImage = "greendot.png";
-	const redDotImage = "reddot.png";
-
+	const [userImage, setUserImage] = useState("https://www.studiopeople.kr/common/img/default_profile.png");
 	useEffect(() => {
 		const a = async () => {
 			try {
 				const _userData = await getUserData(friendId);
+				const _userImage = await getUserProfileImage(_userData.id);
 				setUserData(() => _userData);
+				setUserImage(() => _userImage);
 			} catch (error) {
 				console.log("FriendInfo Error: ", error);
 				logout();
@@ -123,23 +124,25 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 	}, [refresh])
 
 	return (
-		<div className={"container py-1 my-1 border-start border-end rounded bg-opacity-10 d-flex justify-content-around text-light fs-5 "
-			+ (userData.online === true ? "border-success bg-success" : "border-danger bg-danger")}>
-			<img className="rounded-circle"
-				width="24" height="24"
-				src={userData.avatar} />
-			<div className="dropdown" style="user-select: none; cursor: pointer;">
-				<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
-					{userData.name}
+		<div className={"container border-start border-end rounded bg-opacity-10 text-light d-flex align-items-center"
+			+ (userData.online === true ? " border-success bg-success" : " border-danger bg-danger")} style="height:42px; width:100%">
+			<div className="d-flex justify-content-between align-items-center" style="width:100%">
+				<img className="rounded-circle"
+					width="32" height="32"
+					src={userImage} />
+				<div className="dropdown fs-4" style="user-select: none; cursor: pointer;">
+					<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
+						{userData.name}
+					</div>
+					<ul className="dropdown-menu" >
+						<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
+						<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setFriends)}>Unfriended</li>
+					</ul>
 				</div>
-				<ul className="dropdown-menu" >
-					<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
-					<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setFriends)}>Unfriended</li>
-				</ul>
+				<div>
+					<div style={"width: 25px; height: 25px; border-radius: 50%; background-color: " + (userData.online === true ? "green;" : "red;")}></div>
+				</div>
 			</div>
-			<img className="rounded-circle"
-				width="24" height="24"
-				src={userData.online === true ? greenDotImage : redDotImage} />
 		</div>
 	);
 }
