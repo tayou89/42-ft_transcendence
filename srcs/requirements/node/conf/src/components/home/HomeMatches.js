@@ -151,7 +151,7 @@ async function onCreateNewRoomSubmit(event, myId) {
 	const roomType = document.querySelector("input[name='optradio']:checked").value;
 	if (roomType === "local") {//로컬 방의 경우
 		closeModalById("create-room-modal");
-		navigate(`/room?type=${roomType}`);
+		navigate("/local_game");
 	} else {//온라인 방의 경우
 		let title = document.querySelector("#create-room-input").value;
 		if (title === "") {
