@@ -1,6 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Navbar from "../Navbar.js";
-import { Link, navigate } from "../../MyReact/MyReactRouter.js";
 import MatchRecords from "./MatchRecords.js";
 import StatChart from "./StatChart.js";
 import getMyData from "../utility/getMyData.js";
@@ -9,6 +8,7 @@ import logout from "../utility/logout.js";
 import ChangeMyNicknameModal from "./ChangeMyNicknameModal.js";
 import DeleteMyAccountModal from "./DeleteMyAccountModal.js";
 import getUserProfileImage from "../utility/getUserProfileImage.js";
+import BioMessage from "./BioMessage.js";
 
 const defaultData1 = {
 	"id": -1234,
@@ -62,8 +62,8 @@ function UserPage() {
 		<div style="user-select: none;">
 			<Navbar refresh={refresh} />
 			<div className="container text-light">
-				<div className="d-flex">
-					<div className="p-1 fs-3">{userData.name} Info</div>
+				<div className="d-flex" style="height: 50px">
+					<div className="p-1 fs-2">{userData.name} Info</div>
 					<div className="p-1 my-1">
 						{myData.id === userData.id ? <ChangeMyNicknameModal myId={myData.id} setMyData={setMyData} /> : null}
 					</div>
@@ -72,6 +72,9 @@ function UserPage() {
 					</div>
 				</div>
 				<StatChart userData={userData} myId={myData.id} setRefresh={setRefresh} />
+				<div className="mt-3">
+					<BioMessage userId={userId} isMyPage={myData.id == userId} />
+				</div>
 				<div className="mt-3">
 					<MatchRecords userId={userId} />
 				</div>

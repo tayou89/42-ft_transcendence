@@ -100,7 +100,6 @@ async function onClickUnFriend(event, friendId, setFriends) {
 }
 
 function onClickShowFriendsInfo(friendId) {
-	console.log(friendId);
 	navigate(`/userpage?userId=${friendId}`);
 }
 
