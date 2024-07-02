@@ -4,22 +4,22 @@ import TopLine from "../Room/TopLine.js";
 import ScoreBoard from "./ScoreBoard.js";
 import GameBoard from "./GameBoard.js";
 import BottomLine from "./BottomLine.js";
-import ResultPopUp from "./ResultPopUp.js";
-import EventHandler from "../Room/EventHandler.js";
-import { INIT } from "./constant.js";
+import { pongSocket, mttSocket } from "./GameSocket.js";
+import { GameEventHandler } from "./EventHandler.js";
+import { INIT, GAME } from "./constant.js";
 import "../../css/game/game-page.css";
 
-function Game({ data }) {
+function RemoteGame({ data }) {
     if (!data) 
         return (navigate("/home"));
     const [ game, setGame ] = useState(getInitialGameData(data));
 
     useEffect(() => {
-        console.log("=====================Game Page=======================");
-        console.log("game:", game);
+        addScreenEffect();
         addEvents(game, setGame); 
         turnOnSocketChannels(game, setGame);
         return (() => {
+            removeScreenEffect();
             removeEvents(game);
             turnOffSocketChannels(game);
         });
@@ -30,35 +30,45 @@ function Game({ data }) {
             <ScoreBoard game={ game } />
             <GameBoard game={ game } />
             <BottomLine />
-            <ResultPopUp game={ game } />
         </div>
     );
 }
 
 function getInitialGameData(data) {
+    const socket = data.type === GAME.TYPE.PONG ? pongSocket : mttSocket;
+
     return ({
-        socket: data?.socket,
-        type: data?.type,
-        myId: data?.myId,
-        round: data?.gameRound,
+        socket: socket,
+        type: data.type,
+        myId: data.myId,
+        round: data.gameRound,
         ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
         paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
-        score: { p1: 0, p2: 0},
+        score: [0, 0],
         result: {},
         players: [{}, {}],
-        isQuitClicked: false,
-        eventHandler: new EventHandler(),
+        eventHandler: new GameEventHandler(socket),
     });
 }
 
+export function addScreenEffect() {
+    document.body.id = "screen-effect";
+}
+
+export function removeScreenEffect() {
+    document.body.id = "";
+}
+
 function addEvents(game, setGame) {
-    game.eventHandler.addKeyEvent(game.socket);
+    game.eventHandler.addKeyDownEvent(game.socket);
+    game.eventHandler.addKeyUpEvent(game.socket);
     game.eventHandler.addRefreshEvent();
-    game.eventHandler.addPageBackEvent(setGame);
+    game.eventHandler.addPageBackEvent(game, setGame);
 }
 
 function removeEvents(game) {
-    game.eventHandler.removeKeyEvent();
+    game.eventHandler.removeKeyDownEvent();
+    game.eventHandler.removeKeyUpEvent();
     game.eventHandler.removeRefreshEvent();
     game.eventHandler.removePageBackEvent();
 }
@@ -77,4 +87,4 @@ function turnOffSocketChannels(game) {
     }
 }
 
-export default Game;
+export default RemoteGame;

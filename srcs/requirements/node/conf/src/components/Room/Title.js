@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { GAME } from "../Game/constant.js";
+import { GAME } from "../RemoteGame/constant.js";
 import "../../css/room/title.css";
 
 function Title({ room } ) {

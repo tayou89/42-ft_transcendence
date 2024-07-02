@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../..//MyReact/MyReact.js";
-import { URL_PATH } from "../Game/constant.js";
+import { URL_PATH } from "../RemoteGame/constant.js";
 import tokenRefreshAndGoTo from "../utility/tokenRefreshAndGoTo.js";
 
 class Fetch {
