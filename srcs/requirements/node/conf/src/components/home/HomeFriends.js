@@ -128,6 +128,7 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 			+ (userData.online === true ? " border-success bg-success" : " border-danger bg-danger")} style="height:42px; width:100%">
 			<div className="d-flex justify-content-between align-items-center" style="width:100%">
 				<img className="rounded-circle"
+					style="object-fit: cover;"
 					width="32" height="32"
 					src={userImage} />
 				<div className="dropdown fs-4" style="user-select: none; cursor: pointer;">
@@ -140,7 +141,7 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 					</ul>
 				</div>
 				<div>
-					<div style={"width: 25px; height: 25px; border-radius: 50%; background-color: " + (userData.online === true ? "green;" : "red;")}></div>
+					<div style={"width: 20px; height: 20px; border-radius: 50%; background-color: " + (userData.online === true ? "green;" : "red;")}></div>
 				</div>
 			</div>
 		</div>
