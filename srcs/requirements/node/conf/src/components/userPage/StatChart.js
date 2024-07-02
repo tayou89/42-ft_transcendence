@@ -14,7 +14,7 @@ function StatChart({ userData, myId, setRefresh }) {
 		<div>
 			<div className="container">
 				<div className="row border-top border-bottom rounded bg-secondary bg-opacity-25">
-					<div className="col-md-5 text-center">
+					<div className="col-md-5 text-center" style="height: 260px">
 						<div className="container m-3 pt-3">
 							<img className="rounded-circle"
 								style="object-fit: cover;"

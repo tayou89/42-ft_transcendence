@@ -86,7 +86,7 @@ async function changeProfileImage(myId) {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
-		console.log("changeProfileImage Error: ");
+		console.log("changeProfileImage Error: ", error);
 		return Promise.reject(error);
 	}
 }

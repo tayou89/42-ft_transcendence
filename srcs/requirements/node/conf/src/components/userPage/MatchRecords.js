@@ -63,7 +63,7 @@ function MatchRecords({ userId }) {
 			</div>
 			<div
 				className="pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
-				style="height: 300px; overflow-y: auto;">
+				style="height: 400px; overflow-y: auto;">
 				{userMatchRecords.map((match) =>
 					<MatchRecord match={match} userId={userId} />
 				)}

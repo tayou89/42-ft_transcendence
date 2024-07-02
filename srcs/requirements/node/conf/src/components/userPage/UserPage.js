@@ -62,8 +62,8 @@ function UserPage() {
 		<div style="user-select: none;">
 			<Navbar refresh={refresh} />
 			<div className="container text-light">
-				<div className="d-flex">
-					<div className="p-1 fs-3">{userData.name} Info</div>
+				<div className="d-flex" style="height: 50px">
+					<div className="p-1 fs-2">{userData.name} Info</div>
 					<div className="p-1 my-1">
 						{myData.id === userData.id ? <ChangeMyNicknameModal myId={myData.id} setMyData={setMyData} /> : null}
 					</div>
