@@ -82,11 +82,10 @@ async function changeBioMessage(newBioMessage, myId) {
 				introduce: newBioMessage
 			})
 		});
-		console.log(response.status);
 		if (response.status === 200) {
 			return;
 		} else if (response.status === 401) {
-			return (tokenRefresh(() => changeBioMessage(myId)));
+			return (tokenRefresh(() => changeBioMessage(newBioMessage, myId)));
 		} else {
 			return Promise.reject("unknown");
 		}
