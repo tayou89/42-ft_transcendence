@@ -1,4 +1,4 @@
-import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { MyReact } from "../../MyReact/MyReact.js";
 import "../../css/game/score-board.css";
 
 function ScoreBoard({ game }) {

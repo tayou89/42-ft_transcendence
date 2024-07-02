@@ -35,3 +35,23 @@
     align-items: center;
     margin-top: 10px;
 }
+
+@keyframes ball-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#ball {
+    background-image: url("../images/ball-4.jpg");;
+    background-size: cover;
+}
+
+#ball-spin {
+    background-image: url("../images/ball-4.jpg");;
+    background-size: cover;
+    animation: ball-spin 0.5s linear infinite;
+}
