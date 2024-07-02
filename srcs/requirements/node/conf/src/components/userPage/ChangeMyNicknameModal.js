@@ -1,5 +1,5 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import refreshToken from "../utility/tokenRefresh.js"
+import tokenRefresh from "../utility/tokenRefresh.js"
 import notifyStatusById from "../utility/notifyStatusById.js"
 
 function ChangeMyNicknameModal({ myId }) {
@@ -52,7 +52,7 @@ async function changeNickname(myId, newNickname) {
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await refreshToken(() => changeNickname(myId, newNickname));
+			return await tokenRefresh(() => changeNickname(myId, newNickname));
 		} else if (response.status === 400) {
 			return Promise.reject("This nickname already exists");
 		} else {
