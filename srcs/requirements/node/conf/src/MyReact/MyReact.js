@@ -335,6 +335,7 @@ function reconcileChildren(wipFiber, elements) {
         parent: wipFiber,
         alternate: oldFiber,
         effectTag: "UPDATE",
+        version: oldFiber.version + 1,
       }
     }
     else {
@@ -346,6 +347,7 @@ function reconcileChildren(wipFiber, elements) {
           parent: wipFiber,
           alternate: null,
           effectTag: "PLACEMENT",
+          version: 0,
         }
       }
       if (oldFiber) {
