@@ -39,7 +39,7 @@ function BioMessage({ userId, isMyPage }) {
 			setRefresh(current => !current);
 		} catch (error) {
 			console.log("onClickSaveBio Error: ", error);
-			// logout();
+			logout();
 		}
 	}
 
