@@ -45,7 +45,6 @@ function UserPage() {
 			try {
 				const _myData = await getMyData();
 				const _userData = await getUserData(userId);
-				console.log(_myData);
 				setMyData(() => _myData);
 				setUserData(() => _userData);
 			} catch (error) {

@@ -3,6 +3,7 @@ import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
 import { navigate } from "../MyReact/MyReactRouter.js";
 import getMyData from "./utility/getMyData.js";
 import logout from "./utility/logout.js";
+import getUserProfileImage from "./utility/getUserProfileImage.js";
 
 const defaultMyData = {
 	"id": 0,
@@ -26,6 +27,8 @@ function Navbar() {
 		const a = async () => {
 			try {
 				const _myData = await getMyData();
+				const _myProfileImage = await getUserProfileImage(_myData.id);
+				_myData.avatar = _myProfileImage;
 				setMyData(() => _myData);
 			} catch (error) {
 				console.log("Navbar Error: ", error);
@@ -44,7 +47,7 @@ function Navbar() {
 						<div className="row">
 							<div className="col">
 								<img className="rounded-circle"
-									width="35" height="35"
+									style="object-fit: cover;" width="35" height="35"
 									src={myData.avatar} />
 							</div>
 							<div className="dropdown col">
