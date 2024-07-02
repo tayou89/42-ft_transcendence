@@ -11,7 +11,9 @@ server {
 
     #modsecurity on;
     #modsecurity_rules_file /etc/nginx/modsecurity.d/modsecurity.conf;
-    
+
+    client_max_body_size 512M;
+
     location / {
         proxy_pass http://gameserver:8001;
         proxy_set_header Host $host;

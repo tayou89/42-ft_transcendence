@@ -173,6 +173,7 @@ services:
     container_name: nginx
     environment:
       ALLOWED_METHODS: "GET POST PUT PATCH DELETE HEAD OPTIONS"
+      MODSEC_REQ_BODY_LIMIT: 536870912 #536870912 btyes == 512 MB
     volumes:
       - ${PROJECT_DIR}/requirements/nginx/conf/:/etc/nginx/templates/conf.d/:ro
       - certs_volume:/certs:ro
