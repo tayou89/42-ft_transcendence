@@ -9,19 +9,19 @@ function GameBoard({ game }) {
     return (
         <div className="row" id="game-board">
             <PlayerSlot id="player1" player={ game.players[0] }/>
-            <Board ball={ game.ball } paddle={ game.paddle } game={ game }/>
+            <Board game={ game }/>
             <PlayerSlot id="player2" player={ game.players[1] }/>
             <ResultPopUp game={ game } />
         </div>
     );
 }
 
-function Board({ ball, paddle, game }) {
+function Board({ game }) {
     return (
         <div className="col" id="board">
-            <Ball id="ball" ball={ ball } />
-            <Paddle id="paddle1" paddle={ paddle } />
-            <Paddle id="paddle2" paddle={ paddle }/>
+            <Ball id="ball-spin" ball={ game.ball } />
+            <Paddle id="paddle1" paddle={ game.paddle.p1 } />
+            <Paddle id="paddle2" paddle={ game.paddle.p2 }/>
         </div>
     );
 }

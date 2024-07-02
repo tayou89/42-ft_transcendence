@@ -6,7 +6,6 @@ import { removeGameEvents } from "./Game.js";
 function ResultPopUp({ game }) {
     if (!isGameOver(game.score))
         return (null);
-
     removeGameEvents(game);
     game.ballSetter.setBallStop();
     useEffect(() => {
