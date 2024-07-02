@@ -1,0 +1,16 @@
+server {
+    listen       8080;
+    listen  [::]:8080;
+    server_name  localhost;
+
+    root /node;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /avatars {
+        alias /django/avatars/;
+        autoindex on;
+    }
+}
