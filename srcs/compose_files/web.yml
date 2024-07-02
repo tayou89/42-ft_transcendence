@@ -19,7 +19,17 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-  
+
+  node_builder:
+    image: node:transcendence
+    container_name: node_builder
+    volumes:
+      - node_volume:/workspace/public
+    command: "npm run build"
+    build: 
+      context: ${PROJECT_DIR}/requirements/node/
+      dockerfile: dockerfile
+
   userserver:
     depends_on:
       userdb:
@@ -100,12 +110,12 @@ services:
       GAMEDATA_DB_PW: ${USERDATA_DB_PW}
     networks:
       - my_net
-    # healthcheck:
-    #   test: ["CMD-SHELL", "curl -s localhost:8001"]
-    #   interval: 1s
-    #   timeout: 5s
-    #   retries: 3
-    #   start_period: 1s
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s localhost:8001"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 1s
 
   gamedb:
     image: postgres:gameserver
@@ -152,7 +162,11 @@ services:
     depends_on:
       cert_setup:
         condition: service_completed_successfully
+      node_builder:
+        condition: service_completed_successfully
       userserver:
+        condition: service_healthy
+      gameserver:
         condition: service_healthy
     user: "0"
     image: owasp/modsecurity-crs:4.2.0-nginx-alpine-202405101205
@@ -164,11 +178,13 @@ services:
       - certs_volume:/certs:ro
       - logs_volume:/logs
       - avatars_volume:/django/avatars/:ro
+      - node_volume:/node/:ro
     ports:
       - 8000:8000
       - 8001:8001
       - 9090:9090
       - 4242:4242
+      # - 8080:8080
     networks:
       - my_net
     healthcheck:
@@ -188,4 +204,6 @@ volumes:
   avatars_volume:
     name: avatars_volume
     driver: local
-
+  node_volume:
+    name: node_volume
+    driver: local
