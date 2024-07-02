@@ -1,13 +1,15 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import Paddle from "./Paddle.js";
 import Ball from "./Ball.js";
+import StartPopUp from "./StartPopUp.js";
 import ResultPopUp from ".//ResultPopUp.js";
 import "../../css/game/game-board.css";
 
-function GameBoard({ game }) {
+function GameBoard({ game, setGame }) {
     return (
         <div className="row" id="game-board">
             <Board ball={ game.ball } paddle={ game.paddle }/>
+            <StartPopUp game={ game } setGame={ setGame } />
             <ResultPopUp game={ game } />
         </div>
     );

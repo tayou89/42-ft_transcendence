@@ -7,7 +7,7 @@ class GameStateSetter extends RoomStateSetter {
              ...prev, 
              ball: { x: newGameData.ball[0], y: newGameData.ball[1] },
              paddle: { p1: newGameData.paddle[0], p2: newGameData.paddle[1] },
-             score: { p1: newGameData.score[0], p2: newGameData.score[1] }
+             score: [ newGameData.score[0], newGameData.score[1] ],
          }));
     }
     static setGameResult(newGameResult, setGameResult) {

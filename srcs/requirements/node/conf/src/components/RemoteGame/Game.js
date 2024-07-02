@@ -44,7 +44,7 @@ function getInitialGameData(data) {
         round: data.gameRound,
         ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
         paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
-        score: { p1: 0, p2: 0},
+        score: [0, 0],
         result: {},
         players: [{}, {}],
         eventHandler: new GameEventHandler(socket),
