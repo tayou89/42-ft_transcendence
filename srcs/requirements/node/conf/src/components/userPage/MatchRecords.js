@@ -84,15 +84,15 @@ function MatchRecord({ match, userId }) {
 			try {
 				if (match.p1) {
 					const p1Data = await getUserData(match.p1);
-					setP1Name(() => p1Data.name)
+					setP1Name(() => p1Data.name);
 				} else {
-					setP1Name(() => "unknown")
+					setP1Name(() => match.p1);
 				}
 				if (match.p2) {
 					const p2Data = await getUserData(match.p2);
 					setP2Name(() => p2Data.name)
 				} else {
-					setP2Name(() => "unknown")
+					setP2Name(() => match.p2);
 				}
 			} catch (error) {
 				console.log("MatchRecord Error: ", error);
@@ -101,6 +101,7 @@ function MatchRecord({ match, userId }) {
 		}
 		a();
 	}, [match.p1, match.p2])
+
 	return (
 		<div
 			className={"my-1 py-1 text-light text-center container bg-dark border-start rounded" + (isUserWin ? " border-success" : " border-danger")}
@@ -114,16 +115,16 @@ function MatchRecord({ match, userId }) {
 				<div className="col-10 mt-1 py-1">
 					<div className="row">
 						<div id={``}
-							className={"col-4 text-end " + (p1Name === "unknown" ? "text-secondary" : "text-info")}
-							style={p1Name === "unknown" ? "" : "cursor: pointer;"}
-							onClick={(p1Name === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p1))}>
-							{p1Name}
+							className={"col-4 text-end " + (!p1Name ? "text-secondary" : "text-info")}
+							style={!p1Name ? "" : "cursor: pointer;"}
+							onClick={!p1Name ? null : event => onClickNameInMatchRecord(event, match.p1)}>
+							{!p1Name ? "unknown" : p1Name}
 						</div>
 						<div className="col-4">{match.p1_score} vs {match.p2_score}</div>
-						<div className={"col-4 text-start " + (p2Name === "unknown" ? "text-secondary" : "text-info")}
-							style={p2Name === "unknown" ? "" : "cursor: pointer;"}
-							onClick={(p2Name === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p2))}>
-							{p2Name}
+						<div className={"col-4 text-start " + (!p2Name ? "text-secondary" : "text-info")}
+							style={!p2Name ? "" : "cursor: pointer;"}
+							onClick={!p2Name ? null : event => onClickNameInMatchRecord(event, match.p2)}>
+							{!p2Name ? "unknown" : p2Name}
 						</div>
 					</div>
 					<div>

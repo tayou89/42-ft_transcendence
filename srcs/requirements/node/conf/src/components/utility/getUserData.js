@@ -12,6 +12,8 @@ async function getUserData(userId) {
 			return await response.json();
 		} else if (response.status === 401) {
 			return await tokenRefresh(() => getUserData(userId));
+		} else if (response.status === 404) {
+			return Promise.reject("not found");
 		} else {
 			return Promise.reject("unknown");
 		}
