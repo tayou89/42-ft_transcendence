@@ -5,9 +5,9 @@ import tokenRefresh from "../utility/tokenRefresh.js";
 import getUserProfileImage from "../utility/getUserProfileImage.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 
-function ChangeProfileImageModal({ myId }) {
+function ChangeProfileImageModal({ myId, setRefreshUpper }) {
 	const [imageUrl, setImageUrl] = useState();
-	const [refresh, setRefresh] = useState();
+	const [refreshThis, setRefreshThis] = useState();
 
 	async function onChangeImageUpload(event) {
 		event.preventDefault();
@@ -20,7 +20,7 @@ function ChangeProfileImageModal({ myId }) {
 				setImageUrl(() => reader.result);
 			}
 		} else {
-			setRefresh(current => !current);
+			setRefreshThis(current => !current);
 		}
 	}
 	useEffect(() => {
@@ -34,7 +34,7 @@ function ChangeProfileImageModal({ myId }) {
 			}
 		}
 		a();
-	}, [refresh]);
+	}, [refreshThis]);
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#change-profile-image-modal">
@@ -55,7 +55,7 @@ function ChangeProfileImageModal({ myId }) {
 							</div>
 							<div className="d-flex container px-4 mt-2">
 								<input className="form-control" type="file" id="change-profile-image-input" onChange={onChangeImageUpload} />
-								<button className="btn btn-primary" onClick={event => onClickChangeProfileImageSubmit(event, myId)}>Submit</button>
+								<button className="btn btn-primary" onClick={event => onClickChangeProfileImageSubmit(event, myId, setRefreshUpper)}>Submit</button>
 							</div>
 						</div>
 						<div id="change-profile-image-status" className="container mb-2 text-success"></div>
@@ -91,12 +91,13 @@ async function changeProfileImage(myId) {
 	}
 }
 
-async function onClickChangeProfileImageSubmit(event, myId) {
+async function onClickChangeProfileImageSubmit(event, myId, setRefreshUpper) {
 	event.preventDefault();
 	try {
 		const result = await changeProfileImage(myId);
 		if (result === "success") {
 			notifyStatusById("successfully changed!", true, "change-profile-image-status");
+			setRefreshUpper(current => !current);
 		} else {
 			notifyStatusById("no file!", false, "change-profile-image-status");
 		}

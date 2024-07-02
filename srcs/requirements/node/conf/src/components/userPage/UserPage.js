@@ -41,6 +41,7 @@ function UserPage() {
 	const userId = queryParams.get('userId');
 	const [myData, setMyData] = useState(defaultData1);
 	const [userData, setUserData] = useState(defaultData2);
+	const [refresh, setRefresh] = useState(true);
 	useEffect(() => {
 		const a = async () => {
 			try {
@@ -56,10 +57,10 @@ function UserPage() {
 			}
 		};
 		a();
-	}, [userId]);
+	}, [userId, refresh]);
 	return (
 		<div style="user-select: none;">
-			<Navbar position="/userpage" />
+			<Navbar refresh={refresh} />
 			<div className="container text-light">
 				<div className="d-flex">
 					<div className="p-1 fs-3">{userData.name} Info</div>
@@ -70,7 +71,7 @@ function UserPage() {
 						{myData.id === userData.id ? <DeleteMyAccountModal myId={myData.id} /> : null}
 					</div>
 				</div>
-				<StatChart userData={userData} myId={myData.id} />
+				<StatChart userData={userData} myId={myData.id} setRefresh={setRefresh} />
 				<div className="mt-3">
 					<MatchRecords userId={userId} />
 				</div>
