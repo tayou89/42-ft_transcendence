@@ -19,7 +19,17 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-  
+
+  node_builder:
+    image: node:transcendence
+    container_name: node_builder
+    volumes:
+      - node_volume:/workspace/public
+    command: "npm run build"
+    build: 
+      context: ${PROJECT_DIR}/requirements/node/
+      dockerfile: dockerfile
+
   userserver:
     depends_on:
       userdb:
@@ -164,6 +174,7 @@ services:
       - certs_volume:/certs:ro
       - logs_volume:/logs
       - avatars_volume:/django/avatars/:ro
+      - node_volume:/node/:ro
     ports:
       - 8000:8000
       - 8001:8001
@@ -188,4 +199,6 @@ volumes:
   avatars_volume:
     name: avatars_volume
     driver: local
-
+  node_volume:
+    name: node_volume
+    driver: local
