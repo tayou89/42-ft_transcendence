@@ -17,7 +17,8 @@ from django.core.mail import send_mail
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-RETURN_URI = 'http://localhost:8000/api/login/done'
+HOST_IP = os.getenv("HOST_IP")
+RETURN_URI = f'http://{HOST_IP}:8000/api/login/done'
 
 
 class login_to_42(RedirectView):
