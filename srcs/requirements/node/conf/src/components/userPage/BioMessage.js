@@ -53,16 +53,14 @@ function BioMessage({ userId, isMyPage }) {
 					<div className="btn-group ms-3">
 						<div className={"btn btn-primary btn-sm " + (isInputMode ? "disabled" : "")} onClick={onClickEditBio}>Edit</div>
 						<div className={"btn btn-primary btn-sm " + (isInputMode ? "" : "disabled")} onClick={onClickSaveBio}>Save</div>
-					</div>
-					:
-					<div></div>
+					</div> : <div></div>
 				}
 			</div>
 			<div
 				className="pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
-				style="height: 150px; overflow-y: auto;">
+				style="height: 120px; overflow-y: auto;">
 				<textarea id="bio-input" input={userData.introduce} className="rounded" maxLength={200}
-					style={"height:94%; width: 100%; resize: none;" + (isInputMode ? "" : " display: none;")} />
+					style={"height:92%; width: 100%; resize: none;" + (isInputMode ? "" : " display: none;")} />
 				<div id="bio-display" className="container"
 					style={"height: 100%; white-space: wrap; word-break: break-all;" + (isInputMode ? " display: none;" : "")}>
 					{userData.introduce}
@@ -84,6 +82,7 @@ async function changeBioMessage(newBioMessage, myId) {
 				introduce: newBioMessage
 			})
 		});
+		console.log(response.status);
 		if (response.status === 200) {
 			return;
 		} else if (response.status === 401) {
