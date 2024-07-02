@@ -7,13 +7,20 @@ import notifyStatusById from "../utility/notifyStatusById.js"
 
 function ChangeProfileImageModal({ myId }) {
 	const [imageUrl, setImageUrl] = useState();
-	const onchangeImageUpload = (e) => {
-		const { files } = e.target;
+	const [refresh, setRefresh] = useState();
+
+	async function onChangeImageUpload(event) {
+		event.preventDefault();
+		const { files } = event.target;
 		const uploadFile = files[0];
-		const reader = new FileReader();
-		reader.readAsDataURL(uploadFile);
-		reader.onloadend = () => {
-			setImageUrl(() => reader.result);
+		if (uploadFile) {
+			const reader = new FileReader();
+			reader.readAsDataURL(uploadFile);
+			reader.onloadend = () => {
+				setImageUrl(() => reader.result);
+			}
+		} else {
+			setRefresh(current => !current);
 		}
 	}
 	useEffect(() => {
@@ -27,7 +34,7 @@ function ChangeProfileImageModal({ myId }) {
 			}
 		}
 		a();
-	}, []);
+	}, [refresh]);
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#change-profile-image-modal">
@@ -47,7 +54,7 @@ function ChangeProfileImageModal({ myId }) {
 								<img src={imageUrl} className="rounded-circle" img="img" style="object-fit: cover; width: 150px; height: 150px;" />
 							</div>
 							<div className="d-flex container px-4 mt-2">
-								<input className="form-control" type="file" id="change-profile-image-input" onChange={onchangeImageUpload} />
+								<input className="form-control" type="file" id="change-profile-image-input" onChange={onChangeImageUpload} />
 								<button className="btn btn-primary" onClick={event => onClickChangeProfileImageSubmit(event, myId)}>Submit</button>
 							</div>
 						</div>
