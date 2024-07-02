@@ -8,6 +8,7 @@ import getUserData from "../utility/getUserData.js";
 import logout from "../utility/logout.js";
 import ChangeMyNicknameModal from "./ChangeMyNicknameModal.js";
 import DeleteMyAccountModal from "./DeleteMyAccountModal.js";
+import getUserProfileImage from "../utility/getUserProfileImage.js";
 
 const defaultData1 = {
 	"id": -1234,
@@ -45,6 +46,8 @@ function UserPage() {
 			try {
 				const _myData = await getMyData();
 				const _userData = await getUserData(userId);
+				const _userProfileImage = await getUserProfileImage(_userData.id);
+				_userData.avatar = _userProfileImage;
 				setMyData(() => _myData);
 				setUserData(() => _userData);
 			} catch (error) {

@@ -17,6 +17,7 @@ function StatChart({ userData, myId }) {
 					<div className="col-md-5 text-center">
 						<div className="container m-3 pt-3">
 							<img className="rounded-circle"
+								style="object-fit: cover;"
 								width="170" height="170"
 								src={userData.avatar}></img>
 							<div className="container mt-3">
