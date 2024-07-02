@@ -7,7 +7,7 @@ async function getUserProfileImage(id) {
 			const blob = await response.blob();
 			return await URL.createObjectURL(blob);
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => getUserProfileImage(myId));
+			return await tokenRefresh(() => getUserProfileImage(id));
 		} else {
 			return Promise.reject("unknown");
 		}
