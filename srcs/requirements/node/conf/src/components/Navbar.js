@@ -20,7 +20,7 @@ function onClickShowMyInfo(userId) {
 	navigate(`/userpage?userId=${userId}`);
 }
 
-function Navbar() {
+function Navbar({ refresh }) {
 	const [myData, setMyData] = useState(defaultMyData);
 
 	useEffect(() => {
@@ -36,7 +36,7 @@ function Navbar() {
 			}
 		};
 		a();
-	}, []);
+	}, [refresh]);
 
 	return (
 		<div className="container-fluid bg-dark bg-opacity-75" style="user-select: none;">

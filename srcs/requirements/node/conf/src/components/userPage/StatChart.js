@@ -3,7 +3,7 @@ import ChangeProfileImageModal from "./ChangeProfileImageModal.js";
 
 
 
-function StatChart({ userData, myId }) {
+function StatChart({ userData, myId, setRefresh }) {
 	const level = Math.floor(userData.exp / 1000);
 	const nextexp = Math.floor((userData.exp + 1000) / 1000) * 1000;
 	const win = userData.wins;
@@ -17,10 +17,11 @@ function StatChart({ userData, myId }) {
 					<div className="col-md-5 text-center">
 						<div className="container m-3 pt-3">
 							<img className="rounded-circle"
+								style="object-fit: cover;"
 								width="170" height="170"
 								src={userData.avatar}></img>
 							<div className="container mt-3">
-								{myId === userData.id ? <ChangeProfileImageModal myId={userData.id} /> : null}
+								{myId === userData.id ? <ChangeProfileImageModal myId={userData.id} setRefreshUpper={setRefresh} /> : null}
 							</div>
 						</div>
 					</div>
