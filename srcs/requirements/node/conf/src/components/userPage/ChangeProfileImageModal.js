@@ -23,6 +23,7 @@ function ChangeProfileImageModal({ myId, setRefreshUpper }) {
 			setRefreshThis(current => !current);
 		}
 	}
+	
 	useEffect(() => {
 		const a = async () => {
 			try {
