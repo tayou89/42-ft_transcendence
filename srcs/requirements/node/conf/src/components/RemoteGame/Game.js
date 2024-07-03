@@ -88,7 +88,7 @@ function turnOffSocketChannels(game) {
 }
 
 export function getBallImage() {
-    const path = "/images/ball/";
+    const path = "https://localhost:4242/images/ball/";
     const images = [
         "abstract-1.jpg", "abstract-2.jpg", 
         "abstract-3.jpg", "abstract-4.jpg",
