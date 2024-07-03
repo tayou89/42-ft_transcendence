@@ -45,13 +45,13 @@
     }
 }
 
-#ball {
-    background-image: url("../images/ball-4.jpg");;
+/* #ball {
+    background-image: url("../images/ball//abstract-4.jpg");
     background-size: cover;
-}
+} */
 
 #ball-spin {
-    background-image: url("../images/ball-4.jpg");;
-    background-size: cover;
+    /* background-image: url("../images/ball//abstract-4.jpg");
+    background-size: cover; */
     animation: ball-spin 0.5s linear infinite;
 }

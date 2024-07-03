@@ -42,7 +42,7 @@ function getInitialGameData(data) {
         type: data.type,
         myId: data.myId,
         round: data.gameRound,
-        ball: { x: INIT.BALL.X, y: INIT.BALL.Y },
+        ball: { x: INIT.BALL.X, y: INIT.BALL.Y, image: getBallImage() },
         paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
         score: [0, 0],
         result: {},
@@ -85,6 +85,18 @@ function turnOffSocketChannels(game) {
         game.socket.turnOffGameChannel();
         game.socket.turnOffResultChannel();
     }
+}
+
+export function getBallImage() {
+    const path = "/images/ball/";
+    const images = [
+        "abstract-1.jpg", "abstract-2.jpg", 
+        "abstract-3.jpg", "abstract-4.jpg",
+        "42-1.png", "42-2.png"
+    ];
+    const imageIndex = Math.floor(Math.random() * images.length);
+
+    return (path + images[imageIndex]);
 }
 
 export default RemoteGame;

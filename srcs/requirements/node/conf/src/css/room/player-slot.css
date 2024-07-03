@@ -65,3 +65,48 @@
     height: 250px;
     border-radius: 50%;
 }
+@keyframes slide-in-left {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-in-right {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+#slot-pong:nth-child(1) {
+    animation: slide-in-left 1s ease-in-out forwards;
+}
+
+#slot-pong:nth-child(2) {
+    animation: slide-in-right 1s ease-in-out forwards;
+}
+
+#slot-mtt:nth-child(1) {
+    animation: slide-in-left 1s ease-in-out forwards;
+}
+
+#slot-mtt:nth-child(2) {
+    animation: slide-in-left 1s ease-in-out forwards;
+}
+
+#slot-mtt:nth-child(3) {
+    animation: slide-in-right 1s ease-in-out forwards;
+}
+
+#slot-mtt:nth-child(4) {
+    animation: slide-in-right 1s ease-in-out forwards;
+}

@@ -5,7 +5,7 @@ class GameStateSetter extends RoomStateSetter {
     static setGameData(newGameData, setGameData) {
          setGameData((prev) => ({ 
              ...prev, 
-             ball: { x: newGameData.ball[0], y: newGameData.ball[1] },
+             ball: { ...prev.ball, x: newGameData.ball[0], y: newGameData.ball[1] },
              paddle: { p1: newGameData.paddle[0], p2: newGameData.paddle[1] },
              score: [ newGameData.score[0], newGameData.score[1] ],
          }));
