@@ -26,7 +26,7 @@ async function onClickSubmitOtpCode(event) {
 	event.preventDefault();
 	const input = document.querySelector("#otp-code-input");
 	try {
-		const response = await fetch("http://localhost:8000/api/otp", {
+		const response = await fetch("/user/api/otp", {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
