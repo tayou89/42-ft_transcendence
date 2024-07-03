@@ -9,10 +9,10 @@ function StartPopUp({ game, setGame }) {
     useEffect(() =>{
         setTimeout(() => {
             setStartText(() => "Start!")
-        }, 1000);
+        }, 1500);
         setTimeout(() => {
             setGame((prev) => ({ ...prev, isStarted: true }))
-        }, 2000);
+        }, 2500);
     }, []);
     return (
         <div id="start-text-box">
