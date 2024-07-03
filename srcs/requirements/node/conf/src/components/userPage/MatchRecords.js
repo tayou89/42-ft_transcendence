@@ -43,6 +43,7 @@ async function getUserMatchRecords(userId) {
 
 function MatchRecords({ userId }) {
 	const [userMatchRecords, setUserMatchRecords] = useState([]);
+
 	useEffect(() => {
 		const a = async () => {
 			try {
@@ -82,18 +83,20 @@ function MatchRecord({ match, userId }) {
 	useEffect(() => {
 		const a = async () => {
 			try {
+				let p1Name = match.p1;
+				let p2Name = match.p2;
 				if (match.p1) {
 					const p1Data = await getUserData(match.p1);
-					setP1Name(() => p1Data.name);
-				} else {
-					setP1Name(() => match.p1);
+					console.log("p1 await");
+					p1Name = p1Data.name;
 				}
 				if (match.p2) {
 					const p2Data = await getUserData(match.p2);
-					setP2Name(() => p2Data.name)
-				} else {
-					setP2Name(() => match.p2);
+					console.log("p2 await");
+					p2Name = p2Data.name;
 				}
+				setP1Name(() => p1Name);
+				setP2Name(() => p2Name);
 			} catch (error) {
 				console.log("MatchRecord Error: ", error);
 				logout();
