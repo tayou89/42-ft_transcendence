@@ -326,7 +326,6 @@ function reconcileChildren(wipFiber, elements) {
     let newFiber = null;
     const sameType
       = oldFiber && element && element.type === oldFiber.type;
-
     if (sameType) {
       newFiber = {
         type: oldFiber.type,
