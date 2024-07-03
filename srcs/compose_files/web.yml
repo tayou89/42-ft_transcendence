@@ -180,6 +180,7 @@ services:
       - logs_volume:/logs
       - avatars_volume:/django/avatars/:ro
       - node_volume:/node/:ro
+      - ${PROJECT_DIR}/requirements/node/conf/src/css/images:/images:ro
     ports:
       - 8000:8000
       - 8001:8001
