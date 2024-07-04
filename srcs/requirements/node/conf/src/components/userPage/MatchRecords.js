@@ -43,6 +43,7 @@ function MatchRecord({ match, userId }) {
 
 	const [p1Name, setP1Name] = useState("Player 1");
 	const [p2Name, setP2Name] = useState("Player 2");
+	matchTime(match.date);
 	useEffect(() => {
 		const a = async () => {
 			try {
@@ -65,7 +66,6 @@ function MatchRecord({ match, userId }) {
 		}
 		a();
 	}, [match.p1, match.p2])
-
 	return (
 		<div
 			className={"my-1 py-1 text-light text-center container bg-dark border-start rounded" + (isUserWin ? " border-success" : " border-danger")}
@@ -92,12 +92,17 @@ function MatchRecord({ match, userId }) {
 						</div>
 					</div>
 					<div>
-						{match.date}
+						{matchTime(match.date)}
 					</div>
 				</div>
 			</div>
 		</div >
 	);
+}
+
+function matchTime(timestamp) {
+	const date = new Date(timestamp);
+	return (`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
 }
 
 function onClickNameInMatchRecord(event, userId) {
