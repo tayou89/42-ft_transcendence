@@ -10,7 +10,7 @@ import RemoteGame from "./RemoteGame/Game.js";
 import Room from "./Room/Room.js";
 
 const paths = [ "/", "/emailotp", "/home", "/userpage", "/login", 
-                "local_game", "/remote_game", "/next_game", "/room", ];
+                "/local_game", "/remote_game", "/next_game", "/room", ];
 
 function App() {
     if (!paths.includes(window.location.pathname))
