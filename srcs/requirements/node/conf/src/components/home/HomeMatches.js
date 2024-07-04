@@ -189,8 +189,12 @@ function CreateRoomModal({ myId }) {
 											<label className="form-check-label text-dark" for="radio3">1 vs 1 (Local)</label>
 										</div>
 										<div className="row">
-											{local ? <div className="col-8"></div> : <div className="col-8"><input id="create-room-input" className="me-1" type="text" placeholder="Room name" autocomplete="off" /></div>}
-											<div className="col-4 my-1">
+											{local ? <div className="col-8"></div>
+												:
+												<div className="col-8">
+													<input id="create-room-input" className="me-1" type="text" placeholder="Room name" autocomplete="off" style="width:100%; height:38px;" />
+												</div>}
+											<div className="col-4">
 												<button className="btn btn-primary btn-md flex-fill" onClick={event => onCreateNewRoomSubmit(event, myId)}>Submit</button>
 											</div>
 										</div>

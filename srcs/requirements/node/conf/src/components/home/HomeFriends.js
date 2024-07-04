@@ -20,18 +20,6 @@ const defaultFriendData = {
 	"online": true
 }
 
-function RefreshFriendsButton({ setRefresh }) {
-	function onClickrefreshFriends(event) {
-		event.preventDefault();
-		setRefresh(current => !current);
-	}
-	return (
-		<button type="button" className="btn btn-sm btn-primary me-2" onClick={onClickrefreshFriends}>
-			Refresh
-		</button>
-	);
-}
-
 function HomeFriends() {
 	const [friends, setFriends] = useState([]);
 	const [refresh, setRefresh] = useState(true);
@@ -48,7 +36,7 @@ function HomeFriends() {
 		a();
 	}, [refresh])
 	return (
-		<div>
+		<div className="my-2">
 			<div className="fs-4 row">
 				<div className="container col-4">
 					Friends
@@ -66,6 +54,18 @@ function HomeFriends() {
 				))}
 			</div>
 		</div>
+	);
+}
+
+function RefreshFriendsButton({ setRefresh }) {
+	function onClickrefreshFriends(event) {
+		event.preventDefault();
+		setRefresh(current => !current);
+	}
+	return (
+		<button type="button" className="btn btn-sm btn-primary me-2" onClick={onClickrefreshFriends}>
+			Refresh
+		</button>
 	);
 }
 
@@ -104,7 +104,6 @@ function onClickShowFriendsInfo(friendId) {
 	navigate(`/userpage?userId=${friendId}`);
 }
 
-//!!!??? 빨간점, 초록점 이미지
 function FriendInfo({ friendId, setFriends, refresh }) {
 	const [userData, setUserData] = useState(defaultFriendData);
 	const [userImage, setUserImage] = useState("https://www.studiopeople.kr/common/img/default_profile.png");
