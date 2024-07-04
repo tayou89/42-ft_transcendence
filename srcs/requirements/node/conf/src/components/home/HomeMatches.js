@@ -247,6 +247,7 @@ async function onClickEnterRoom(event, room, myId, setRooms) {
 		}
 	} catch (error) {
 		console.log("onClickEnterRoom Error: ", error);
+		logout();
 	}
 }
 

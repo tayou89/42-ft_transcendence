@@ -43,6 +43,7 @@ async function onClickSubmitOtpCode(event) {
 			notifyStatusById(data.result, false, "otp-status-message");
 		}
 	} catch (error) {
+		console.log("onClickSubmitOtpCode Error: ", error);
 		notifyStatusById("Network Error!", false, "otp-status-message");
 		setTimeout(() => { navigate("/login") }, 800);
 	}
