@@ -10,31 +10,37 @@ import { INIT, GAME } from "./constant.js";
 import "../../css/game/game-page.css";
 
 function RemoteGame({ data }) {
-    if (!data) 
-        return (navigate("/home"));
-    const [ game, setGame ] = useState(getInitialGameData(data));
+    try {
+        const [ game, setGame ] = useState(getInitialGameData(data));
 
-    useEffect(() => {
-        addScreenEffect();
-        addEvents(game, setGame); 
-        turnOnSocketChannels(game, setGame);
-        return (() => {
-            removeScreenEffect();
-            removeEvents(game);
-            turnOffSocketChannels(game);
-        });
-    }, []);
-    return (
-        <div className="container-fluid" id="game-page">
-            <TopLine />
-            <ScoreBoard game={ game } />
-            <GameBoard game={ game } />
-            <BottomLine />
-        </div>
-    );
+        useEffect(() => {
+            addScreenEffect();
+            addEvents(game, setGame); 
+            turnOnSocketChannels(game, setGame);
+            return (() => {
+                removeScreenEffect();
+                removeEvents(game);
+                turnOffSocketChannels(game);
+            });
+        }, []);
+        return (
+            <div className="container-fluid" id="game-page">
+                <TopLine />
+                <ScoreBoard game={ game } />
+                <GameBoard game={ game } />
+                <BottomLine />
+            </div>
+        );
+    }
+    catch (error) {
+        alert(error);
+        navigate("/home");
+    }
 }
 
 function getInitialGameData(data) {
+    if (!data) 
+        throw new Error("Can't access the game");
     const socket = data.type === GAME.TYPE.PONG ? pongSocket : mttSocket;
 
     return ({
