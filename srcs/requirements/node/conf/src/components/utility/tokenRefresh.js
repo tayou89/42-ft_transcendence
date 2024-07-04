@@ -1,5 +1,3 @@
-import { navigate } from "../../MyReact/MyReactRouter";
-
 async function tokenRefresh(workingFunction) {
 	try {
 		const response = await fetch("http://localhost:8000/api/token/refresh", {

@@ -1,5 +1,3 @@
-import MyReact from "../../MyReact/MyReact.js";
-import logout from "./logout.js";
 import tokenRefresh from "./tokenRefresh.js";
 
 async function getUserData(userId) {
