@@ -123,7 +123,7 @@ async function onClickEnterRoom(event, room, myId, setRooms) {
 			alert("game has already started");
 			setRooms(() => currentRooms);
 		} else {
-			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}&roomId=${room.id}`);
+			navigate("/room", { room: currentRoom, myId: myId });
 		}
 	} catch (error) {
 		console.log("onClickEnterRoom Error: ", error);

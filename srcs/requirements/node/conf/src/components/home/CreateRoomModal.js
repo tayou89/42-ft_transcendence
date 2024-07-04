@@ -1,7 +1,9 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
+import { navigate } from "../../MyReact/MyReactRouter.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 import closeModalById from "../utility/closeModalById.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
+import logout from "../utility/logout.js";
 
 function CreateRoomModal({ myId }) {
 	const [local, setLocal] = useState(false);
@@ -114,7 +116,7 @@ async function onCreateNewRoomSubmit(event, myId) {
 		try {
 			const roomData = await createRoom(title, roomType);
 			closeModalById("create-room-modal");
-			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}&roomId=${roomData.id}`);
+			navigate("/room", { room: roomData, myId: myId });
 		} catch (error) {
 			console.log("onCreateNewRoomSubmit Error: ", error);
 			if (error === "same room") {
