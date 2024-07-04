@@ -15,13 +15,17 @@ function Room() {
 
     useEffect(() => {
         const executeRoomFunctions = async () => {
-            const exists = await isExistedRoom(room.roomId);
+            try {
+                const roomsData = await getRoomsData();
+                const myRoomData = getMyRoomData(roomsData, room.roomId);
 
-            if (!exists) 
-                navigate("/home");
-            else {
+                checkSamePlayer(myRoomData, room.myId);
                 room.socket.sendRoomJoinMessage(room.myId, room.title);
                 room.socket.turnOnRoomChannel(setRoom);
+            }
+            catch (error) {
+                alert(error);
+                navigate("/home");
             }
         };
         executeRoomFunctions();
@@ -52,10 +56,21 @@ function getInitialRoomData() {
     });
 }
 
-async function isExistedRoom(roomId) {
-    const roomData = await getRoomsData();
-
-    return (roomData.some((room) => room.id === roomId));
+function getMyRoomData(roomsData, roomId) {
+    for (let room of roomsData) {
+        if (room.id === roomId)
+            return (room);
+    }
+    throw new Error("Room does not exist");
 }
 
-export default Room
+function checkSamePlayer(roomData, myId) {
+    const roomKeysToCheck = [ "p1", "p2", "p3", "p4" ];
+
+    for (let key of roomKeysToCheck) {
+        if (roomData[key] === myId)
+            throw new Error("Can't enter: you already joined the same room");
+    }
+}
+
+export default Room;

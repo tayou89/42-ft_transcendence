@@ -19,7 +19,7 @@ class RoomSocket {
         this.socket.emit(SOCKET.EVENT.READY, readyStatus);
     }
     turnOnRoomChannel(setPlayers) {
-        this.#eventHandler.setRoomEvent(setPlayers);
+        this.#eventHandler.setRoomEvent(setPlayers, this.socket);
         this.socket.off(SOCKET.EVENT.ROOM);
         this.socket.on(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
