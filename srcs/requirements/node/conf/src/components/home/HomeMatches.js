@@ -36,7 +36,7 @@ function HomeMatches({ myId }) {
 						</div>
 					</div>
 				</div>
-				<div className="container col-6 text-end pe-4 d-flex flex-row-reverse">
+				<div className="container col-6 text-end pe-4 d-flex flex-row-reverse align-items-center">
 					<CreateRoomModal myId={myId} />
 					<RefreshRoomButton setRooms={setRooms} />
 				</div>
@@ -81,9 +81,11 @@ function RefreshRoomButton({ setRooms }) {
 		}
 	}
 	return (
-		<button type="button" className="btn btn-sm btn-primary me-2" onClick={onClickRefreshRoomButton}>
-			Refresh
-		</button>
+		<div className="d-flex justify-content-center bg-primary rounded me-1" style="height:30px; width:30px; cursor: pointer;">
+			<div className="d-flex align-items-center">
+				<img src="https://localhost:4242/images/refresh.png" onClick={onClickRefreshRoomButton} style="height:25px; width:25px;" />
+			</div>
+		</div>
 	);
 }
 
