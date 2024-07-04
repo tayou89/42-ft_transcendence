@@ -24,7 +24,7 @@ export function Route({path, component: Component}) {
 export function Link({to, children, props, ...others}) {
     const preventReload = (event) => {
         const state = props ? props : {};
-        const curPath = window.location.pathname;
+        const curPath = window.location.pathname + window.location.search;
     
         event.preventDefault();
         if (curPath !== to) {
@@ -42,7 +42,7 @@ export function Link({to, children, props, ...others}) {
 
 export function navigate(to, props) {
     const state = props ? props : {};
-    const curPath = window.location.pathname;
+    const curPath = window.location.pathname + window.location.search;
 
     if (curPath !== to) {
         window.history.pushState(state, "", to);
