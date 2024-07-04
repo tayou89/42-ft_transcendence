@@ -11,8 +11,6 @@ import "../../css/room/room.css";
 
 function Room(props) {
     try {
-        if (!props)
-            throw new Error("Can't find room data");
         const [ room, setRoom ] = useState(getInitialRoomData(props));
 
         useEffect(() => {
@@ -36,15 +34,17 @@ function Room(props) {
 }
 
 function getInitialRoomData(props) {
+    if (!props.room)
+        throw new Error("Can't access the room");
     const room = props.room;
 
     return ({ 
-        title: room.title,
-        type: room.type,
         myId: props.myId,
-        socket: room.type === GAME.TYPE.PONG ? pongSocket : mttSocket,
+        title: room.name,
+        type: !room.mtt ? GAME.TYPE.PONG : GAME.TYPE.MTT,
+        socket: !room.mtt ? pongSocket : mttSocket,
+        players: !room.mtt ? [{}, {}] : [{}, {}, {}, {}],
         isQuitClicked: false,
-        players: room.type === GAME.TYPE.PONG ? [{}, {}] : [{}, {}, {}, {}],
     });
 }
 
