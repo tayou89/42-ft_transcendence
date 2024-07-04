@@ -50,12 +50,10 @@ function MatchRecord({ match, userId }) {
 				let _p2Name = match.p2;
 				if (match.p1) {
 					const p1Data = await getUserData(match.p1);
-					console.log("p1 await");
 					_p1Name = p1Data.name;
 				}
 				if (match.p2) {
 					const p2Data = await getUserData(match.p2);
-					console.log("p2 await");
 					_p2Name = p2Data.name;
 				}
 				setP1Name(() => _p1Name);
