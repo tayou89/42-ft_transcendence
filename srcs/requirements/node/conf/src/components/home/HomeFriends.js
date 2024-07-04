@@ -20,18 +20,6 @@ const defaultFriendData = {
 	"online": true
 }
 
-function RefreshFriendsButton({ setRefresh }) {
-	function onClickrefreshFriends(event) {
-		event.preventDefault();
-		setRefresh(current => !current);
-	}
-	return (
-		<button type="button" className="btn btn-sm btn-primary me-2" onClick={onClickrefreshFriends}>
-			Refresh
-		</button>
-	);
-}
-
 function HomeFriends() {
 	const [friends, setFriends] = useState([]);
 	const [refresh, setRefresh] = useState(true);
@@ -48,12 +36,12 @@ function HomeFriends() {
 		a();
 	}, [refresh])
 	return (
-		<div>
+		<div className="my-2">
 			<div className="fs-4 row">
 				<div className="container col-4">
 					Friends
 				</div>
-				<div className="container col-8 text-end pe-4 d-flex flex-row-reverse">
+				<div className="container col-8 text-end pe-4 d-flex flex-row-reverse align-items-center">
 					<AddNewFriendModal title="add Friend" setFriends={setFriends} />
 					<RefreshFriendsButton setRefresh={setRefresh} />
 				</div>
@@ -64,6 +52,20 @@ function HomeFriends() {
 				{friends.map(id => (
 					<FriendInfo friendId={id} setFriends={setFriends} refresh={refresh} />
 				))}
+			</div>
+		</div>
+	);
+}
+
+function RefreshFriendsButton({ setRefresh }) {
+	function onClickrefreshFriends(event) {
+		event.preventDefault();
+		setRefresh(current => !current);
+	}
+	return (
+		<div className="d-flex justify-content-center bg-primary rounded me-1" style="height:30px; width:30px; cursor: pointer;">
+			<div className="d-flex align-items-center">
+				<img src="https://localhost:4242/images/refresh.png" onClick={onClickrefreshFriends} style="height:25px; width:25px;" />
 			</div>
 		</div>
 	);
@@ -104,7 +106,6 @@ function onClickShowFriendsInfo(friendId) {
 	navigate(`/userpage?userId=${friendId}`);
 }
 
-//!!!??? 빨간점, 초록점 이미지
 function FriendInfo({ friendId, setFriends, refresh }) {
 	const [userData, setUserData] = useState(defaultFriendData);
 	const [userImage, setUserImage] = useState("https://www.studiopeople.kr/common/img/default_profile.png");
