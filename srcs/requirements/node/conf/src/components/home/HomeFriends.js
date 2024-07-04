@@ -83,6 +83,7 @@ async function unFriend(friendId) {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("unFriend Error: ", error);
 		return Promise.reject(error);
 	}
 }
@@ -167,12 +168,11 @@ async function addNewFriend(newFriendName) {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("addNewFriend Error: ", error);
 		return Promise.reject(error);
 	}
 }
 
-//!!!??? 성공했을 때 친구 목록이 바로 업데이트되게끔 바꿔야함.
-//!!!??? 성공/실패 메세지 뜨고 잠시뒤에 or 창 닫으면 사라지게 하고싶음. settimeout 쓰면 1초에 한번씩 눌렀을 때 처음 누른 settimeout 때문에 3번째에 나온 메세지가 1초만에 사라짐.
 async function onClickAddNewFriendSubmit(event, setFriends) {
 	event.preventDefault();
 	const newFriendName = document.querySelector("#add-friend-input").value;

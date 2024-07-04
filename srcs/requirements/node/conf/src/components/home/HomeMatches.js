@@ -4,6 +4,7 @@ import tokenRefresh from "../utility/tokenRefresh.js";
 import logout from "../utility/logout.js";
 import closeModalById from "../utility/closeModalById.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
+import getRoomsData from "../utility/getRoomsData.js"
 
 function HomeMatches({ myId }) {
 	const [rooms, setRooms] = useState([]);
@@ -11,13 +12,12 @@ function HomeMatches({ myId }) {
 	useEffect(() => {
 		const a = async () => {
 			try {
-				const _rooms = await getOpenRooms();
+				const _rooms = await getRoomsData();
 				setRooms(() => _rooms);
+				setLoading(() => false);
 			} catch (error) {
 				console.log("HomeMatches Error: ", error);
 				logout();
-			} finally {
-				setLoading(() => false);
 			}
 		};
 		a();
@@ -69,35 +69,11 @@ function HomeMatches({ myId }) {
 	);
 }
 
-async function getOpenRooms() {
-	try {
-		const response = await fetch("http://localhost:8001/api/rooms/", {
-			method: 'GET',
-			credentials: 'include'
-		});
-		if (response.status === 200) {
-			return await response.json();
-		} else if (response.status === 403) {//엑세스토큰 만료됐을 때
-			const data = await response.json();
-			if (data.detail === "Authentication credentials were not provided.") {
-				return await tokenRefresh(getOpenRooms);
-			} else {
-				return Promise.reject("unknown");
-			}
-		} else {
-			return Promise.reject("unknown");
-		}
-	} catch (error) {
-		console.log("getOpenRooms Error: ", error);
-		return Promise.reject(error);
-	}
-}
-
 function RefreshRoomButton({ setRooms }) {
 	async function onClickRefreshRoomButton(event) {
 		event.preventDefault();
 		try {
-			const _rooms = await getOpenRooms();
+			const _rooms = await getRoomsData();
 			setRooms(() => _rooms);
 		} catch (error) {
 			console.log("HomeMatches Error: ", error);
@@ -125,10 +101,10 @@ async function createRoom(title, roomType) {
 			})
 		});
 		if (response.status === 200 || response.status === 201) {
-			return;
+			return await response.json();
 		} else if (response.status === 400) {//같은 이름의 방이 이미 있음
 			return Promise.reject("same room");
-		} else if (response.status === 401) {//???!!! 백엔드에서 401로 바꿔주면 403은 지워야함
+		} else if (response.status === 401) {
 			return await tokenRefresh(() => createRoom(title, roomType));
 		} else if (response.status === 403) {
 			const data = await response.json();
@@ -158,9 +134,9 @@ async function onCreateNewRoomSubmit(event, myId) {
 			title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament");
 		}
 		try {
-			await createRoom(title, roomType);
+			const roomData = await createRoom(title, roomType);
 			closeModalById("create-room-modal");
-			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}&roomId=${roomData.id}`);
 		} catch (error) {
 			console.log("onCreateNewRoomSubmit Error: ", error);
 			if (error === "same room") {
@@ -252,7 +228,7 @@ async function onClickEnterRoom(event, room, myId, setRooms) {
 	const title = room.name;
 	const roomType = room.mtt ? "mtt" : "pong";
 	try {
-		const currentRooms = await getOpenRooms();
+		const currentRooms = await getRoomsData();
 		const currentRoom = currentRooms.find(room => room.id === roomId);
 		if (currentRoom === undefined) {
 			alert("This room disappeared");
@@ -267,10 +243,11 @@ async function onClickEnterRoom(event, room, myId, setRooms) {
 			alert("game has already started");
 			setRooms(() => currentRooms);
 		} else {
-			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}&roomId=${room.id}`);
 		}
 	} catch (error) {
 		console.log("onClickEnterRoom Error: ", error);
+		logout();
 	}
 }
 
