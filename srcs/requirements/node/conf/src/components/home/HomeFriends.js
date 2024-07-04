@@ -83,6 +83,7 @@ async function unFriend(friendId) {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("unFriend Error: ", error);
 		return Promise.reject(error);
 	}
 }
@@ -167,6 +168,7 @@ async function addNewFriend(newFriendName) {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("addNewFriend Error: ", error);
 		return Promise.reject(error);
 	}
 }

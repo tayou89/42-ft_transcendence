@@ -18,6 +18,7 @@ async function getUserData(userId) {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("getUserData Error: ", error);
 		return Promise.reject(error);
 	}
 }

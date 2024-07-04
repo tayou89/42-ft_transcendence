@@ -16,6 +16,7 @@ async function getMyData() {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("getMyData Error: ", error);
 		return Promise.reject(error);
 	}
 }

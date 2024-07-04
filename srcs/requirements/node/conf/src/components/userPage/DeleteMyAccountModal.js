@@ -18,6 +18,7 @@ async function deleteAccount() {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("deleteAccount Error: ", error);
 		return Promise.reject(error);
 	}
 }

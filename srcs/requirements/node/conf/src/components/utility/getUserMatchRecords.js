@@ -14,6 +14,7 @@ async function getUserMatchRecords(userId) {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("getUserMatchRecords Error: ", error);
 		return Promise.reject(error);
 	}
 }
