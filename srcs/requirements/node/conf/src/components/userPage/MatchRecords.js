@@ -1,45 +1,8 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-import logout from "../utility/logout.js";
-import tokenRefresh from "../utility/tokenRefresh.js";
 import getUserData from "../utility/getUserData.js"
-
-const sampleMatches = [
-	{
-		"id": 1,
-		"p1_score": 1,
-		"p2_score": 10,
-		"date": "2024-05-01T12:24:37.756097Z",
-		"p1": 1,
-		"p2": 2
-	},
-	{
-		"id": 2,
-		"p1_score": 10,
-		"p2_score": 7,
-		"date": "2024-05-01T12:24:53.702258Z",
-		"p1": 1,
-		"p2": 2
-	}
-]
-
-async function getUserMatchRecords(userId) {
-	try {
-		const response = await fetch(`http://localhost:8000/api/users/${userId}/matches`, {
-			method: 'GET',
-			credentials: 'include'
-		});
-		if (response.status === 200) {
-			return await response.json();
-		} else if (response.status === 401) {
-			return await tokenRefresh(() => getUserMatchRecords(userId));
-		} else {
-			return Promise.reject("unknown");
-		}
-	} catch (error) {
-		return Promise.reject(error);
-	}
-}
+import getUserMatchRecords from "../utility/getUserMatchRecords.js"
+import logout from "../utility/logout.js";
 
 function MatchRecords({ userId }) {
 	const [userMatchRecords, setUserMatchRecords] = useState([]);
@@ -83,20 +46,20 @@ function MatchRecord({ match, userId }) {
 	useEffect(() => {
 		const a = async () => {
 			try {
-				let p1Name = match.p1;
-				let p2Name = match.p2;
+				let _p1Name = match.p1;
+				let _p2Name = match.p2;
 				if (match.p1) {
 					const p1Data = await getUserData(match.p1);
 					console.log("p1 await");
-					p1Name = p1Data.name;
+					_p1Name = p1Data.name;
 				}
 				if (match.p2) {
 					const p2Data = await getUserData(match.p2);
 					console.log("p2 await");
-					p2Name = p2Data.name;
+					_p2Name = p2Data.name;
 				}
-				setP1Name(() => p1Name);
-				setP2Name(() => p2Name);
+				setP1Name(() => _p1Name);
+				setP2Name(() => _p2Name);
 			} catch (error) {
 				console.log("MatchRecord Error: ", error);
 				logout();
