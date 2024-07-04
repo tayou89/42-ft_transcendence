@@ -101,7 +101,7 @@ async function createRoom(title, roomType) {
 			})
 		});
 		if (response.status === 200 || response.status === 201) {
-			return;
+			return await response.json();
 		} else if (response.status === 400) {//같은 이름의 방이 이미 있음
 			return Promise.reject("same room");
 		} else if (response.status === 401) {
@@ -134,9 +134,9 @@ async function onCreateNewRoomSubmit(event, myId) {
 			title = (roomType === "pong" ? "Let's play 1:1 with me" : "Let's play a tournament");
 		}
 		try {
-			await createRoom(title, roomType);
+			const roomData = await createRoom(title, roomType);
 			closeModalById("create-room-modal");
-			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}&roomId=${roomData.id}`);
 		} catch (error) {
 			console.log("onCreateNewRoomSubmit Error: ", error);
 			if (error === "same room") {
@@ -243,7 +243,7 @@ async function onClickEnterRoom(event, room, myId, setRooms) {
 			alert("game has already started");
 			setRooms(() => currentRooms);
 		} else {
-			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}`);
+			navigate(`/room?title=${title}&myId=${myId}&type=${roomType}&roomId=${room.id}`);
 		}
 	} catch (error) {
 		console.log("onClickEnterRoom Error: ", error);
