@@ -20,7 +20,7 @@ const defaultFriendData = {
 	"online": true
 }
 
-function HomeFriends() {
+function FriendsInfo() {
 	const [friends, setFriends] = useState([]);
 	const [refresh, setRefresh] = useState(true);
 	useEffect(() => {
@@ -223,4 +223,4 @@ function AddNewFriendModal({ title, setFriends }) {
 	);
 }
 
-export default HomeFriends;
+export default FriendsInfo;
