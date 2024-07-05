@@ -97,7 +97,7 @@ async function unFriend(friendId) {
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => unFriend(friendId));
+			return await tokenRefresh(async () => await unFriend(friendId));
 		} else {
 			return Promise.reject("unknown");
 		}
@@ -180,7 +180,7 @@ async function addNewFriend(newFriendName) {
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => addNewFriend(newFriendName));
+			return await tokenRefresh(async () => await addNewFriend(newFriendName));
 		} else {
 			return Promise.reject("unknown");
 		}

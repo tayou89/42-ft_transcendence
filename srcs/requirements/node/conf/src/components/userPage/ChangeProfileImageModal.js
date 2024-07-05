@@ -81,7 +81,7 @@ async function changeProfileImage(myId) {
 		if (response.status === 200) {
 			return "success";
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => changeProfileImage(myId));
+			return await tokenRefresh(async () => await changeProfileImage(myId));
 		} else {
 			return Promise.reject("unknown");
 		}

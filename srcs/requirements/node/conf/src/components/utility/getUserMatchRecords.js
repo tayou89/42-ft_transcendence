@@ -9,7 +9,7 @@ async function getUserMatchRecords(userId) {
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => getUserMatchRecords(userId));
+			return await tokenRefresh(async () => await getUserMatchRecords(userId));
 		} else {
 			return Promise.reject("unknown");
 		}
