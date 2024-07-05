@@ -7,6 +7,7 @@ import closeModalById from "../utility/closeModalById.js"
 import getUserData from "../utility/getUserData.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 import getUserProfileImage from "../utility/getUserProfileImage.js";
+import RoadingSpinning from "../utility/LoadingSpinning.js";
 
 const defaultFriendData = {
 	"id": 0,
@@ -23,18 +24,20 @@ const defaultFriendData = {
 function FriendsInfo() {
 	const [friends, setFriends] = useState([]);
 	const [refresh, setRefresh] = useState(true);
+	const [loading, setLoading] = useState(true);
 	useEffect(() => {
 		const a = async () => {
 			try {
 				const _myData = await getMyData();
 				setFriends(() => _myData.friends);
+				setLoading(() => false);
 			} catch (error) {
 				console.log("HomeFriends Error: ", error);
 				logout();
 			}
 		};
 		a();
-	}, [refresh])
+	}, [loading])
 	return (
 		<div className="my-2">
 			<div className="fs-4 row">
@@ -42,25 +45,27 @@ function FriendsInfo() {
 					Friends
 				</div>
 				<div className="container col-8 text-end pe-4 d-flex flex-row-reverse align-items-center">
-					<AddNewFriendModal title="add Friend" setFriends={setFriends} />
-					<RefreshFriendsButton setRefresh={setRefresh} />
+					<AddNewFriendModal title="add Friend" setLoading={setLoading} />
+					<RefreshFriendsButton setLoading={setLoading} />
 				</div>
 			</div>
 			<div
 				className="container mt-1 py-2 px-3 border-top border-bottom rounded bg-secondary bg-opacity-25"
 				style="height: 400px; overflow-y: auto;">
-				{friends.map(id => (
-					<FriendInfo friendId={id} setFriends={setFriends} refresh={refresh} />
-				))}
+				{loading ?
+					<RoadingSpinning />
+					: friends.map(id => (
+						<FriendInfo friendId={id} setFriends={setFriends} refresh={refresh} />
+					))}
 			</div>
 		</div>
 	);
 }
 
-function RefreshFriendsButton({ setRefresh }) {
+function RefreshFriendsButton({ setLoading }) {
 	function onClickrefreshFriends(event) {
 		event.preventDefault();
-		setRefresh(current => !current);
+		setLoading(() => true);
 	}
 	return (
 		<div className="d-flex justify-content-center bg-primary rounded me-1" style="height:30px; width:30px; cursor: pointer;">
@@ -174,15 +179,14 @@ async function addNewFriend(newFriendName) {
 	}
 }
 
-async function onClickAddNewFriendSubmit(event, setFriends) {
+async function onClickAddNewFriendSubmit(event, setLoading) {
 	event.preventDefault();
 	const newFriendName = document.querySelector("#add-friend-input").value;
 	try {
 		const data = await addNewFriend(newFriendName);
 		if (data.result === "Successfully Added!") {
 			notifyStatusById("Successfully Added!", true, "add-friend-status")
-			const myData = await getMyData();
-			setFriends(() => myData.friends);
+			setLoading(() => true);
 		} else {
 			notifyStatusById(data.result, false, "add-friend-status")
 		}
@@ -193,7 +197,7 @@ async function onClickAddNewFriendSubmit(event, setFriends) {
 	}
 }
 
-function AddNewFriendModal({ title, setFriends }) {
+function AddNewFriendModal({ title, setLoading }) {
 	return (
 		<div>
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#add-friend-modal">
@@ -211,7 +215,7 @@ function AddNewFriendModal({ title, setFriends }) {
 						<div className="modal-body">
 							<form className="container my-1 py-1">
 								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" autocomplete="off" />
-								<button className="btn btn-primary btn-md" onClick={event => { onClickAddNewFriendSubmit(event, setFriends) }}>Submit</button>
+								<button className="btn btn-primary btn-md" onClick={event => { onClickAddNewFriendSubmit(event, setLoading) }}>Submit</button>
 							</form>
 							<div id="add-friend-status" className="container mt-2 text-success"></div>
 						</div>

@@ -2,7 +2,9 @@ import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import logout from "../utility/logout.js";
 import getRoomsData from "../utility/getRoomsData.js"
+import LoadingSpinning from "../utility/LoadingSpinning.js"
 import CreateRoomModal from "./CreateRoomModal.js"
+
 
 function RoomsInfo({ myId }) {
 	const [rooms, setRooms] = useState([]);
@@ -19,7 +21,7 @@ function RoomsInfo({ myId }) {
 			}
 		};
 		a();
-	}, []);
+	}, [loading]);
 
 	return (
 		<div>
@@ -36,28 +38,22 @@ function RoomsInfo({ myId }) {
 				</div>
 				<div className="container col-6 text-end pe-4 d-flex flex-row-reverse align-items-center">
 					<CreateRoomModal myId={myId} />
-					<RefreshRoomButton setRooms={setRooms} />
+					<RefreshRoomButton setLoading={setLoading} />
 				</div>
 			</div>
 			<div
 				className="container pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
 				style="height: 674px; overflow-y: auto;">
 				{loading ?
-					<div className="d-flex justify-content-center" style="height:100%">
-						<div className="d-flex align-items-center">
-							<div className="spinner-border text-primary"></div>
-						</div>
-					</div>
+					<LoadingSpinning />
 					:
 					<div>
 						{rooms
-							.filter(room => room.cur_users !== room.max_users && room.in_game === false)
-							.map((room) => (
+							.filter(room => room.cur_users !== room.max_users && room.in_game === false).map((room) => (
 								<RoomInfo key={room.id} myId={myId} room={room} active={true} setRooms={setRooms} />
 							))}
 						{rooms
-							.filter(room => room.cur_users === room.max_users || room.in_game === true)
-							.map((room) => (
+							.filter(room => room.cur_users === room.max_users || room.in_game === true).map((room) => (
 								<RoomInfo key={room.id} myId={myId} room={room} active={false} setRooms={setRooms} />
 							))}
 					</div>
@@ -67,16 +63,10 @@ function RoomsInfo({ myId }) {
 	);
 }
 
-function RefreshRoomButton({ setRooms }) {
+function RefreshRoomButton({ setLoading }) {
 	async function onClickRefreshRoomButton(event) {
 		event.preventDefault();
-		try {
-			const _rooms = await getRoomsData();
-			setRooms(() => _rooms);
-		} catch (error) {
-			console.log("HomeMatches Error: ", error);
-			logout();
-		}
+		setLoading(() => true);
 	}
 	return (
 		<div className="d-flex justify-content-center bg-primary rounded me-1" style="height:30px; width:30px; cursor: pointer;">
@@ -105,8 +95,6 @@ function isStartedRoom(room) {
 async function onClickEnterRoom(event, room, myId, setRooms) {
 	event.preventDefault();
 	const roomId = room.id;
-	const title = room.name;
-	const roomType = room.mtt ? "mtt" : "pong";
 	try {
 		const currentRooms = await getRoomsData();
 		const currentRoom = currentRooms.find(room => room.id === roomId);
