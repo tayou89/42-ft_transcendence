@@ -6,7 +6,6 @@ import tokenRefresh from "../utility/tokenRefresh.js";
 import closeModalById from "../utility/closeModalById.js"
 import getUserData from "../utility/getUserData.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
-import getUserProfileImage from "../utility/getUserProfileImage.js";
 import RoadingSpinning from "../utility/LoadingSpinning.js";
 import "../../css/home/RotatingImage.css"
 
@@ -124,14 +123,11 @@ function onClickShowFriendsInfo(friendId) {
 
 function FriendInfo({ friendId, setLoading }) {
 	const [userData, setUserData] = useState(defaultFriendData);
-	const [userImage, setUserImage] = useState("https://www.studiopeople.kr/common/img/default_profile.png");
 	useEffect(() => {
 		const a = async () => {
 			try {
 				const _userData = await getUserData(friendId);
-				const _userImage = await getUserProfileImage(_userData.id);
 				setUserData(() => _userData);
-				setUserImage(() => _userImage);
 			} catch (error) {
 				console.log("FriendInfo Error: ", error);
 				logout();
@@ -144,10 +140,7 @@ function FriendInfo({ friendId, setLoading }) {
 		<div className={"container border-start border-end rounded bg-opacity-10 text-light d-flex align-items-center mb-1"
 			+ (userData.online === true ? " border-success bg-success" : " border-danger bg-danger")} style="height:42px; width:100%">
 			<div className="d-flex justify-content-between align-items-center" style="width:100%">
-				<img className="rounded-circle"
-					style="object-fit: cover;"
-					width="32" height="32"
-					src={userImage} />
+				<img src={userData.avatar} className="rounded-circle" style="object-fit: cover; width:32px; height:32px;" />
 				<div className="dropdown fs-4" style="user-select: none; cursor: pointer;">
 					<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
 						{userData.name}
