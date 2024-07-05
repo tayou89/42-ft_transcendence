@@ -69,7 +69,7 @@ async function onClickChangeNickname(event, myId) {
 	const newNickname = document.querySelector("#change-name-input").value;
 	if (newNickname.length < 2) {
 		notifyStatusById("name too short!", false, "change-name-status");
-	} else if (newNickname.length > 16) {
+	} else if (newNickname.length > 12) {
 		notifyStatusById("name too long!", false, "change-name-status");
 	} else if (isNonAlphanumeric(newNickname)) {
 		notifyStatusById("Only alphabets and numbers are available", false, "change-name-status");

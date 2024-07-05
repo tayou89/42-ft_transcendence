@@ -141,7 +141,7 @@ function FriendInfo({ friendId, setLoading }) {
 	}, [])
 
 	return (
-		<div className={"container border-start border-end rounded bg-opacity-10 text-light d-flex align-items-center"
+		<div className={"container border-start border-end rounded bg-opacity-10 text-light d-flex align-items-center mb-1"
 			+ (userData.online === true ? " border-success bg-success" : " border-danger bg-danger")} style="height:42px; width:100%">
 			<div className="d-flex justify-content-between align-items-center" style="width:100%">
 				<img className="rounded-circle"
