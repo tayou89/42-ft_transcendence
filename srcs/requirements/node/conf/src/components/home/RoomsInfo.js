@@ -37,7 +37,7 @@ function RoomsInfo({ myId }) {
 					</div>
 				</div>
 				<div className="container col-6 text-end pe-4 d-flex flex-row-reverse align-items-center">
-					<CreateRoomModal myId={myId} />
+					<CreateRoomModal myId={myId} setLoading={setLoading} />
 					<RefreshRoomButton setLoading={setLoading} />
 				</div>
 			</div>
@@ -50,11 +50,11 @@ function RoomsInfo({ myId }) {
 					<div>
 						{rooms
 							.filter(room => room.cur_users !== room.max_users && room.in_game === false).map((room) => (
-								<RoomInfo key={room.id} myId={myId} room={room} active={true} setRooms={setRooms} />
+								<RoomInfo key={room.id} myId={myId} room={room} active={true} setLoading={setLoading} />
 							))}
 						{rooms
 							.filter(room => room.cur_users === room.max_users || room.in_game === true).map((room) => (
-								<RoomInfo key={room.id} myId={myId} room={room} active={false} setRooms={setRooms} />
+								<RoomInfo key={room.id} myId={myId} room={room} active={false} setLoading={setLoading} />
 							))}
 					</div>
 				}
@@ -92,24 +92,23 @@ function isStartedRoom(room) {
 	return false;
 }
 
-async function onClickEnterRoom(event, room, myId, setRooms) {
+async function onClickEnterRoom(event, roomId, myId, setLoading) {
 	event.preventDefault();
-	const roomId = room.id;
 	try {
 		const currentRooms = await getRoomsData();
 		const currentRoom = currentRooms.find(room => room.id === roomId);
 		if (currentRoom === undefined) {
 			alert("This room disappeared");
-			setRooms(() => currentRooms);
+			setLoading(() => true);
 		} else if (isRoomFull(currentRoom)) {
 			alert("This room is full");
-			setRooms(() => currentRooms);
+			setLoading(() => true);
 		} else if (isAlreadyEnteredRoom(currentRoom, myId)) {
 			alert("you've already entered");
-			setRooms(() => currentRooms);
+			setLoading(() => true);
 		} else if (isStartedRoom(currentRoom)) {
 			alert("game has already started");
-			setRooms(() => currentRooms);
+			setLoading(() => true);
 		} else {
 			navigate("/room", { room: currentRoom, myId: myId });
 		}
@@ -119,7 +118,7 @@ async function onClickEnterRoom(event, room, myId, setRooms) {
 	}
 }
 
-function RoomInfo({ room, myId, active, setRooms }) {
+function RoomInfo({ room, myId, active, setLoading }) {
 	const opt1 = "container rounded text-center my-2 py-3 text-light border bg-primary";
 	const opt2 = "container rounded text-center my-2 py-3 text-light border bg-secondary";
 	const [mouseEntered, setMouseEntered] = useState(false);
@@ -148,7 +147,7 @@ function RoomInfo({ room, myId, active, setRooms }) {
 			<div className="my-2 py-4 fs-4 text-center bg-primary rounded border"
 				style="height: 82px; user-select: none; cursor: pointer;"
 				onMouseEnter={MouseEnter} onMouseLeave={MouseLeave}
-				onClick={event => onClickEnterRoom(event, room, myId, setRooms)}
+				onClick={event => onClickEnterRoom(event, room.id, myId, setLoading)}
 			>
 				<div>
 					Enter Room
