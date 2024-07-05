@@ -8,6 +8,7 @@ import getUserData from "../utility/getUserData.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 import getUserProfileImage from "../utility/getUserProfileImage.js";
 import RoadingSpinning from "../utility/LoadingSpinning.js";
+import "../../css/home/RotatingImage.css"
 
 const defaultFriendData = {
 	"id": 0,
@@ -62,14 +63,25 @@ function FriendsInfo() {
 }
 
 function RefreshFriendsButton({ setLoading }) {
+	const [isRotated, setIsRotated] = useState(false);
+	
 	function onClickrefreshFriends(event) {
 		event.preventDefault();
 		setLoading(() => true);
 	}
+	function handleMouseEnter() {
+		setIsRotated(() => true);
+	};
+	function handleMouseLeave() {
+		setIsRotated(() => false);
+	};
 	return (
-		<div className="d-flex justify-content-center bg-primary rounded me-1" style="height:30px; width:30px; cursor: pointer;">
+		<div className="d-flex justify-content-center bg-primary rounded me-1" onClick={onClickrefreshFriends} style="height:30px; width:30px; cursor: pointer;">
 			<div className="d-flex align-items-center">
-				<img src="https://localhost:4242/images/refresh.png" onClick={onClickrefreshFriends} style="height:25px; width:25px;" />
+				<img src="https://localhost:4242/images/refresh.png"
+					className={`image ${isRotated ? 'rotate' : ''}`}
+					onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+					style="height:25px; width:25px;" />
 			</div>
 		</div>
 	);
