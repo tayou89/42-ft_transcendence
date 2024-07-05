@@ -4,6 +4,7 @@ import logout from "../utility/logout.js";
 import tokenRefresh from "../utility/tokenRefresh.js";
 
 function BioMessage({ userId, isMyPage }) {
+    console.log("This is BioMessage!!");
 	const [userData, setUserData] = useState("");
 	const [isInputMode, setIsInputMode] = useState(false);
 

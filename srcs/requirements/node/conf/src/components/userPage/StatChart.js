@@ -8,6 +8,7 @@ function StatChart({ userData, myId, setRefresh }) {
 	const loss = userData.losses;
 	const winRate = (win / (win + loss)) * 100;
 	const winRateWidth = win + loss === 0 ? "width:0%" : `width:${winRate}%`;
+    console.log("This is StartChar!");
 	return (
 		<div>
 			<div className="container">

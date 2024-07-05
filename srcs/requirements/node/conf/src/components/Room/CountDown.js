@@ -3,15 +3,16 @@ import { navigate } from "../../MyReact/MyReactRouter.js";
 import "../../css/room/count-down.css";
 
 function CountDown({ room }) {
-    const [ count, setCount ] = useState(5);
+    const [count, setCount] = useState(5);
     const countText = count ? count : "Start!";
 
-    if (!isAllReady(room.players))
+    if (!room.isAllReady) 
         return (null);
-    if (count <= 0)
+    console.log("everybody is ready!!");
+    if (count <= 0) 
         setTimeout(() => navigate("/remote_game", { data: getGameData(room) } ), 500);
     useEffect(() => {
-        if (isAllReady(room.players))
+        if (room.isAllReady)
             countDown(count, setCount);
         return (() => stopCount(countDown));
     }, [count]);
@@ -20,16 +21,12 @@ function CountDown({ room }) {
     );
 }
 
-function isAllReady(players) {
-    if (players.length === 0)
-        return (false);
-    return (players.every(player => player.ready));
-}
 
 function getGameData(room) {
     return {
         type: room.type,
         myId: room.myId,
+        roomId: room.roomId,
         gameRound: 1,
     }
 }

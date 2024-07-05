@@ -15,7 +15,7 @@ function RemoteGame({ data }) {
 
         useEffect(() => {
             addScreenEffect();
-            addEvents(game, setGame); 
+            addEvents(game); 
             turnOnSocketChannels(game, setGame);
             return (() => {
                 removeScreenEffect();
@@ -47,8 +47,9 @@ function getInitialGameData(data) {
         socket: socket,
         type: data.type,
         myId: data.myId,
+        roomId: data.roomId,
         round: data.gameRound,
-        ball: { x: INIT.BALL.X, y: INIT.BALL.Y, image: getBallImage() },
+        ball: { x: INIT.BALL.X, y: INIT.BALL.Y, image: getBallImage(data.roomId) },
         paddle: { p1: INIT.PADDLE1.Y, p2: INIT.PADDLE2.Y },
         score: [0, 0],
         result: {},
@@ -65,11 +66,11 @@ export function removeScreenEffect() {
     document.body.id = "";
 }
 
-function addEvents(game, setGame) {
+function addEvents(game) {
     game.eventHandler.addKeyDownEvent(game.socket);
     game.eventHandler.addKeyUpEvent(game.socket);
     game.eventHandler.addRefreshEvent();
-    game.eventHandler.addPageBackEvent(game, setGame);
+    game.eventHandler.addPageBackEvent();
 }
 
 function removeEvents(game) {
@@ -93,14 +94,15 @@ function turnOffSocketChannels(game) {
     }
 }
 
-export function getBallImage() {
+export function getBallImage(roomId) {
     const path = "https://localhost:4242/images/ball/";
     const images = [
         "abstract-1.jpg", "abstract-2.jpg", 
         "abstract-3.jpg", "abstract-4.jpg",
         "42-1.png", "42-2.png"
     ];
-    const imageIndex = Math.floor(Math.random() * images.length);
+    const imageIndex = roomId ? 
+        (roomId % images.length) : Math.floor(Math.random() * images.length);
 
     return (path + images[imageIndex]);
 }
