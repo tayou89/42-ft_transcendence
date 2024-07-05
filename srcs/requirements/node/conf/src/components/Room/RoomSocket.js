@@ -1,6 +1,6 @@
 import {io} from "socket.io-client";
 import { GAME, SOCKET, URL_PATH } from "../RemoteGame/constant.js";
-import RoomSocketEventHandler from "./EventHandler.js";
+import { RoomSocketEventHandler } from "./EventHandler.js";
 
 class RoomSocket {
     constructor (gameType) {

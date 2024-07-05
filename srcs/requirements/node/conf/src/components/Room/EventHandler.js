@@ -1,4 +1,5 @@
 import { MyReact } from "../../MyReact/MyReact.js";
+import { navigate } from "../../MyReact/MyReactRouter.js";
 import RoomStateSetter from "./StateSetter.js";
 import logout from "../utility/logout.js";
 import { SOCKET } from "../RemoteGame/constant.js";
@@ -22,4 +23,25 @@ class RoomSocketEventHandler {
     #roomEvent;
 }
 
-export default RoomSocketEventHandler; 
+class RoomEventHandler {
+    constructor(socket) {
+        this.#socket = socket;
+    }
+    addPageBackEvent() {
+        this.#setPageBackEvent();
+        window.addEventListener("popstate", this.#pageBackEvent);
+    }
+    removePageBackEvent() {
+        window.removeEventListener("popstate", this.#pageBackEvent);
+    }
+    #setPageBackEvent() {
+        this.#pageBackEvent = () => {
+            this.#socket.sendRoomLeaveMessage();
+            navigate("/home");
+        };
+    }
+    #socket;
+    #pageBackEvent;
+}
+
+export { RoomSocketEventHandler, RoomEventHandler }; 

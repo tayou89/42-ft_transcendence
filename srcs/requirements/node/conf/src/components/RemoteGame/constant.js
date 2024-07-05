@@ -91,8 +91,8 @@ const PATH = {
 export const URL_PATH = {
     BACK_API: `/api/rooms`,
     SOCKET: {
-        PONG: `https://10.15.6.2:4242/api/pong`,
-        MTT: `https://10.15.6.2:4242/api/mtt`,
+        PONG: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.PONG}`,
+        MTT: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.MTT}`,
     }
 }
 

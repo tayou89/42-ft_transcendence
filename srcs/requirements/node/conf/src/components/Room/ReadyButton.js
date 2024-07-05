@@ -1,11 +1,11 @@
 import { MyReact } from "../../MyReact/MyReact.js";
 import "../../css/room/ready-button.css";
 
-function ReadyButton({ status, socket, isMySlot }) {
-    const id = getElementsId(status);;
-    const handleClickEvent = () => { socket.sendReadyStatus(!status); };
+function ReadyButton({ player, socket}) {
+    const id = getElementsId(player.ready);;
+    const handleClickEvent = () => { socket.sendReadyStatus(!player.ready); };
 
-    if (isMySlot) 
+    if (player.isMyPlayer) 
         return (<div className="ready-button" id={ id } onClick={ handleClickEvent }>Ready</div>);
     else
         return (<div className="ready-button" id={ id }>Ready</div>);

@@ -20,7 +20,7 @@ function getStyle(ball) {
         height: ${ BALL.HEIGHT }px;
         border-radius: ${ BALL.RADIUS }px;
         box-shadow: inset -5px -5px 5px 0px rgba(0, 0, 0, 0.25);
-        transition: 'top 0.1s linear, left 0.1s linear',
+        transition: 'top 0.1s ease-out, left 0.1s ease-out',
     `;
     return (style);
 }
