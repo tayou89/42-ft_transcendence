@@ -19,7 +19,17 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-  
+
+  node_builder:
+    image: node:transcendence
+    container_name: node_builder
+    volumes:
+      - node_volume:/workspace/public
+    command: "npm run build"
+    build: 
+      context: ${PROJECT_DIR}/requirements/node/
+      dockerfile: dockerfile
+
   userserver:
     depends_on:
       userdb:
@@ -46,6 +56,7 @@ services:
       CLIENT_SECRET: ${CLIENT_SECRET}
       VAULT_USER_NAME: ${VAULT_USER_NAME}
       VAULT_PASSWORD: ${VAULT_PASSWORD}
+      HOST_IP: ${HOST_IP}
     # ports:
     #   - 8000:8000
     networks:
@@ -169,23 +180,31 @@ services:
     depends_on:
       vault_init:
         condition: service_completed_successfully
+      node_builder:
+        condition: service_completed_successfully
       userserver:
+        condition: service_healthy
+      gameserver:
         condition: service_healthy
     user: "0"
     image: owasp/modsecurity-crs:4.2.0-nginx-alpine-202405101205
     container_name: nginx
     environment:
       ALLOWED_METHODS: "GET POST PUT PATCH DELETE HEAD OPTIONS"
+      MODSEC_REQ_BODY_LIMIT: 536870912 #536870912 btyes == 512 MB
     volumes:
       - ${PROJECT_DIR}/requirements/nginx/conf/:/etc/nginx/templates/conf.d/:ro
       - certs_volume:/certs:ro
       - logs_volume:/logs
       - avatars_volume:/django/avatars/:ro
+      - node_volume:/node/:ro
+      - ${PROJECT_DIR}/requirements/node/conf/src/css/images:/images:ro
     ports:
       - 8000:8000
       - 8001:8001
       - 9090:9090
       - 4242:4242
+      # - 8080:8080
     networks:
       - my_net
     healthcheck:
@@ -208,4 +227,6 @@ volumes:
   avatars_volume:
     name: avatars_volume
     driver: local
-
+  node_volume:
+    name: node_volume
+    driver: local

@@ -1,10 +1,8 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import Navbar from "../Navbar.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 import tokenRefresh from "../utility/tokenRefresh";
 import closeModalById from "../utility/closeModalById.js"
-import logout from "../utility/logout.js";
 
 async function deleteAccount() {
 	try {
@@ -13,13 +11,14 @@ async function deleteAccount() {
 			credentials: 'include'
 		});
 		if (response.status === 200) {
-			return "success";
+			return;
 		} else if (response.status === 401) {
 			return await tokenRefresh(deleteAccount);
 		} else {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
+		console.log("deleteAccount Error: ", error);
 		return Promise.reject(error);
 	}
 }
@@ -41,11 +40,11 @@ async function onClickDeleteAccount(event) {
 	}
 }
 
-function DeleteMyAccountModal({ title }) {
+function DeleteMyAccountModal() {
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#delete-account-modal">
-				{title}
+				delete Account
 			</button>
 			<div className="modal text-center" id="delete-account-modal">
 				<div className="modal-dialog">
@@ -61,8 +60,8 @@ function DeleteMyAccountModal({ title }) {
 								Enter '<b className="text-danger"><i>delete</i></b>' to delete the account.
 							</div>
 							<form className="container my-1 py-1">
-								<input id="delete-account-input" className="me-1" type="text" />
-								<button type="button" className="btn btn-danger btn-md" onClick={onClickDeleteAccount}>
+								<input id="delete-account-input" className="me-1" type="text" autocomplete="off" />
+								<button className="btn btn-danger btn-md" onClick={onClickDeleteAccount}>
 									delete Account
 								</button>
 							</form>

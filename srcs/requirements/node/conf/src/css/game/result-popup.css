@@ -6,7 +6,17 @@
     width: 100%;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     font-size: 300px;
-    animation: fadeInOut 3s infinite, scaleUpDown 3s infinite;
+    animation: slide-in 1s ease-in-out forwards;
+}
+
+@keyframes slide-in {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }

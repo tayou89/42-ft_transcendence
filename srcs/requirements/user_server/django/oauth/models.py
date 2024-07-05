@@ -1,5 +1,6 @@
 from django.db import models
 from user.models import User
+import string
 import random
 
 class OTPModel(models.Model):
@@ -13,8 +14,8 @@ class OTPModel(models.Model):
 		]
 
 	def save(self, *args, **kwargs):
-		key_set = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		self.code = ''.join(random.choice(key_set) for _ in range(6))
+		key_set = string.ascii_lowercase + string.ascii_uppercase + string.digits
+		self.code = ''.join(random.sample(key_set, 6))
 		super().save()
 
 

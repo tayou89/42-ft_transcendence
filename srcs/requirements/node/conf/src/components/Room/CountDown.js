@@ -4,18 +4,19 @@ import "../../css/room/count-down.css";
 
 function CountDown({ room }) {
     const [ count, setCount ] = useState(5);
+    const countText = count ? count : "Start!";
 
     if (!isAllReady(room.players))
         return (null);
     if (count <= 0)
-        navigate("/game", { data: getDeliveryDataToGame(room) } );
+        setTimeout(() => navigate("/remote_game", { data: getGameData(room) } ), 500);
     useEffect(() => {
         if (isAllReady(room.players))
             countDown(count, setCount);
         return (() => stopCount(countDown));
     }, [count]);
     return (
-        <div id="count-down">{ count }</div>
+        <div id="count-down">{ countText }</div>
     );
 }
 
@@ -25,9 +26,8 @@ function isAllReady(players) {
     return (players.every(player => player.ready));
 }
 
-function getDeliveryDataToGame(room) {
+function getGameData(room) {
     return {
-        socket: room.socket,
         type: room.type,
         myId: room.myId,
         gameRound: 1,

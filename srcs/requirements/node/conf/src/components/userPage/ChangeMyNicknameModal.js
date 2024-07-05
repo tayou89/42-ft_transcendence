@@ -1,12 +1,12 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import refreshToken from "../utility/tokenRefresh.js"
+import tokenRefresh from "../utility/tokenRefresh.js"
 import notifyStatusById from "../utility/notifyStatusById.js"
 
-function ChangeMyNicknameModal({ title, myId }) {
+function ChangeMyNicknameModal({ myId }) {
 	return (
 		<div className="fs-4">
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#change-name-modal">
-				{title}
+				Change nickname
 			</button>
 			<div className="modal text-center" id="change-name-modal">
 				<div className="modal-dialog">
@@ -19,11 +19,10 @@ function ChangeMyNicknameModal({ title, myId }) {
 
 						<div className="modal-body">
 							<form className="container my-1 py-1">
-								<input id="change-name-input" className="me-1" type="text" placeholder="Your new nickname" />
+								<input id="change-name-input" className="me-1" type="text" placeholder="Your new nickname" autocomplete="off" />
 								<button className="btn btn-primary btn-md" onClick={event => onClickChangeNickname(event, myId)}>Submit</button>
 							</form>
-							<div id="change-name-status" className="container mt-2 text-success">
-							</div>
+							<div id="change-name-status" className="container mt-2 text-success"></div>
 						</div>
 
 					</div>
@@ -53,12 +52,15 @@ async function changeNickname(myId, newNickname) {
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await refreshToken(() => changeNickname(myId, newNickname));
+			return await tokenRefresh(() => changeNickname(myId, newNickname));
+		} else if (response.status === 400) {
+			return Promise.reject("This nickname already exists");
 		} else {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
-		return Promise.reject("network");
+		console.log("changeNickname Error: ", error);
+		return Promise.reject(error);
 	}
 }
 
@@ -77,7 +79,6 @@ async function onClickChangeNickname(event, myId) {
 			let nicknameElement = document.querySelector("#userpage-statchart-nickname");
 			notifyStatusById("successfully changed!", true, "change-name-status");
 			nicknameElement.innerText = newNickname;
-
 		} catch (error) {
 			console.log("onClickChangeNickname error:", error);
 			notifyStatusById(error, false, "change-name-status");

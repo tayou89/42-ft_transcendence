@@ -1,6 +1,4 @@
 import { useEffect, useState, MyReact } from "../MyReact/MyReact.js";
-import MyReactRouter, { Link } from "../MyReact/MyReactRouter.js";
-import Navbar from "./Navbar.js";
 
 function clickLoginButton() {
 	window.location.href = "http://localhost:8000/api/login";
@@ -8,7 +6,7 @@ function clickLoginButton() {
 
 function Login() {
 	return (
-		<div>
+		<div style="user-select: none;">
 			<h1 className="container-fluid text-white text-center mt-5 mb-5 p-5 display-1">
 				42 Pong
 			</h1>

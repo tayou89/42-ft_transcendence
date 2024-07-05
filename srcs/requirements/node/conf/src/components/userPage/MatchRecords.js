@@ -1,48 +1,12 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
-import logout from "../utility/logout.js";
-import tokenRefresh from "../utility/tokenRefresh.js";
 import getUserData from "../utility/getUserData.js"
-
-const sampleMatches = [
-	{
-		"id": 1,
-		"p1_score": 1,
-		"p2_score": 10,
-		"date": "2024-05-01T12:24:37.756097Z",
-		"p1": 1,
-		"p2": 2
-	},
-	{
-		"id": 2,
-		"p1_score": 10,
-		"p2_score": 7,
-		"date": "2024-05-01T12:24:53.702258Z",
-		"p1": 1,
-		"p2": 2
-	}
-]
-
-async function getUserMatchRecords(userId) {
-	try {
-		const response = await fetch(`http://localhost:8000/api/users/${userId}/matches`, {
-			method: 'GET',
-			credentials: 'include'
-		});
-		if (response.status === 200) {
-			return await response.json();
-		} else if (response.status === 401) {
-			return await tokenRefresh(() => getUserMatchRecords(userId));
-		} else {
-			return Promise.reject("unknown");
-		}
-	} catch (error) {
-		return Promise.reject(error);
-	}
-}
+import getUserMatchRecords from "../utility/getUserMatchRecords.js"
+import logout from "../utility/logout.js";
 
 function MatchRecords({ userId }) {
 	const [userMatchRecords, setUserMatchRecords] = useState([]);
+
 	useEffect(() => {
 		const a = async () => {
 			try {
@@ -63,7 +27,7 @@ function MatchRecords({ userId }) {
 			</div>
 			<div
 				className="pt-2 pb-2 border-top border-bottom rounded bg-secondary bg-opacity-25"
-				style="height: 300px; overflow-y: auto;">
+				style="height: 400px; overflow-y: auto;">
 				{userMatchRecords.map((match) =>
 					<MatchRecord match={match} userId={userId} />
 				)}
@@ -77,25 +41,27 @@ function MatchRecord({ match, userId }) {
 	const isUserP1 = match.p1 == userId;
 	const isUserWin = (isUserP1 ? isP1Win : !isP1Win);
 
-	const [p1NickName, setP1NickName] = useState("Player 1");
-	const [p2NickName, setP2NickName] = useState("Player 2");
+	const [p1Name, setP1Name] = useState("Player 1");
+	const [p2Name, setP2Name] = useState("Player 2");
+	matchTime(match.date);
 	useEffect(() => {
 		const a = async () => {
 			try {
+				let _p1Name = match.p1;
+				let _p2Name = match.p2;
 				if (match.p1) {
 					const p1Data = await getUserData(match.p1);
-					setP1NickName(() => p1Data.display_name)
-				} else {
-					setP1NickName(() => "unknown")
+					_p1Name = p1Data.name;
 				}
 				if (match.p2) {
 					const p2Data = await getUserData(match.p2);
-					setP2NickName(() => p2Data.display_name)
-				} else {
-					setP2NickName(() => "unknown")
+					_p2Name = p2Data.name;
 				}
+				setP1Name(() => _p1Name);
+				setP2Name(() => _p2Name);
 			} catch (error) {
 				console.log("MatchRecord Error: ", error);
+				logout();
 			}
 		}
 		a();
@@ -113,25 +79,30 @@ function MatchRecord({ match, userId }) {
 				<div className="col-10 mt-1 py-1">
 					<div className="row">
 						<div id={``}
-							className={"col-4 text-end " + (p1NickName === "unknown" ? "text-secondary" : "text-info")}
-							style={p1NickName === "unknown" ? "" : "cursor: pointer;"}
-							onClick={(p1NickName === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p1))}>
-							{p1NickName}
+							className={"col-4 text-end " + (!p1Name ? "text-secondary" : "text-info")}
+							style={!p1Name ? "" : "cursor: pointer;"}
+							onClick={!p1Name ? null : event => onClickNameInMatchRecord(event, match.p1)}>
+							{!p1Name ? "unknown" : p1Name}
 						</div>
 						<div className="col-4">{match.p1_score} vs {match.p2_score}</div>
-						<div className={"col-4 text-start " + (p2NickName === "unknown" ? "text-secondary" : "text-info")}
-							style={p2NickName === "unknown" ? "" : "cursor: pointer;"}
-							onClick={(p2NickName === "unknown" ? null : event => onClickNameInMatchRecord(event, match.p2))}>
-							{p2NickName}
+						<div className={"col-4 text-start " + (!p2Name ? "text-secondary" : "text-info")}
+							style={!p2Name ? "" : "cursor: pointer;"}
+							onClick={!p2Name ? null : event => onClickNameInMatchRecord(event, match.p2)}>
+							{!p2Name ? "unknown" : p2Name}
 						</div>
 					</div>
 					<div>
-						{match.date}
+						{matchTime(match.date)}
 					</div>
 				</div>
 			</div>
 		</div >
 	);
+}
+
+function matchTime(timestamp) {
+	const date = new Date(timestamp);
+	return (`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
 }
 
 function onClickNameInMatchRecord(event, userId) {
