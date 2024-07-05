@@ -77,12 +77,13 @@ function RefreshRoomButton({ setLoading }) {
 		setIsRotated(() => false);
 	};
 	return (
-		<div className="d-flex justify-content-center bg-primary rounded me-1" onClick={onClickRefreshRoomButton} style="height:30px; width:30px; cursor: pointer;">
+		<div className="d-flex justify-content-center bg-primary rounded me-1"
+			onClick={onClickRefreshRoomButton} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+			style="height:30px; width:30px; cursor: pointer;">
 			<div className="d-flex align-items-center">
 				<img src="https://localhost:4242/images/refresh.png"
 					className={`image ${isRotated ? 'rotate' : ''}`}
-					style="height:25px; width:25px;"
-					onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} />
+					style="height:25px; width:25px;" />
 			</div>
 		</div>
 	);

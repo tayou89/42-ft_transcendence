@@ -64,7 +64,7 @@ function FriendsInfo() {
 
 function RefreshFriendsButton({ setLoading }) {
 	const [isRotated, setIsRotated] = useState(false);
-	
+
 	function onClickrefreshFriends(event) {
 		event.preventDefault();
 		setLoading(() => true);
@@ -76,11 +76,12 @@ function RefreshFriendsButton({ setLoading }) {
 		setIsRotated(() => false);
 	};
 	return (
-		<div className="d-flex justify-content-center bg-primary rounded me-1" onClick={onClickrefreshFriends} style="height:30px; width:30px; cursor: pointer;">
+		<div className="d-flex justify-content-center bg-primary rounded me-1"
+			onClick={onClickrefreshFriends} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+			style="height:30px; width:30px; cursor: pointer;">
 			<div className="d-flex align-items-center">
 				<img src="https://localhost:4242/images/refresh.png"
 					className={`image ${isRotated ? 'rotate' : ''}`}
-					onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
 					style="height:25px; width:25px;" />
 			</div>
 		</div>
