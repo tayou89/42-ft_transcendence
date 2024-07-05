@@ -12,23 +12,10 @@ class RoomStateSetter {
 }
 
 async function updatePlayers(newPlayers, playerSetter) {
-    const promises = newPlayers.reduce((promises, newPlayer) => {
-        if (newPlayer.pid) {
-            promises.push(getUserData(newPlayer.pid));
-            promises.push(getUserProfileImage(newPlayer.pid));
-        }
-        else 
-            promises.push(Promise.resolve(null));
-        return (promises);
-    }, []);;
-    const promiseResults = await Promise.all(promises);
-    const updatedPlayers = [];
-    for (let i = 0; i < promiseResults.length; i++) {
-        if (promiseResults[i]) 
-            updatedPlayers.push({ ...promiseResults[i], photoURL: promiseResults[++i] });
-        else
-            updatedPlayers.push({});
-    }
+    const promises = newPlayers.map((newPlayer) =>  
+        newPlayer.pid ? getUserData(newPlayer.pid) : Promise.resolve({}));
+    const updatedPlayers = await Promise.all(promises);
+
     playerSetter((prev) => ({...prev, players: updatedPlayers}));
 } 
 
