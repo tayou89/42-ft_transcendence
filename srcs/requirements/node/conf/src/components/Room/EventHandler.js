@@ -34,41 +34,14 @@ class RoomEventHandler {
     removePageBackEvent() {
         window.removeEventListener("popstate", this.#pageBackEvent);
     }
-    addUserPageClickEvent(setRoom) {
-        this.#setUserPageClickEvent(setRoom);
-        document.addEventListener("click", this.#userPageClickEvent);
-    }
-    removeUserPageClickEvent() {
-        document.removeEventListener("click", this.#userPageClickEvent);
-    }
-    addUserPageKeyDownEvent(setRoom) {
-        this.#setUserPageKeyDownEvent(setRoom);
-        document.addEventListener("keydown", this.#userPageKeyDownEvent);
-    }
-    removeUserPageKeyDownEvent() {
-        document.removeEventListener("keydown", this.#userPageKeyDownEvent);
-    }
     #setPageBackEvent() {
         this.#pageBackEvent = () => {
             this.#socket.sendRoomLeaveMessage();
             navigate("/home");
         };
     }
-    #setUserPageClickEvent(setRoom) {
-        this.#userPageClickEvent = () => {
-            setRoom((prev) => ({ ...prev, clickedPlayer: null }));
-        };
-    }
-    #setUserPageKeyDownEvent(setRoom) {
-        this.#userPageClickEvent = (event) => {
-            if (event.key === "Esc" || event.key === "Enter")
-                setRoom((prev) => ({ ...prev, clickedPlayer: null }));
-        };
-    }
     #socket;
     #pageBackEvent;
-    #userPageClickEvent;
-    #userPageKeyDownEvent;
 }
 
 export { RoomSocketEventHandler, RoomEventHandler }; 

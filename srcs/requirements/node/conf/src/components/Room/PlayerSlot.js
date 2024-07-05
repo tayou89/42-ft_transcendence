@@ -1,20 +1,10 @@
 import { useEffect, useState, MyReact } from "../../MyReact/MyReact.js";
-import { navigate } from "../../MyReact/MyReactRouter.js";
 import ReadyButton from "./ReadyButton.js";
 import { GAME } from "../RemoteGame/constant.js";
 import "../../css/room/player-slot.css";
 
-function PlayerSlot({ player, room, setRoom }) {
+function PlayerSlot({ player, room }) {
     const elementIds = getElementsIds(room.type);
-    const handleClickEvent = (event) => {
-        console.log("playerslot click event occured!!");
-        console.log("event.target.id:", event.target.id);
-        console.log("elementIds[1]", elementIds[1]);
-        if (event.target.id === elementIds[1]){
-            console.log("player:", player);
-            setRoom((prev) => ({...prev, clickedPlayer: { ...player }}));
-        }
-    };
 
     if (!player.id) {
         return (
@@ -27,7 +17,7 @@ function PlayerSlot({ player, room, setRoom }) {
     return (
         <div className="col" id={ elementIds[0]}>
             <div id="slot-title">{ 'Player ' + (player.index + 1)}</div>
-            <div id={ elementIds[1] } onClick={ handleClickEvent }>
+            <div id={ elementIds[1] } >
                 <div id={ elementIds[2] } >
                     <img id={ elementIds[3] } src={ player.photoURL } />
                 </div>

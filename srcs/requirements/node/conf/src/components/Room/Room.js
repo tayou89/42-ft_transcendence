@@ -5,7 +5,7 @@ import Title from "./Title.js";
 import Player from "./Player.js";
 import BottomLine from "./BottomLine.js";
 import QuitPopUp from "./QuitPopUp.js";
-import UserPage from "./UserPage.js";
+import getRoomsData from "../utility/getRoomsData.js";
 import { pongSocket, mttSocket } from "../RemoteGame/GameSocket.js";
 import { GAME } from "../RemoteGame/constant.js";
 import { RoomEventHandler } from "./EventHandler.js";
@@ -15,22 +15,21 @@ function Room(props) {
     try {
         const [ room, setRoom ] = useState(getInitialRoomData(props));
 
-        console.log("room:", room);
-        checkAllReady(room, setRoom);
         useEffect(() => {
-            room.socket.sendRoomJoinMessage(room.myId, room.title);
-            room.socket.turnOnRoomChannel(setRoom);
-            room.eventHandler.addPageBackEvent();
+            const executeRoomFunctions = async() => {
+                try {
+                    await checkRoomExistence(room.roomId);
+                    room.socket.sendRoomJoinMessage(room.myId, room.title);
+                    room.socket.turnOnRoomChannel(setRoom);
+                    room.eventHandler.addPageBackEvent();
+                }
+                catch (error) {
+                    handleRoomError(error);
+                }
+            }
+            executeRoomFunctions();
             return (() => room.eventHandler.removePageBackEvent());
         }, []);
-        if (room.clickedPlayer && !room.isAllReady) {
-            return (
-                <div className="container" id="room-page">
-                    <TopLine />
-                    <UserPage room={ room } setRoom={ setRoom } />
-                </div>
-            );
-        }
         return (
             <div className="container-fluid" id="room-page">
                 <TopLine />
@@ -42,8 +41,7 @@ function Room(props) {
         );
     }
     catch (error) {
-        alert(error);
-        navigate("/home");
+        handleRoomError(error);
     }
 }
 
@@ -61,16 +59,20 @@ function getInitialRoomData(props) {
         socket: socket,
         players: !room.mtt ? [{}, {}] : [{}, {}, {}, {}],
         isQuitClicked: false,
-        isAllReady: false,
-        clickedPlayer: null,
-        count: 5,
         eventHandler: new RoomEventHandler(socket),
     });
 }
 
-function checkAllReady(room, setRoom) {
-    if (room.players.every(player => player.ready))
-        setRoom((prev) => ({ ...prev, isAllReady: true }));
+async function checkRoomExistence(roomId) {
+    const rooms = await getRoomsData();
+
+    if (!rooms.some((room) => room.id === roomId))
+        throw new Error("This is not existing room");
+}
+
+function handleRoomError(error) {
+    alert(error);
+    navigate("/home");
 }
 
 export default Room;

@@ -6,13 +6,12 @@ function CountDown({ room }) {
     const [count, setCount] = useState(5);
     const countText = count ? count : "Start!";
 
-    if (!room.isAllReady) 
+    if (!isAllReady(room.players)) 
         return (null);
-    console.log("everybody is ready!!");
     if (count <= 0) 
         setTimeout(() => navigate("/remote_game", { data: getGameData(room) } ), 500);
     useEffect(() => {
-        if (room.isAllReady)
+        if (isAllReady(room.players))
             countDown(count, setCount);
         return (() => stopCount(countDown));
     }, [count]);
@@ -38,6 +37,12 @@ function countDown(count, setCount) {
 
 function stopCount(countDown) {
     clearTimeout(countDown);
+}
+
+function isAllReady(players) {
+    if (players.length === 0)
+        return (false);
+    return (players.every(player => player.ready));
 }
 
 export default CountDown;

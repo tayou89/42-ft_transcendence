@@ -4,14 +4,14 @@ import PlayerSlot from "./PlayerSlot.js";
 import CountDown  from "./CountDown.js";
 import "../../css/room/room.css";
 
-export function Player({ room, setRoom }) {
+export function Player({ room }) {
     const elementId = getElementId(room.type);
-    const playerSlots = getPlayerSlots(room, setRoom);
+    const playerSlots = getPlayerSlots(room);
 
     return (
         <div className="row" id={ elementId }>
             { playerSlots }
-            <CountDown room={ room } setRoom={ setRoom } />
+            <CountDown room={ room } />
         </div>
     );
 }
@@ -20,11 +20,11 @@ function getElementId(type) {
     return (type === GAME.TYPE.PONG ? "player-pong" : "player-mtt");
 }
 
-function getPlayerSlots(room, setRoom) {
+function getPlayerSlots(room) {
     return (room.players.map((p, i) => {
         const player = { ...p, index: i, isMyPlayer: (room.myId === p.id) };
 
-        return (<PlayerSlot player={player} room={ room } setRoom={ setRoom } />);
+        return (<PlayerSlot player={player} room={ room } />);
     }));
 }
 

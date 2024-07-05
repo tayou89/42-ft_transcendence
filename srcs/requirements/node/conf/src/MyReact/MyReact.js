@@ -143,8 +143,6 @@ function commitWork(fiber) {
 }
 
 function commitDeletion(fiber, domParent) {
-  if (!fiber)
-    return ;
   if (fiber.dom) {
     domParent.removeChild(fiber.dom);
   }
