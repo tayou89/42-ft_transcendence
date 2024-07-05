@@ -19,7 +19,7 @@ function PlayerSlot({ player, room }) {
             <div id="slot-title">{ 'Player ' + (player.index + 1)}</div>
             <div id={ elementIds[1] } >
                 <div id={ elementIds[2] } >
-                    <img id={ elementIds[3] } src={ player.photoURL } />
+                    <img id={ elementIds[3] } src={ player.avatar } />
                 </div>
                 <div id="name">{ player.display_name}</div>
                 <div id="level">Level { Math.floor( player.exp / 1000) }</div>
