@@ -94,8 +94,8 @@ function turnOffSocketChannels(game) {
     }
 }
 
-export function getBallImage(roomId) {
-    const path = "https://localhost:4242/images/ball/";
+export function getBallImage() {
+    const path = "/images/ball/";
     const images = [
         "abstract-1.jpg", "abstract-2.jpg", 
         "abstract-3.jpg", "abstract-4.jpg",

@@ -39,7 +39,7 @@ function isNonAlphanumeric(newNickname) {
 
 async function changeNickname(myId, newNickname) {
 	try {
-		const response = await fetch(`http://localhost:8000/api/users/${myId}/`, {
+		const response = await fetch(`/user/api/users/${myId}/`, {
 			method: 'PATCH',
 			credentials: 'include',
 			headers: {
@@ -52,7 +52,7 @@ async function changeNickname(myId, newNickname) {
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => changeNickname(myId, newNickname));
+			return await tokenRefresh(async () => await changeNickname(myId, newNickname));
 		} else if (response.status === 400) {
 			return Promise.reject("This nickname already exists");
 		} else {

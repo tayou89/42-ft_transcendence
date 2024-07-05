@@ -1,6 +1,6 @@
 async function tokenRefresh(workingFunction) {
 	try {
-		const response = await fetch("http://localhost:8000/api/token/refresh", {
+		const response = await fetch("/user/api/token/refresh", {
 			method: 'POST',
 			credentials: 'include'
 		});
@@ -12,7 +12,6 @@ async function tokenRefresh(workingFunction) {
 			return Promise.reject("unknown");
 		}
 	} catch (error) {
-		console.log("tokenRefresh Error: ", error);
 		return Promise.reject(error);
 	}
 }

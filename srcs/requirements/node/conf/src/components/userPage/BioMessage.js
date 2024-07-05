@@ -68,7 +68,7 @@ function BioMessage({ userId, isMyPage }) {
 
 async function changeBioMessage(newBioMessage, myId) {
 	try {
-		const response = await fetch(`http://localhost:8000/api/users/${myId}/`, {
+		const response = await fetch(`/user/api/users/${myId}/`, {
 			method: 'PATCH',
 			credentials: 'include',
 			headers: {
@@ -81,7 +81,7 @@ async function changeBioMessage(newBioMessage, myId) {
 		if (response.status === 200) {
 			return;
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => changeBioMessage(newBioMessage, myId));
+			return await tokenRefresh(async () => await changeBioMessage(newBioMessage, myId));
 		} else {
 			return Promise.reject("unknown");
 		}

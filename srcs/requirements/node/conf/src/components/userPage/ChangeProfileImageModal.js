@@ -54,7 +54,7 @@ function ChangeProfileImageModal({ myId, setRefreshUpper }) {
 								<img src={imageUrl} className="rounded-circle" img="img" style="object-fit: cover; width: 150px; height: 150px;" />
 							</div>
 							<div className="d-flex container px-4 mt-2">
-								<input className="form-control" type="file" id="change-profile-image-input" onChange={onChangeImageUpload} />
+								<input id="change-profile-image-input" className="form-control" type="file" accept="image/*" onChange={onChangeImageUpload} />
 								<button className="btn btn-primary" onClick={event => onClickChangeProfileImageSubmit(event, myId, setRefreshUpper)}>Submit</button>
 							</div>
 						</div>
@@ -73,7 +73,7 @@ async function changeProfileImage(myId) {
 		if (!file) return "no file";
 		const formData = new FormData();
 		formData.append("avatar", file);
-		const response = await fetch(`http://localhost:8000/api/users/${myId}/`, {
+		const response = await fetch(`/user/api/users/${myId}/`, {
 			method: 'PATCH',
 			credentials: 'include',
 			body: formData
@@ -81,7 +81,7 @@ async function changeProfileImage(myId) {
 		if (response.status === 200) {
 			return "success";
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => changeProfileImage(myId));
+			return await tokenRefresh(async () => await changeProfileImage(myId));
 		} else {
 			return Promise.reject("unknown");
 		}

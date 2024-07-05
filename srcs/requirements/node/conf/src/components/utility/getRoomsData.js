@@ -2,7 +2,7 @@ import tokenRefresh from "./tokenRefresh";
 
 async function getRoomsData() {
 	try {
-		const response = await fetch("http://localhost:8001/api/rooms/", {
+		const response = await fetch("/game/api/rooms/", {
 			method: 'GET',
 			credentials: 'include'
 		});

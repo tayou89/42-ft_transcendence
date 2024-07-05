@@ -7,6 +7,8 @@ import closeModalById from "../utility/closeModalById.js"
 import getUserData from "../utility/getUserData.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
 import getUserProfileImage from "../utility/getUserProfileImage.js";
+import RoadingSpinning from "../utility/LoadingSpinning.js";
+import "../../css/home/RotatingImage.css"
 
 const defaultFriendData = {
 	"id": 0,
@@ -22,19 +24,20 @@ const defaultFriendData = {
 
 function FriendsInfo() {
 	const [friends, setFriends] = useState([]);
-	const [refresh, setRefresh] = useState(true);
+	const [loading, setLoading] = useState(true);
 	useEffect(() => {
 		const a = async () => {
 			try {
 				const _myData = await getMyData();
 				setFriends(() => _myData.friends);
+				setLoading(() => false);
 			} catch (error) {
 				console.log("HomeFriends Error: ", error);
 				logout();
 			}
 		};
 		a();
-	}, [refresh])
+	}, [loading])
 	return (
 		<div className="my-2">
 			<div className="fs-4 row">
@@ -42,30 +45,44 @@ function FriendsInfo() {
 					Friends
 				</div>
 				<div className="container col-8 text-end pe-4 d-flex flex-row-reverse align-items-center">
-					<AddNewFriendModal title="add Friend" setFriends={setFriends} />
-					<RefreshFriendsButton setRefresh={setRefresh} />
+					<AddNewFriendModal title="add Friend" setLoading={setLoading} />
+					<RefreshFriendsButton setLoading={setLoading} />
 				</div>
 			</div>
 			<div
 				className="container mt-1 py-2 px-3 border-top border-bottom rounded bg-secondary bg-opacity-25"
 				style="height: 400px; overflow-y: auto;">
-				{friends.map(id => (
-					<FriendInfo friendId={id} setFriends={setFriends} refresh={refresh} />
-				))}
+				{loading ?
+					<RoadingSpinning />
+					: friends.map(id => (
+						<FriendInfo friendId={id} setLoading={setLoading} />
+					))}
 			</div>
 		</div>
 	);
 }
 
-function RefreshFriendsButton({ setRefresh }) {
+function RefreshFriendsButton({ setLoading }) {
+	const [isRotated, setIsRotated] = useState(false);
+
 	function onClickrefreshFriends(event) {
 		event.preventDefault();
-		setRefresh(current => !current);
+		setLoading(() => true);
 	}
+	function handleMouseEnter() {
+		setIsRotated(() => true);
+	};
+	function handleMouseLeave() {
+		setIsRotated(() => false);
+	};
 	return (
-		<div className="d-flex justify-content-center bg-primary rounded me-1" style="height:30px; width:30px; cursor: pointer;">
+		<div className="d-flex justify-content-center bg-primary rounded me-1"
+			onClick={onClickrefreshFriends} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+			style="height:30px; width:30px; cursor: pointer;">
 			<div className="d-flex align-items-center">
-				<img src="https://localhost:4242/images/refresh.png" onClick={onClickrefreshFriends} style="height:25px; width:25px;" />
+				<img src="/images/refresh.png"
+					className={`image ${isRotated ? 'rotate' : ''}`}
+					style="height:25px; width:25px;" />
 			</div>
 		</div>
 	);
@@ -73,14 +90,14 @@ function RefreshFriendsButton({ setRefresh }) {
 
 async function unFriend(friendId) {
 	try {
-		const response = await fetch(`http://localhost:8000/api/me/friend/${friendId}`, {
+		const response = await fetch(`/user/api/me/friend/${friendId}`, {
 			method: 'DELETE',
 			credentials: 'include'
 		});
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => unFriend(friendId));
+			return await tokenRefresh(async () => await unFriend(friendId));
 		} else {
 			return Promise.reject("unknown");
 		}
@@ -90,12 +107,11 @@ async function unFriend(friendId) {
 	}
 }
 
-async function onClickUnFriend(event, friendId, setFriends) {
+async function onClickUnFriend(event, friendId, setLoading) {
 	event.preventDefault();
 	try {
 		await unFriend(friendId);
-		const _myData = await getMyData();
-		setFriends(() => _myData.friends);
+		setLoading(() => true);
 	} catch (error) {
 		console.log("onClickUnFriend Error: ", error);
 		logout();
@@ -106,7 +122,7 @@ function onClickShowFriendsInfo(friendId) {
 	navigate(`/userpage?userId=${friendId}`);
 }
 
-function FriendInfo({ friendId, setFriends, refresh }) {
+function FriendInfo({ friendId, setLoading }) {
 	const [userData, setUserData] = useState(defaultFriendData);
 	const [userImage, setUserImage] = useState("https://www.studiopeople.kr/common/img/default_profile.png");
 	useEffect(() => {
@@ -122,7 +138,7 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 			}
 		};
 		a();
-	}, [refresh])
+	}, [])
 
 	return (
 		<div className={"container border-start border-end rounded bg-opacity-10 text-light d-flex align-items-center"
@@ -138,7 +154,7 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 					</div>
 					<ul className="dropdown-menu" >
 						<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
-						<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setFriends)}>Unfriended</li>
+						<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setLoading)}>Unfriended</li>
 					</ul>
 				</div>
 				<div>
@@ -151,7 +167,7 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 
 async function addNewFriend(newFriendName) {
 	try {
-		const response = await fetch("http://localhost:8000/api/me/friend", {
+		const response = await fetch("/user/api/me/friend", {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -164,7 +180,7 @@ async function addNewFriend(newFriendName) {
 		if (response.status === 200) {
 			return await response.json();
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => addNewFriend(newFriendName));
+			return await tokenRefresh(async () => await addNewFriend(newFriendName));
 		} else {
 			return Promise.reject("unknown");
 		}
@@ -174,15 +190,14 @@ async function addNewFriend(newFriendName) {
 	}
 }
 
-async function onClickAddNewFriendSubmit(event, setFriends) {
+async function onClickAddNewFriendSubmit(event, setLoading) {
 	event.preventDefault();
 	const newFriendName = document.querySelector("#add-friend-input").value;
 	try {
 		const data = await addNewFriend(newFriendName);
 		if (data.result === "Successfully Added!") {
 			notifyStatusById("Successfully Added!", true, "add-friend-status")
-			const myData = await getMyData();
-			setFriends(() => myData.friends);
+			setLoading(() => true);
 		} else {
 			notifyStatusById(data.result, false, "add-friend-status")
 		}
@@ -193,7 +208,7 @@ async function onClickAddNewFriendSubmit(event, setFriends) {
 	}
 }
 
-function AddNewFriendModal({ title, setFriends }) {
+function AddNewFriendModal({ title, setLoading }) {
 	return (
 		<div>
 			<button type="button" className="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#add-friend-modal">
@@ -211,7 +226,7 @@ function AddNewFriendModal({ title, setFriends }) {
 						<div className="modal-body">
 							<form className="container my-1 py-1">
 								<input id="add-friend-input" className="me-1" type="text" placeholder="Friend name" autocomplete="off" />
-								<button className="btn btn-primary btn-md" onClick={event => { onClickAddNewFriendSubmit(event, setFriends) }}>Submit</button>
+								<button className="btn btn-primary btn-md" onClick={event => { onClickAddNewFriendSubmit(event, setLoading) }}>Submit</button>
 							</form>
 							<div id="add-friend-status" className="container mt-2 text-success"></div>
 						</div>
