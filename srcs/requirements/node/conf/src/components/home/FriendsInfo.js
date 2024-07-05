@@ -88,7 +88,7 @@ function RefreshFriendsButton({ setLoading }) {
 	);
 }
 
-async function unFriend(friendId) {
+async function unFriend(friendId, retryCount = 0) {
 	try {
 		const response = await fetch(`/user/api/me/friend/${friendId}`, {
 			method: 'DELETE',
@@ -96,8 +96,8 @@ async function unFriend(friendId) {
 		});
 		if (response.status === 200) {
 			return await response.json();
-		} else if (response.status === 401) {
-			return await tokenRefresh(async () => await unFriend(friendId));
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await unFriend(friendId, retryCount + 1));
 		} else {
 			return Promise.reject("unknown");
 		}
@@ -165,7 +165,7 @@ function FriendInfo({ friendId, setLoading }) {
 	);
 }
 
-async function addNewFriend(newFriendName) {
+async function addNewFriend(newFriendName, retryCount = 0) {
 	try {
 		const response = await fetch("/user/api/me/friend", {
 			method: 'POST',
@@ -179,8 +179,8 @@ async function addNewFriend(newFriendName) {
 		});
 		if (response.status === 200) {
 			return await response.json();
-		} else if (response.status === 401) {
-			return await tokenRefresh(async () => await addNewFriend(newFriendName));
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await addNewFriend(newFriendName, retryCount + 1));
 		} else {
 			return Promise.reject("unknown");
 		}
