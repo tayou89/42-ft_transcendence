@@ -13,9 +13,12 @@ class withdraw(APIView):
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		jwt_token = AccessToken(jwt_token)
 		
-		user = User.objects.get(id=jwt_token.payload.get('user_id'))
-		user.delete()
-  
+		try:
+			user = User.objects.get(id=jwt_token.payload.get('user_id'))
+			user.delete()
+		except:
+			pass
+	
 		response = Response(status=status.HTTP_200_OK)
 		response.delete_cookie('jwt')
 		response.delete_cookie('refresh')
@@ -29,9 +32,13 @@ class log_out(APIView):
 		if not jwt_token:
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		jwt_token = AccessToken(jwt_token)
-		user = User.objects.get(id=jwt_token.payload.get('user_id'))
-		user.online = False
-		user.save()
+
+		try:
+			user = User.objects.get(id=jwt_token.payload.get('user_id'))
+			user.online = False
+			user.save()
+		except:
+			pass
 
 		refresh_token = request.COOKIES.get('refresh')
 		if refresh_token:
