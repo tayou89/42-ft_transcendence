@@ -1,7 +1,7 @@
 import { useEffect, useState, MyReact } from "../MyReact/MyReact.js";
 
 function clickLoginButton() {
-	window.location.href = "http://localhost:8000/api/login";
+	window.location.href = "/user/api/login";
 }
 
 function Login() {

@@ -80,7 +80,7 @@ function RefreshFriendsButton({ setLoading }) {
 			onClick={onClickrefreshFriends} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
 			style="height:30px; width:30px; cursor: pointer;">
 			<div className="d-flex align-items-center">
-				<img src="https://localhost:4242/images/refresh.png"
+				<img src="/images/refresh.png"
 					className={`image ${isRotated ? 'rotate' : ''}`}
 					style="height:25px; width:25px;" />
 			</div>
@@ -90,7 +90,7 @@ function RefreshFriendsButton({ setLoading }) {
 
 async function unFriend(friendId) {
 	try {
-		const response = await fetch(`http://localhost:8000/api/me/friend/${friendId}`, {
+		const response = await fetch(`/user/api/me/friend/${friendId}`, {
 			method: 'DELETE',
 			credentials: 'include'
 		});
@@ -167,7 +167,7 @@ function FriendInfo({ friendId, setLoading }) {
 
 async function addNewFriend(newFriendName) {
 	try {
-		const response = await fetch("http://localhost:8000/api/me/friend", {
+		const response = await fetch("/user/api/me/friend", {
 			method: 'POST',
 			credentials: 'include',
 			headers: {

@@ -1,6 +1,6 @@
 async function tokenRefresh(workingFunction) {
 	try {
-		const response = await fetch("http://localhost:8000/api/token/refresh", {
+		const response = await fetch("/user/api/token/refresh", {
 			method: 'POST',
 			credentials: 'include'
 		});

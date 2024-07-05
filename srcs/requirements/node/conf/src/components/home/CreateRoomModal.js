@@ -69,7 +69,7 @@ function CreateRoomModal({ myId, setLoading }) {
 
 async function createRoom(title, roomType) {
 	try {
-		const response = await fetch("http://localhost:8001/api/rooms/", {
+		const response = await fetch("/game/api/rooms/", {
 			method: 'POST',
 			credentials: 'include',
 			headers: {

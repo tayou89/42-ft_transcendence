@@ -6,7 +6,7 @@ import closeModalById from "../utility/closeModalById.js"
 
 async function deleteAccount() {
 	try {
-		const response = await fetch(`http://localhost:8000/api/withdraw`, {
+		const response = await fetch(`/user/api/withdraw`, {
 			method: 'POST',
 			credentials: 'include'
 		});
