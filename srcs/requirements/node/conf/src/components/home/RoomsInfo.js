@@ -4,7 +4,7 @@ import logout from "../utility/logout.js";
 import getRoomsData from "../utility/getRoomsData.js"
 import LoadingSpinning from "../utility/LoadingSpinning.js"
 import CreateRoomModal from "./CreateRoomModal.js"
-
+import "../../css/home/RotatingImage.css"
 
 function RoomsInfo({ myId }) {
 	const [rooms, setRooms] = useState([]);
@@ -64,14 +64,26 @@ function RoomsInfo({ myId }) {
 }
 
 function RefreshRoomButton({ setLoading }) {
+	const [isRotated, setIsRotated] = useState(false);
 	async function onClickRefreshRoomButton(event) {
 		event.preventDefault();
 		setLoading(() => true);
 	}
+	function handleMouseEnter() {
+		setIsRotated(() => true);
+	};
+
+	function handleMouseLeave() {
+		setIsRotated(() => false);
+	};
 	return (
-		<div className="d-flex justify-content-center bg-primary rounded me-1" style="height:30px; width:30px; cursor: pointer;">
+		<div className="d-flex justify-content-center bg-primary rounded me-1"
+			onClick={onClickRefreshRoomButton} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+			style="height:30px; width:30px; cursor: pointer;">
 			<div className="d-flex align-items-center">
-				<img src="https://localhost:4242/images/refresh.png" onClick={onClickRefreshRoomButton} style="height:25px; width:25px;" />
+				<img src="https://localhost:4242/images/refresh.png"
+					className={`image ${isRotated ? 'rotate' : ''}`}
+					style="height:25px; width:25px;" />
 			</div>
 		</div>
 	);

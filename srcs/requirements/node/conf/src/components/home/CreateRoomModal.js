@@ -85,11 +85,11 @@ async function createRoom(title, roomType) {
 		} else if (response.status === 400) {//같은 이름의 방이 이미 있음
 			return Promise.reject("same room");
 		} else if (response.status === 401) {
-			return await tokenRefresh(() => createRoom(title, roomType));
+			return await tokenRefresh(async () => await createRoom(title, roomType));
 		} else if (response.status === 403) {
 			const data = await response.json();
 			if (data.detail === "Authentication credentials were not provided.") {
-				return await tokenRefresh(() => createRoom(title, roomType));
+				return await tokenRefresh(async () => await createRoom(title, roomType));
 			} else {
 				return Promise.reject("unknown");
 			}
