@@ -75,11 +75,11 @@ export const GAME = {
     },
 };
 
-const DEFAULT_URL = "http://localhost";
+const DEFAULT_URL = "https://10.32.6.1";
 
 const PORT = {
-    BACK_API: 8000,
-    SOCKET: 8001,
+    BACK_API: 4242,
+    SOCKET: 4242,
 }
 const PATH = {
     SOCKET: {
