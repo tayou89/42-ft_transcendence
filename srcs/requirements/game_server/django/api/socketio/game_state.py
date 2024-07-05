@@ -150,11 +150,11 @@ class GameState:
 
 	def unearned_win(self, player):
 		if player == 'p1':
-			self.score[P1] = 7
+			self.score[P1] = END_SCORE
 			self.score[P2] = 0
 		else:
 			self.score[P1] = 0
-			self.score[P2] = 7
+			self.score[P2] = END_SCORE
 		self.status = 'end'
 
 	def get_result(self):
