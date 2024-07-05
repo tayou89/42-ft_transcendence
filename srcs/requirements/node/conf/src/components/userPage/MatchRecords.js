@@ -5,7 +5,6 @@ import getUserMatchRecords from "../utility/getUserMatchRecords.js"
 import logout from "../utility/logout.js";
 
 function MatchRecords({ userId }) {
-    console.log("This is MatchRecords!!");
 	const [userMatchRecords, setUserMatchRecords] = useState([]);
 
 	useEffect(() => {
