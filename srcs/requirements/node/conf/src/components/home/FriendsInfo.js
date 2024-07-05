@@ -23,7 +23,6 @@ const defaultFriendData = {
 
 function FriendsInfo() {
 	const [friends, setFriends] = useState([]);
-	const [refresh, setRefresh] = useState(true);
 	const [loading, setLoading] = useState(true);
 	useEffect(() => {
 		const a = async () => {
@@ -55,7 +54,7 @@ function FriendsInfo() {
 				{loading ?
 					<RoadingSpinning />
 					: friends.map(id => (
-						<FriendInfo friendId={id} setFriends={setFriends} refresh={refresh} />
+						<FriendInfo friendId={id} setLoading={setLoading} />
 					))}
 			</div>
 		</div>
@@ -95,12 +94,11 @@ async function unFriend(friendId) {
 	}
 }
 
-async function onClickUnFriend(event, friendId, setFriends) {
+async function onClickUnFriend(event, friendId, setLoading) {
 	event.preventDefault();
 	try {
 		await unFriend(friendId);
-		const _myData = await getMyData();
-		setFriends(() => _myData.friends);
+		setLoading(() => true);
 	} catch (error) {
 		console.log("onClickUnFriend Error: ", error);
 		logout();
@@ -111,7 +109,7 @@ function onClickShowFriendsInfo(friendId) {
 	navigate(`/userpage?userId=${friendId}`);
 }
 
-function FriendInfo({ friendId, setFriends, refresh }) {
+function FriendInfo({ friendId, setLoading }) {
 	const [userData, setUserData] = useState(defaultFriendData);
 	const [userImage, setUserImage] = useState("https://www.studiopeople.kr/common/img/default_profile.png");
 	useEffect(() => {
@@ -127,7 +125,7 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 			}
 		};
 		a();
-	}, [refresh])
+	}, [])
 
 	return (
 		<div className={"container border-start border-end rounded bg-opacity-10 text-light d-flex align-items-center"
@@ -143,7 +141,7 @@ function FriendInfo({ friendId, setFriends, refresh }) {
 					</div>
 					<ul className="dropdown-menu" >
 						<li className="dropdown-item" onClick={() => onClickShowFriendsInfo(friendId)}>Show Info</li>
-						<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setFriends)}>Unfriended</li>
+						<li className="dropdown-item text-danger" onClick={event => onClickUnFriend(event, friendId, setLoading)}>Unfriended</li>
 					</ul>
 				</div>
 				<div>
