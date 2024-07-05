@@ -66,7 +66,7 @@ function ChangeProfileImageModal({ myId, setRefreshUpper }) {
 	);
 }
 
-async function changeProfileImage(myId) {
+async function changeProfileImage(myId, retryCount = 0) {
 	try {
 		const input = document.querySelector("#change-profile-image-input");
 		const file = input.files[0];
@@ -80,8 +80,8 @@ async function changeProfileImage(myId) {
 		});
 		if (response.status === 200) {
 			return "success";
-		} else if (response.status === 401) {
-			return await tokenRefresh(async () => await changeProfileImage(myId));
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await changeProfileImage(myId, retryCount + 1));
 		} else {
 			return Promise.reject("unknown");
 		}
