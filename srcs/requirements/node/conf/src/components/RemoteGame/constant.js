@@ -75,24 +75,24 @@ export const GAME = {
     },
 };
 
-const DEFAULT_URL = "https://10.15.6.2";
+// const DEFAULT_URL = "https://10.15.6.2";
 
-const PORT = {
-    BACK_API: 4242,
-    SOCKET: 4242,
-}
-const PATH = {
-    SOCKET: {
-        PONG: "/api/pong",
-        MTT: "/api/mtt",
-    },
-}
+// const PORT = {
+//     BACK_API: 4242,
+//     SOCKET: 4242,
+// }
+// const PATH = {
+//     SOCKET: {
+//         PONG: "/api/pong",
+//         MTT: "/api/mtt",
+//     },
+// }
 
 export const URL_PATH = {
     BACK_API: `/api/rooms`,
     SOCKET: {
-        PONG: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.PONG}`,
-        MTT: `${DEFAULT_URL}:${PORT.SOCKET}${PATH.SOCKET.MTT}`,
+        PONG: `/api/pong`,
+        MTT: `/api/mtt`,
     }
 }
 
