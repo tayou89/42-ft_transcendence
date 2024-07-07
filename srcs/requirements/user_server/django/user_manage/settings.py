@@ -212,7 +212,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'SIGNING_KEY': 'hihi',
+    'SIGNING_KEY': kv_get('JWT_SECRET'),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ALGORITHM': 'HS256',
