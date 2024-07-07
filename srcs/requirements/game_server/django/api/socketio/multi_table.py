@@ -11,7 +11,6 @@ from ..models import Room
 from asgiref.sync import sync_to_async
 from .pong import Pong
 
-
 class MttPong(Pong):
 	
 	sub_games = {}
@@ -30,12 +29,22 @@ class MttPong(Pong):
 			return
 
 		me = info.get('me')
+		origin = info.get('origin')
 		room_name = info.get('room')
 		room_db = await sync_to_async(Room.objects.get)(name=room_name)
 
 		if room_db.in_game:
-			self.sub_games[info.get('sub_room')].pop(me)
-			self.player_sessions[room_name].pop(info.get('origin'))
+			sub_room_name = info.get('sub_room')
+			self.sub_games[sub_room_name].pop(me)
+			try:
+				for key, value in self.player_sessions[room_name].items():
+					if value == sid:
+						self.player_sessions[room_name].pop(key)
+				if len(self.player_sessions[room_name]) == 0:
+					await sync_to_async(Room.objects.delete)()
+					self.rooms.pop(room_name)
+			except Exception as e:
+				pass
 			return
 
 		self.rooms[room_name][me] = {}
@@ -65,12 +74,12 @@ class MttPong(Pong):
 		room_name = message['room']
 		room_sessions = self.player_sessions.get(room_name, None)
 		if room_sessions is None:
-			room_sessions = self.player_sessions[room_name] = {}
+			self.player_sessions[room_name] = {}
 
 		session_data = await self.get_session(sid)
 		session_data['origin'] = session_data['me']
 		await self.save_session(sid, session_data)
-		room_sessions[session_data['me']] = sid
+		self.player_sessions[room_name][session_data['me']] = sid
 
 
 	async def on_ready(self, sid, message):
@@ -86,7 +95,7 @@ class MttPong(Pong):
 
 		flag = True
 		for key in self.field_list:
-			if key not in cur_room:
+			if not cur_room.get(key, None):
 				flag = False
 				break
 			if not cur_room[key]['ready']:
@@ -120,9 +129,12 @@ class MttPong(Pong):
 		}
 
 		winner = await self.play_pong(sub_room, session[p1], session[p2])
-  
-		await self.leave_room(session[p1], sub_room)
-		await self.leave_room(session[p2], sub_room)
+
+		try:
+			await self.leave_room(session[p1], sub_room)
+			await self.leave_room(session[p2], sub_room)
+		except:
+			pass
   
 		winner_data = {}
   
@@ -161,6 +173,8 @@ class MttPong(Pong):
 	async def on_next_game(self, sid):
 		info = await self.get_session(sid)
 		room_name = info.get('sub_room')
+		real_room = info.get('room')
+		waiting_room = info.get('room')
 		me = info.get('me')
 
 		final_room = self.sub_games[room_name]
@@ -176,10 +190,22 @@ class MttPong(Pong):
 			room=room_name,
 			namespace=self.namespace
 		)
-  
-		if len(final_room) != 2 or not final_room['p1']['ready'] or not final_room['p2']['ready']:
-			return
+
+		while len(final_room) != 2:
+			room_db = await sync_to_async(Room.objects.get)(name=real_room)
+			if len(self.player_sessions[real_room]) == 1:
+				await self.emit(
+					'result',
+					{"p1": 'win', "p2": 'win'},
+					room=room_name,
+					namespace=self.namespace
+				)
+				await sync_to_async(room_db.delete)()
+				return
 	
+		if not final_room['p1']['ready'] or not final_room['p2']['ready']:
+			return
+ 
 		p1 = final_room['p1']['before']
 		p2 = final_room['p2']['before']
   

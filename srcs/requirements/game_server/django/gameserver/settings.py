@@ -39,10 +39,14 @@ ALLOWED_HOSTS = ['*']
 #             'class': 'logging.StreamHandler',
 #         },
 #     },
+# 	'root': {
+# 		'handlers': ['console'],
+# 		'level': 'INFO',
+# 	},
 #     'loggers': {
 #         'django': {
 #             'handlers': ['console'],
-#             'level': 'DEBUG',
+#             'level': 'INFO',
 #             'propagate': True,
 #         },
 #     },
