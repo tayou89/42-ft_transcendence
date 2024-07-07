@@ -212,7 +212,7 @@ class Pong(socketio.AsyncNamespace):
 				namespace=self.namespace
 			)
 
-			await sio.sleep(1 / 30)
+			await sio.sleep(1 / 60)
 		
 		await sio.emit(
 			'result',
