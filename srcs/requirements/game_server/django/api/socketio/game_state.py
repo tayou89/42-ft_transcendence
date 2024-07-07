@@ -7,7 +7,7 @@ HEIGHT = 800
 
 BALL_RADIUS = 15
 
-BAR_SPEED = 20
+BAR_SPEED = 15
 BAR_OFFSET = 50
 BAR_HEIGHT = 120
 BAR_WIDTH = 20
@@ -112,8 +112,8 @@ class GameState:
 
 		self.check_wall_collision()
   
-		if self.ball_speed < 30:
-			self.ball_speed += 0.2
+		if self.ball_speed < 20:
+			self.ball_speed += 0.1
   
 
 	def check_paddle_collision(self):
@@ -150,11 +150,11 @@ class GameState:
 
 	def unearned_win(self, player):
 		if player == 'p1':
-			self.score[P1] = 7
+			self.score[P1] = END_SCORE
 			self.score[P2] = 0
 		else:
 			self.score[P1] = 0
-			self.score[P2] = 7
+			self.score[P2] = END_SCORE
 		self.status = 'end'
 
 	def get_result(self):

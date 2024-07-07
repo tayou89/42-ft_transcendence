@@ -4,16 +4,16 @@ import notifyStatusById from "../utility/notifyStatusById.js"
 import tokenRefresh from "../utility/tokenRefresh";
 import closeModalById from "../utility/closeModalById.js"
 
-async function deleteAccount() {
+async function deleteAccount(retryCount = 0) {
 	try {
-		const response = await fetch(`http://localhost:8000/api/withdraw`, {
+		const response = await fetch(`/user/api/withdraw`, {
 			method: 'POST',
 			credentials: 'include'
 		});
 		if (response.status === 200) {
 			return;
-		} else if (response.status === 401) {
-			return await tokenRefresh(deleteAccount);
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await deleteAccount(retryCount + 1));
 		} else {
 			return Promise.reject("unknown");
 		}

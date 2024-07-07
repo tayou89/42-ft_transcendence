@@ -1,8 +1,8 @@
 import tokenRefresh from "./tokenRefresh";
 
-async function getRoomsData() {
+async function getRoomsData(retryCount = 0) {
 	try {
-		const response = await fetch("http://localhost:8001/api/rooms/", {
+		const response = await fetch("/game/api/rooms/", {
 			method: 'GET',
 			credentials: 'include'
 		});
@@ -10,8 +10,8 @@ async function getRoomsData() {
 			return await response.json();
 		} else if (response.status === 403) {//엑세스토큰 만료됐을 때
 			const data = await response.json();
-			if (data.detail === "Authentication credentials were not provided.") {
-				return await tokenRefresh(getRoomsData);
+			if (data.detail === "Authentication credentials were not provided." && retryCount < 2) {
+				return await tokenRefresh(async () => await getRoomsData(retryCount + 1));
 			} else {
 				return Promise.reject("unknown");
 			}

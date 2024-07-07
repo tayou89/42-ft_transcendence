@@ -6,7 +6,6 @@ import tokenRefresh from "../utility/tokenRefresh.js";
 import closeModalById from "../utility/closeModalById.js"
 import getUserData from "../utility/getUserData.js";
 import notifyStatusById from "../utility/notifyStatusById.js"
-import getUserProfileImage from "../utility/getUserProfileImage.js";
 import RoadingSpinning from "../utility/LoadingSpinning.js";
 import "../../css/home/RotatingImage.css"
 
@@ -80,7 +79,7 @@ function RefreshFriendsButton({ setLoading }) {
 			onClick={onClickrefreshFriends} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
 			style="height:30px; width:30px; cursor: pointer;">
 			<div className="d-flex align-items-center">
-				<img src="https://localhost:4242/images/refresh.png"
+				<img src="/images/refresh.png"
 					className={`image ${isRotated ? 'rotate' : ''}`}
 					style="height:25px; width:25px;" />
 			</div>
@@ -88,16 +87,16 @@ function RefreshFriendsButton({ setLoading }) {
 	);
 }
 
-async function unFriend(friendId) {
+async function unFriend(friendId, retryCount = 0) {
 	try {
-		const response = await fetch(`http://localhost:8000/api/me/friend/${friendId}`, {
+		const response = await fetch(`/user/api/me/friend/${friendId}`, {
 			method: 'DELETE',
 			credentials: 'include'
 		});
 		if (response.status === 200) {
 			return await response.json();
-		} else if (response.status === 401) {
-			return await tokenRefresh(async () => await unFriend(friendId));
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await unFriend(friendId, retryCount + 1));
 		} else {
 			return Promise.reject("unknown");
 		}
@@ -124,14 +123,11 @@ function onClickShowFriendsInfo(friendId) {
 
 function FriendInfo({ friendId, setLoading }) {
 	const [userData, setUserData] = useState(defaultFriendData);
-	const [userImage, setUserImage] = useState("https://www.studiopeople.kr/common/img/default_profile.png");
 	useEffect(() => {
 		const a = async () => {
 			try {
 				const _userData = await getUserData(friendId);
-				const _userImage = await getUserProfileImage(_userData.id);
 				setUserData(() => _userData);
-				setUserImage(() => _userImage);
 			} catch (error) {
 				console.log("FriendInfo Error: ", error);
 				logout();
@@ -141,13 +137,10 @@ function FriendInfo({ friendId, setLoading }) {
 	}, [])
 
 	return (
-		<div className={"container border-start border-end rounded bg-opacity-10 text-light d-flex align-items-center"
+		<div className={"container border-start border-end rounded bg-opacity-10 text-light d-flex align-items-center mb-1"
 			+ (userData.online === true ? " border-success bg-success" : " border-danger bg-danger")} style="height:42px; width:100%">
 			<div className="d-flex justify-content-between align-items-center" style="width:100%">
-				<img className="rounded-circle"
-					style="object-fit: cover;"
-					width="32" height="32"
-					src={userImage} />
+				<img src={userData.avatar} className="rounded-circle" style="object-fit: cover; width:32px; height:32px;" />
 				<div className="dropdown fs-4" style="user-select: none; cursor: pointer;">
 					<div className=" btn-primary btn-sm text-center" data-bs-toggle="dropdown">
 						{userData.name}
@@ -165,9 +158,9 @@ function FriendInfo({ friendId, setLoading }) {
 	);
 }
 
-async function addNewFriend(newFriendName) {
+async function addNewFriend(newFriendName, retryCount = 0) {
 	try {
-		const response = await fetch("http://localhost:8000/api/me/friend", {
+		const response = await fetch("/user/api/me/friend", {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -179,8 +172,8 @@ async function addNewFriend(newFriendName) {
 		});
 		if (response.status === 200) {
 			return await response.json();
-		} else if (response.status === 401) {
-			return await tokenRefresh(async () => await addNewFriend(newFriendName));
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await addNewFriend(newFriendName, retryCount + 1));
 		} else {
 			return Promise.reject("unknown");
 		}

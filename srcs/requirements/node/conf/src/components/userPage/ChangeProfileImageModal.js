@@ -66,22 +66,22 @@ function ChangeProfileImageModal({ myId, setRefreshUpper }) {
 	);
 }
 
-async function changeProfileImage(myId) {
+async function changeProfileImage(myId, retryCount = 0) {
 	try {
 		const input = document.querySelector("#change-profile-image-input");
 		const file = input.files[0];
 		if (!file) return "no file";
 		const formData = new FormData();
 		formData.append("avatar", file);
-		const response = await fetch(`http://localhost:8000/api/users/${myId}/`, {
+		const response = await fetch(`/user/api/users/${myId}/`, {
 			method: 'PATCH',
 			credentials: 'include',
 			body: formData
 		});
 		if (response.status === 200) {
 			return "success";
-		} else if (response.status === 401) {
-			return await tokenRefresh(async () => await changeProfileImage(myId));
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await changeProfileImage(myId, retryCount + 1));
 		} else {
 			return Promise.reject("unknown");
 		}

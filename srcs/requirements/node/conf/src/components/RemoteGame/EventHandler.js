@@ -1,7 +1,7 @@
 import { MyReact } from "../../MyReact/MyReact.js";
 import { navigate } from "../../MyReact/MyReactRouter.js";
 import { KEY, GAME } from "./constant.js";
-import RoomSocketEventHandler from "../Room/EventHandler.js";
+import { RoomSocketEventHandler } from "../Room/EventHandler.js";
 import GameStateSetter from "./StateSetter.js";
 
 class GameSocketEventHandler extends RoomSocketEventHandler {
@@ -50,8 +50,8 @@ class GameEventHandler {
     removeRefreshEvent() {
         window.removeEventListener("beforeunload", this.#refreshEvent);
     }
-    addPageBackEvent(game, setGame) {
-        this.#setPageBackEvent(game, setGame);
+    addPageBackEvent() {
+        this.#setPageBackEvent();
         window.addEventListener("popstate", this.#pageBackEvent);
     }
     removePageBackEvent() {
@@ -106,6 +106,7 @@ class GameEventHandler {
                 navigate("/next_game", { data: { 
                     type: game.type,
                     myId: game.myId,
+                    roomId: game.roomId,
                     gameRound: 2,
                 }});
             };

@@ -18,7 +18,7 @@ function MatchRecords({ userId }) {
 			}
 		}
 		a();
-	}, [])
+	}, [userId])
 
 	return (
 		<div>

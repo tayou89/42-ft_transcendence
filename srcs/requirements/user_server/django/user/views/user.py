@@ -46,6 +46,10 @@ class UserVeiwSet(viewsets.ModelViewSet):
 	serializer_class = UserSerializer
 	http_method_names = ['get', 'post', 'patch', 'delete']
  
+	def retrieve(self, request, *args, **kwargs):
+		instance = self.get_object()
+		serializer = UserSerializer(instance)
+		return Response(serializer.data)
 
 	def list(self, request, *args, **kwargs):
 

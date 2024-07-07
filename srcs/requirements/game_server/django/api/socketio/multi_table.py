@@ -85,8 +85,11 @@ class MttPong(Pong):
 		cur_room = self.rooms[room_name]
 
 		flag = True
-		for key, value in cur_room.items():
-			if value and not value['ready']:
+		for key in self.field_list:
+			if key not in cur_room:
+				flag = False
+				break
+			if not cur_room[key]['ready']:
 				flag = False
 				break;
   
@@ -234,7 +237,7 @@ class MttPong(Pong):
 				namespace=self.namespace
 			)
 
-			await sio.sleep(1 / 30)
+			await sio.sleep(1 / 60)
 		
 		await sio.emit(
 			'result',

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
 from user.models import User
+import logging
 
 class withdraw(APIView):
 	def post(self, request):
@@ -13,9 +14,12 @@ class withdraw(APIView):
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		jwt_token = AccessToken(jwt_token)
 		
-		user = User.objects.get(id=jwt_token.payload.get('user_id'))
-		user.delete()
-  
+		try:
+			user = User.objects.get(id=jwt_token.payload.get('user_id'))
+			user.delete()
+		except Exception as e:
+			logging.info(f"{e}")
+	
 		response = Response(status=status.HTTP_200_OK)
 		response.delete_cookie('jwt')
 		response.delete_cookie('refresh')
@@ -27,16 +31,27 @@ class log_out(APIView):
 	def post(self, request):
 		jwt_token = request.COOKIES.get('jwt')
 		if not jwt_token:
-			return Response(status=status.HTTP_401_UNAUTHORIZED)
-		jwt_token = AccessToken(jwt_token)
-		user = User.objects.get(id=jwt_token.payload.get('user_id'))
-		user.online = False
-		user.save()
+			response = Response(status=status.HTTP_401_UNAUTHORIZED)
+			response.delete_cookie('refresh')
+			return response
 
-		refresh_token = request.COOKIES.get('refresh')
-		if refresh_token:
-			refresh = RefreshToken(refresh_token)
-			refresh.blacklist()
+		try:
+			jwt_token = AccessToken(jwt_token)
+			user = User.objects.get(id=jwt_token.payload.get('user_id'))
+			user.online = False
+			user.save()
+		except Exception as e:
+			logging.info(f"{e}")
+	
+
+		try:
+			refresh_token = request.COOKIES.get('refresh')
+			if refresh_token:
+				refresh = RefreshToken(refresh_token)
+				refresh.blacklist()
+		except Exception as e:
+			logging.info(f"{e}")
+   
 		response = Response(status=status.HTTP_200_OK)
 		response.delete_cookie('jwt')
 		response.delete_cookie('refresh')

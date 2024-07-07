@@ -21,9 +21,11 @@ function getElementId(type) {
 }
 
 function getPlayerSlots(room) {
-    return (room.players.map((player) => 
-        <PlayerSlot player={ player } room={ room } isMySlot={ room.myId === player.id } />
-    ));
+    return (room.players.map((p, i) => {
+        const player = { ...p, index: i, isMyPlayer: (room.myId === p.id) };
+
+        return (<PlayerSlot player={player} room={ room } />);
+    }));
 }
 
 export default Player;

@@ -11,7 +11,7 @@ function PlayerSlot({ id, player }) {
         <div className="col" id={id}>
             <div className="row" id="player-box">
                 <div className="row" id="game-slot-photo-box">
-                    <img className="col" id="game-slot-photo" src={ player.photoURL } />
+                    <img className="col" id="game-slot-photo" src={ player.avatar } />
                 </div>
                 <div className="row" id="player-name">{ player.display_name }</div>
                 <div className="row" id="player-level">Level { level }</div>

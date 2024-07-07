@@ -1,15 +1,15 @@
 import tokenRefresh from "./tokenRefresh.js";
 
-async function getUserData(userId) {
+async function getUserData(userId, retryCount = 0) {
 	try {
-		const response = await fetch(`http://localhost:8000/api/users/${userId}/`, {
+		const response = await fetch(`/user/api/users/${userId}/`, {
 			method: 'GET',
 			credentials: 'include'
 		});
 		if (response.status === 200) {
 			return await response.json();
-		} else if (response.status === 401) {
-			return await tokenRefresh(async () => await getUserData(userId));
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await getUserData(userId, retryCount + 1));
 		} else if (response.status === 404) {
 			return Promise.reject("not found");
 		} else {

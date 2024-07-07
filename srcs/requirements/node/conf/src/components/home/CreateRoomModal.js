@@ -67,9 +67,9 @@ function CreateRoomModal({ myId, setLoading }) {
 	);
 }
 
-async function createRoom(title, roomType) {
+async function createRoom(title, roomType, retryCount = 0) {
 	try {
-		const response = await fetch("http://localhost:8001/api/rooms/", {
+		const response = await fetch("/game/api/rooms/", {
 			method: 'POST',
 			credentials: 'include',
 			headers: {
@@ -84,12 +84,12 @@ async function createRoom(title, roomType) {
 			return await response.json();
 		} else if (response.status === 400) {//같은 이름의 방이 이미 있음
 			return Promise.reject("same room");
-		} else if (response.status === 401) {
-			return await tokenRefresh(async () => await createRoom(title, roomType));
+		} else if (response.status === 401 && retryCount < 2) {
+			return await tokenRefresh(async () => await createRoom(title, roomType, retryCount + 1));
 		} else if (response.status === 403) {
 			const data = await response.json();
-			if (data.detail === "Authentication credentials were not provided.") {
-				return await tokenRefresh(async () => await createRoom(title, roomType));
+			if (data.detail === "Authentication credentials were not provided." && retryCount < 2) {
+				return await tokenRefresh(async () => await createRoom(title, roomType, retryCount + 1));
 			} else {
 				return Promise.reject("unknown");
 			}

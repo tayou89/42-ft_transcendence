@@ -1,10 +1,10 @@
 import {io} from "socket.io-client";
 import { GAME, SOCKET, URL_PATH } from "../RemoteGame/constant.js";
-import RoomSocketEventHandler from "./EventHandler.js";
+import { RoomSocketEventHandler } from "./EventHandler.js";
 
 class RoomSocket {
     constructor (gameType) {
-        const socketOption = this.#getSocketOption(true, true, ['websocket']);
+        const socketOption = this.#getSocketOption(true, true, ['websocket'], true);
 
         this.#setSocket(gameType, socketOption);
         this.#eventHandler = new RoomSocketEventHandler;
@@ -26,8 +26,8 @@ class RoomSocket {
     turnOffRoomChannel() {
         this.socket.off(SOCKET.EVENT.ROOM, this.#eventHandler.roomEvent);
     }
-    #getSocketOption(reconnection, autoConnect, transports) {
-        const socketOption = { reconnection, autoConnect, transports };
+    #getSocketOption(reconnection, autoConnect, transports, secure) {
+        const socketOption = { reconnection, autoConnect, transports, secure};
 
         return (socketOption);
     }
