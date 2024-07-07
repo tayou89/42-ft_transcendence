@@ -39,6 +39,7 @@
     height: 300px;
     border-radius: 50%;
     overflow: hidden;
+    user-select: none;
 }
 
 #photo-pong {
@@ -80,6 +81,7 @@
 }
 
 #photo-box-mtt {
+    user-select: none;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -90,6 +92,8 @@
 }
 
 #photo-mtt {
+    user-select: none;
+    display: flex;
     width: 250px;
     height: 250px;
     border-radius: 50%;
@@ -138,4 +142,8 @@
 
 #slot-mtt:nth-child(4) {
     animation: slide-in-right 1s ease-in-out forwards;
+}
+
+#slot-title, #name, #level {
+    user-select: none;
 }

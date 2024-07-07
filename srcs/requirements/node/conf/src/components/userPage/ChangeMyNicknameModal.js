@@ -19,7 +19,7 @@ function ChangeMyNicknameModal({ myId }) {
 
 						<div className="modal-body">
 							<form className="container my-1 py-1">
-								<input id="change-name-input" className="me-1" type="text" placeholder="Your new nickname" autocomplete="off" />
+								<input id="change-name-input" className="me-1" type="text" placeholder="Your new nickname" autocomplete="off" maxLength={12}/>
 								<button className="btn btn-primary btn-md" onClick={event => onClickChangeNickname(event, myId)}>Submit</button>
 							</form>
 							<div id="change-name-status" className="container mt-2 text-success"></div>
