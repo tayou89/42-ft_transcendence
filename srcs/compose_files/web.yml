@@ -1,24 +1,24 @@
 services:
-  node:
-    image: node:transcendence
-    pull_policy: never
-    container_name: node
-    volumes:
-      - ${PROJECT_DIR}/requirements/node/conf/src:/workspace/src
-      - logs_volume:/logs
-    restart: always
-    ports:
-      - 8080:8080
-    networks:
-      - my_net
-    build: 
-      context: ${PROJECT_DIR}/requirements/node/
-      dockerfile: dockerfile
-    healthcheck:
-      test: ["CMD-SHELL", "curl -I localhost:8080 | grep -q 'HTTP/1.1 200 OK'"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
+  # node:
+  #   image: node:transcendence
+  #   pull_policy: never
+  #   container_name: node
+  #   volumes:
+  #     - ${PROJECT_DIR}/requirements/node/conf/src:/workspace/src
+  #     - logs_volume:/logs
+  #   restart: always
+  #   # ports:
+  #   #   - 8080:8080
+  #   networks:
+  #     - my_net
+  #   build: 
+  #     context: ${PROJECT_DIR}/requirements/node/
+  #     dockerfile: dockerfile
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -I localhost:8080 | grep -q 'HTTP/1.1 200 OK'"]
+  #     interval: 10s
+  #     timeout: 10s
+  #     retries: 5
 
   node_builder:
     image: node:transcendence
@@ -71,7 +71,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 1s
+      start_period: 10s
 
   userdb:
     image: postgres:userserver
@@ -93,10 +93,10 @@ services:
       dockerfile: dockerfile
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
-      interval: 10s
+      interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 1s
+      start_period: 10s
 
   gameserver:
     image: python:gameserver
@@ -157,7 +157,7 @@ services:
       - my_net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -p 5431 -U $POSTGRES_USER"]
-      interval: 5s
+      interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
@@ -173,7 +173,7 @@ services:
       - my_net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
+      interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
@@ -202,11 +202,8 @@ services:
       - node_volume:/node/:ro
       - ${PROJECT_DIR}/requirements/node/conf/src/css/images:/images:ro
     ports:
-      - 8000:8000
-      - 8001:8001
       - 9090:9090
       - 4242:4242
-      # - 8080:8080
     networks:
       - my_net
     healthcheck:
