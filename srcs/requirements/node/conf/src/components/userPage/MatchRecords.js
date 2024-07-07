@@ -102,7 +102,7 @@ function MatchRecord({ match, userId }) {
 
 function matchTime(timestamp) {
 	const date = new Date(timestamp);
-	return (`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
+	return (`${date.getFullYear()}/${date.getMonth() + 1}/${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
 }
 
 function onClickNameInMatchRecord(event, userId) {
