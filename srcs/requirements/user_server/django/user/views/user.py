@@ -26,12 +26,13 @@ class GameResultView(APIView):
      
 		winner = User.objects.get(id=request.data['winner'])
 		winner.wins += 1
-		winner.exp += 1000
+		winner.exp = winner.exp + 1200 if winner.exp + 1200 < 30000 else 30000
 		winner.save()
 		
 		loser = User.objects.get(id=request.data['loser'])
 		loser.losses += 1
-		loser.exp += 300
+		loser.exp = loser.exp + 600 if loser.exp + 600 < 30000 else 30000
+		loser.exp += 600
 		loser.save()
 
 		return Response(status=status.HTTP_200_OK)

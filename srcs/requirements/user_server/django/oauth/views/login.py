@@ -67,7 +67,7 @@ def save_user_info(data):
 		try:
 			user.save()
 		except IntegrityError:
-			random_suffix = ''.join(random.sample(string.ascii_lowercase + string.digits, 2))
+			random_suffix = ''.join(random.sample(string.ascii_uppercase + string.ascii_lowercase + string.digits, 6))
 			user.display_name = name + random_suffix
 			user.save()
 		response = requests.get(img_url)
