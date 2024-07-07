@@ -5,6 +5,7 @@
     font-size: 32px;
     margin-top: 60px;
     min-width: 700px;
+    user-select: none;
 }
 
 #score1 {
