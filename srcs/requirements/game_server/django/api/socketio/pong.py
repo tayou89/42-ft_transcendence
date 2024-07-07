@@ -36,6 +36,11 @@ class Pong(socketio.AsyncNamespace):
 		if room_db.in_game:
 			self.rooms[room_name].pop(me)
 			await self.save_session(sid, {})
+			try:
+				if len(self.rooms[room_name]) == 0:
+					await sync_to_async(room_db.delete)()
+			except:
+				pass
 			return
   
 		self.rooms[room_name][me] = {}
