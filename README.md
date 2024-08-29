@@ -1,6 +1,6 @@
 # 42 Pong
 
-<img width="1300"alt="Screen Shot 2024-08-29 at 3 12 45 PM" src="https://github.com/user-attachments/assets/c2ade439-ad81-434a-82f2-a87cb2b4d8bd">
+<img width="2330" alt="Screen Shot 2024-08-29 at 4 00 19 PM" src="https://github.com/user-attachments/assets/f7141463-b571-4d32-a8f9-c28dd60e806d">
 
 ## Description
 
