@@ -87,15 +87,15 @@ This architecture allows for a responsive and synchronized multiplayer experienc
 
 ## Screenshots
 
-<img width="766" alt="Screen Shot 2024-08-29 at 3 12 45 PM" src="https://github.com/user-attachments/assets/170e25b0-b457-455a-b114-b3773ddbd533">
+<img width="1300" alt="Screen Shot 2024-08-29 at 3 12 45 PM" src="https://github.com/user-attachments/assets/170e25b0-b457-455a-b114-b3773ddbd533">
 
-<img width="541" alt="Screen Shot 2024-08-29 at 3 13 42 PM" src="https://github.com/user-attachments/assets/3964798a-4f63-4069-9ffe-5192c5cefb88">
+<img width="1300" alt="Screen Shot 2024-08-29 at 3 13 42 PM" src="https://github.com/user-attachments/assets/3964798a-4f63-4069-9ffe-5192c5cefb88">
 
 <img width="1348" alt="Screen Shot 2024-08-29 at 3 13 51 PM" src="https://github.com/user-attachments/assets/4b8cf69e-251a-4493-a2f4-11e0c0dcb476">
 
 <img width="1343" alt="Screen Shot 2024-08-29 at 3 14 22 PM" src="https://github.com/user-attachments/assets/b2cb05d7-bafd-4725-ae99-6ea1d5225fd6">
 
-<img width="2261" alt="Screen Shot 2024-08-29 at 4 00 03 PM" src="https://github.com/user-attachments/assets/a5fae895-8fd6-47bf-b488-fb6a8c30ac60">
+<img width="2553" alt="Screen Shot 2024-08-29 at 4 01 35 PM" src="https://github.com/user-attachments/assets/332af8b1-93a2-40a7-922a-e81eda8b1710">
 
 <img width="2330" alt="Screen Shot 2024-08-29 at 4 00 19 PM" src="https://github.com/user-attachments/assets/82400de6-26f4-459b-ae1b-389a002b240f">
 
